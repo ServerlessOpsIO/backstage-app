@@ -1,0 +1,22 @@
+{
+	"ClusterName": "/infra/backstage/backstage-cluster/main/EcsClusterName",
+	"ClusterTaskIamRoleArn": "/infra/backstage/backstage-cluster/main/EcsTaskExecutionIamRoleArn",
+	"ClusterSecurityGroupId": "/infra/backstage/backstage-cluster/main/ContainerSecurityGroupId",
+	"ClusterAlbListenerArn": "/infra/backstage/backstage-cluster/main/EcsAlbListenerArn",
+	"ContainerRepo": $secrets.AWS_ECR_REPO,
+	"ContainerOrg": $env.GITHUB_REPOSITORY_OWNER_PART_SLUG,
+	"ContainerImage": $env.GITHUB_REPOSITORY_NAME_PART_SLUG,
+	"ContainerTag": $env.GITHUB_SHA,
+	"ContainerCpu": "1024",
+	"ContainerMemory": "2048",
+	"ContainerDesiredCount": "1",
+	"ContainerPort": "80",
+	"AlbRulePriority": "1",
+	"AlbRulePath": "*",
+	"VpcId": "/org/networking/VpcId",
+	"VpcSubnets": "/org/networking/VpcPublicSubnets",
+	"Domain": "infra",
+	"System": "backstage",
+	"Component": $env.GITHUB_REPOSITORY_NAME_PART_SLUG_CS,
+	"CodeBranch": $env.GITHUB_REF_SLUG_CS
+}

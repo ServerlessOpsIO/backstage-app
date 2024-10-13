@@ -1,0 +1,7 @@
+{
+  "org:domain": "infra",
+  "org:system": "backstage",
+  "org:component": $env.GITHUB_REPOSITORY_NAME_PART_SLUG_CS,
+  "org:codeBranch": $env.GITHUB_REF_SLUG_CS,
+  "org:codeSha": $env.GITHUB_SHA
+}
