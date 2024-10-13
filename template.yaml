@@ -137,7 +137,7 @@ Resources:
           SecurityGroups:
             - !Ref ClusterSecurityGroupId
           Subnets: !Ref VpcSubnets
-          AssignPublicIp: DISABLED
+          AssignPublicIp: ENABLED   # Enabled because this runs in public subnet
       TaskDefinition: !Ref TaskDefinition
       LoadBalancers:
         - ContainerName: !Ref Component
