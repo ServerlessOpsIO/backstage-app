@@ -102,6 +102,21 @@ Parameters:
   PgPassword:
     Type: String
     Description: PostgreSQL password
+    NoEcho: true
+
+  AuthGoogleClientId:
+    Type: String
+    Description: Google OAuth client ID
+    NoEcho: true
+
+  AuthGoogleClientSecret:
+    Type: String
+    Description: Google OAuth client secret
+    NoEcho: true
+
+  DnsName:
+    Type: String
+    Description: DNS name for the application
 
 
 Resources:
@@ -133,6 +148,12 @@ Resources:
               Value: !Ref PgUser
             - Name: POSTGRES_PASSWORD
               Value: !Ref PgPassword
+            - Name: AUTH_GOOGLE_CLIENT_ID
+              Value: !Ref AuthGoogleClientId
+            - Name: AUTH_GOOGLE_CLIENT_SECRET
+              Value: !Ref AuthGoogleClientSecret
+            - Name: DNS_NAME
+              Value: !Ref DnsName
           LogConfiguration:
             LogDriver: awslogs
             Options:
