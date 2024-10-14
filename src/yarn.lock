@@ -13656,7 +13656,7 @@ __metadata:
     app: "link:../app"
     better-sqlite3: "npm:^9.0.0"
     node-gyp: "npm:^10.0.0"
-    pg: "npm:^8.11.3"
+    pg: "npm:^8.13.0"
     winston: "npm:^3.2.1"
   languageName: unknown
   linkType: soft
@@ -24666,7 +24666,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg@npm:^8.11.3":
+"pg@npm:^8.11.3, pg@npm:^8.13.0":
   version: 8.13.0
   resolution: "pg@npm:8.13.0"
   dependencies:
