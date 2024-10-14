@@ -86,6 +86,23 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<CommaDelimitedList>
     Description: Account subnets
 
+  # Backstage Application Configuration parameters
+  PgHost:
+    Type: String
+    Description: PostgreSQL host
+
+  PgPort:
+    Type: String
+    Description: PostgreSQL port
+
+  PgUser:
+    Type: String
+    Description: PostgreSQL user
+
+  PgPassword:
+    Type: String
+    Description: PostgreSQL password
+
 
 Resources:
   TaskDefinition:
@@ -107,7 +124,15 @@ Resources:
           Image: !Sub '${ContainerRepo}/${ContainerOrg}/${ContainerImage}:${ContainerTag}'
           PortMappings:
             - ContainerPort: !Ref ContainerPort
-          Environment: []
+          Environment:
+            - Name: POSTGRES_HOST
+              Value: !Ref PgHost
+            - Name: POSTGRES_PORT
+              Value: !Ref PgPort
+            - Name: POSTGRES_USER
+              Value: !Ref PgUser
+            - Name: POSTGRES_PASSWORD
+              Value: !Ref PgPassword
           LogConfiguration:
             LogDriver: awslogs
             Options:

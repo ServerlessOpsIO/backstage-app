@@ -1,4 +1,8 @@
 {
+	"Domain": "infra",
+	"System": "backstage",
+	"Component": $env.GITHUB_REPOSITORY_NAME_PART_SLUG_CS,
+	"CodeBranch": $env.GITHUB_REF_SLUG_CS,
 	"ClusterName": "/infra/backstage/backstage-cluster/main/EcsClusterName",
 	"ClusterTaskIamRoleArn": "/infra/backstage/backstage-cluster/main/EcsTaskExecutionIamRoleArn",
 	"ClusterSecurityGroupId": "/infra/backstage/backstage-cluster/main/ContainerSecurityGroupId",
@@ -15,8 +19,8 @@
 	"AlbRulePath": "*",
 	"VpcId": "/org/networking/VpcId",
 	"VpcSubnets": "/org/networking/VpcPublicSubnets",
-	"Domain": "infra",
-	"System": "backstage",
-	"Component": $env.GITHUB_REPOSITORY_NAME_PART_SLUG_CS,
-	"CodeBranch": $env.GITHUB_REF_SLUG_CS
+	"PgHost": $secrets.POSTGRES_HOST,
+	"PgPort": "5432",
+	"PgUser": $secrets.POSTGRES_USER,
+	"PgPassword": $secrets.POSTGRES_PASSWORD
 }
