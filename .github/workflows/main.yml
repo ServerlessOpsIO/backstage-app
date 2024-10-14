@@ -47,17 +47,51 @@ jobs:
       - name: Setup job workspace
         uses: ServerlessOpsIO/gha-setup-workspace@v1
 
+      - name: check working directory
+        shell: bash
+        run: echo ${{ github.workspace }}
+
       - name: Assume AWS Credentials
         uses: ServerlessOpsIO/gha-assume-aws-credentials@v1
         with:
           build_aws_account_id: ${{ secrets.AWS_CICD_ACCOUNT_ID }}
+
+      - name: Setup NodeJS
+        uses: ServerlessOpsIO/gha-setup-node@v1
+        with:
+          node_version_file: src/package.json
+          working_directory: src
+
+      - name: Build Application Code
+        id: build
+        shell: bash
+        working-directory: src
+        run: yarn run build:all
+
+      - name: Test Application
+        id: test
+        shell: bash
+        working-directory: src
+        run: yarn run test:all
+
+      - name: Lint Application
+        id: lint
+        shell: bash
+        working-directory: src
+        run: yarn run lint:all
+
+      - name: Build Base Image
+        id: build-image
+        shell: bash
+        working-directory: src
+        run: yarn run build-image
 
       - name: Build container image
         uses: kciter/aws-ecr-action@v4
         with:
           account_id: ${{ secrets.AWS_CICD_ACCOUNT_ID }}
           region: ${{ env.AWS_REGION }}
-          tags: latest,${{ env.GITHUB_SHA }}
+          tags: latest,${{ env.GITHUB_EVENT_REF_SLUG }},${{ env.GITHUB_SHA_SHORT }},${{ env.GITHUB_SHA }}
           repo: ${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG}}
           create_repo: true
           path: src
@@ -67,7 +101,7 @@ jobs:
           access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           set_repo_policy: true
-          repo_policy_file: .github/workflows/ecr-policy.json
+          repo_policy_file: ../.github/workflows/ecr-policy.json
 
   deploy:
     needs:
