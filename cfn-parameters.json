@@ -25,5 +25,5 @@
 	"PgPassword": $secrets.POSTGRES_PASSWORD,
 	"AuthGoogleClientId": $secrets.AUTH_GOOGLE_CLIENT_ID,
 	"AuthGoogleClientSecret": $secrets.AUTH_GOOGLE_CLIENT_SECRET,
-	"DnsName": $env.DNS_NAME,
+	"DnsName": $secrets.DNS_NAME,
 }
