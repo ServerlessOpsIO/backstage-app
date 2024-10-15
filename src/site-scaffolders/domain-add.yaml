@@ -1,0 +1,45 @@
+---
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: domain-add-template
+  title: Add Application Domain
+  description: Add a new application domain to Backstage
+spec:
+  type: domain
+  owner: group:admins
+
+  parameters:
+    - title: Domain information
+      required:
+        - domain
+        - description
+      properties:
+        domain:
+          title: Domain
+          type: string
+          description: Name of application domain
+          ui:autofocus: true
+          ui:placeholder: eg. Infrastructure, Cloud, AI
+        description:
+          title: Description
+          description: Description of application domain
+          type: string
+  steps:
+    - id: create-catalog-entry
+      name: Create Catalog entry
+      action: catalog:write
+      input:
+        entity:
+          apiVersion: backstage.io/v1alpha1
+          kind: Domain
+          metadata:
+            name: '{{ domain }}'
+          spec:
+            owner: group:admins
+            description: '{{ description }}'
+    - id: register-entity
+      name: Register Domain entity
+      action: catalog:register
+      input:
+        catalogInfoUrl: 'file:./catalog-info.yaml'

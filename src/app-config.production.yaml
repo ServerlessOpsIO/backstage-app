@@ -58,3 +58,7 @@ catalog:
       target: /app/site-catalogs/groups.yaml
       rules:
         - allow: [Groups]
+    - type: file
+      target: /app/site-scaffolders/domain-add.yaml
+      rules:
+        - allow: [Template]
