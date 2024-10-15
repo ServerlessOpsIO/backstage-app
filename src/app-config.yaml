@@ -1,5 +1,5 @@
 app:
-  title: Backstage App
+  title: Backstage Portal
   baseUrl: http://localhost:3000
 
 organization:
