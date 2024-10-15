@@ -8,3 +8,8 @@ ADD --chown=node:node https://truststore.pki.rds.amazonaws.com/us-west-1/us-west
 ADD --chown=node:node https://truststore.pki.rds.amazonaws.com/us-west-2/us-west-2-bundle.pem ./
 RUN cat us-east-1-bundle.pem us-east-2-bundle.pem us-west-1-bundle.pem us-west-2-bundle.pem > ./rds-combined-ca-bundle.pem
 RUN chown node:node ./rds-combined-ca-bundle.pem
+
+# Add site-catalog files
+RUN mkdir site-catalogs
+RUN chown node:node site-catalogs
+COPY --chown=node:node site-catalogs/ site-catalogs/
