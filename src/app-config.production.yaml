@@ -33,6 +33,7 @@ backend:
 auth:
   environment: production
   providers:
+    guest: null
     google:
       production:
         clientId: ${AUTH_GOOGLE_CLIENT_ID}
