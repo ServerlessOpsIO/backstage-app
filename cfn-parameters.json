@@ -14,7 +14,7 @@
 	"ContainerCpu": "1024",
 	"ContainerMemory": "2048",
 	"ContainerDesiredCount": "1",
-	"ContainerPort": "80",
+	"ContainerPort": "7007",
 	"AlbRulePriority": "1",
 	"AlbRulePath": "*",
 	"VpcId": "/org/networking/VpcId",
