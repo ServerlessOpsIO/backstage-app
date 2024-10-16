@@ -2,16 +2,35 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{ values.component_name }}
-  description: ${{ values.component_description }}
-  namespace: ${{ values.component_namespace }}
+  name: backstage-app
+  description: Backstage ECS Service & Task
   annotations:
-    github.com/project-slug: ServerlessOpsIO/${{ values.component_name }}
+    github.com/project-slug: ServerlessOpsIO/backstage-app
 spec:
-  type: aws_ecs_service
+  type: application
   lifecycle: production
-  owner: ${{ values.owner }}
-  system: ${{ values.system_entity }}
-  domain: ${{ values.domain_entity }}
+  owner: group:admins
+  system: backstage
+  domain: infrastructure
   dependsOn:
-    - ${{ values.cluster_ref }}
+    - resource:backstage-app-container
+    - resource:backstage-cluster
+    - resource:backstage-db
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: backstage-app-container
+  description: Backstage ECS Service
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/backstage-app
+    io.serverlessops/cluster-type: ecs
+spec:
+  type: container-service
+  lifecycle: production
+  owner: group:admins
+  system: backstage
+  domain: infrastructure
+  dependsOn:
+    - resource:backstage-cluster
