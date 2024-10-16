@@ -12,15 +12,4 @@ RUN chown node:node ./rds-combined-ca-bundle.pem
 # Add app-config.d directory
 RUN mkdir app-config.d
 RUN chown node:node app-config.d
-COPY --chown=node:node app-config.d app-config.d
-
-
-# Add site-catalog files
-RUN mkdir site-catalogs
-RUN chown node:node site-catalogs
-COPY --chown=node:node site-catalogs/ site-catalogs/
-
-# Add local scaffolders
-RUN mkdir site-scaffolders
-RUN chown node:node site-scaffolders
-COPY --chown=node:node site-scaffolders/ site-scaffolders/
+COPY --chown=node:node app-config.d/ app-config.d/

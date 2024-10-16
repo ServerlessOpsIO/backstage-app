@@ -57,14 +57,14 @@ catalog:
   # on how to get entities into the catalog.
    locations:
     - type: file
-      target: /app/site-catalogs/users.yaml
+      target: /app/app-config.d/catalogs/users.yaml
       rules:
         - allow: [User]
     - type: file
-      target: /app/site-catalogs/groups.yaml
+      target: /app/app-config.d/catalogs/groups.yaml
       rules:
         - allow: [Groups]
     - type: file
-      target: /app/site-scaffolders/domain-add.yaml
+      target: /app/app-config.d/scaffolders/domain-add.yaml
       rules:
         - allow: [Template]
