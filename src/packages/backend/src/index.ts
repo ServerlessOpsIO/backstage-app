@@ -53,4 +53,5 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs/alpha'));
 
 backend.add(import('@backstage/plugin-catalog-backend-module-github'));
 
+backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'));
 backend.start();

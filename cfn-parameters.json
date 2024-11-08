@@ -26,4 +26,8 @@
 	"AuthGoogleClientId": $secrets.AUTH_GOOGLE_CLIENT_ID,
 	"AuthGoogleClientSecret": $secrets.AUTH_GOOGLE_CLIENT_SECRET,
 	"DnsName": $secrets.DNS_NAME,
+	"ServerlessOpsCatalogApiUrl": $env.SERVERLESS_OPS_CATALOG_API_URL,
+	"ServerlessOpsCatalogApiKey": $secrets.SERVERLESS_OPS_CATALOG_API_KEY,
+	"ServerlessOpsCatalogApiSecret": $secrets.SERVERLESS_OPS_CATALOG_API_SECRET,
+	"ServerlessOpsAuthEndpoint": $secrets.SERVERLESS_OPS_AUTH_ENDPOINT
 }

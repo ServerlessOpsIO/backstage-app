@@ -1,0 +1,34 @@
+{
+  "apiVersion": "backstage.io/v1alpha1",
+  "kind": "Resource",
+  "metadata": {
+    "namespace": "default",
+    "name": "aws-796973489093",
+    "title": "796973489093",
+    "description": "Backstage",
+    "annotations": {
+      "io.serverlessops/cloud-provider": "aws"
+    },
+    "tags": [
+      "cloud"
+    ],
+    "links": [
+      {
+        "url": "https://serverlessops.awsapps.com",
+        "title": "AWS Console",
+        "type": "admin-console",
+        "icon": "aws"
+      },
+      {
+        "url": "https://console.aws.amazon.com/billing/home?#/account",
+        "title": "Billing",
+        "type": "billing",
+        "icon": "aws"
+      }
+    ]
+  },
+  "spec": {
+    "owner": "group:admins",
+    "type": "cloud-account"
+  }
+}

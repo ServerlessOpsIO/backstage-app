@@ -52,6 +52,20 @@ integrations:
         - $include: /app/app-config.d/github-app-credentials.yaml
 
 catalog:
+  providers:
+    serverlessops-catalog:
+      baseUrl: ${SERVERLESSOPS_CATALOG_API_URL}
+      namespace: default
+      entityKinds:
+        - Domain
+        - System
+        - Resource
+        - Users
+        - Group
+      auth:
+        endpoint: ${SERVERLESSOPS_AUTH_ENDPOINT}
+        clientId: ${SERVERLESSOPS_AUTH_CLIENT_ID}
+        clientSecret: ${SERVERLESSOPS_AUTH_CLIENT_SECRET}
   # Overrides the default list locations from app-config.yaml as these contain example data.
   # See https://backstage.io/docs/features/software-catalog/#adding-components-to-the-catalog for more details
   # on how to get entities into the catalog.

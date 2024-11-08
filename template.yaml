@@ -118,6 +118,23 @@ Parameters:
     Type: String
     Description: DNS name for the application
 
+  ServerlessOpsCatalogApiUrl:
+    Type: String
+    Description: ServerlessOps catalog API URL
+
+  ServerlessOpsAuthEndpoint:
+    Type: String
+    Description: ServerlessOps auth endpoint
+
+  ServerlessOpsAuthClientId:
+    Type: String
+    Description: ServerlessOps auth client ID
+
+  ServerlessOpsAuthClientSecret:
+    Type: String
+    Description: ServerlessOps auth client secret
+    NoEcho: true
+
 
 Resources:
   TaskDefinition:
@@ -154,6 +171,14 @@ Resources:
               Value: !Ref AuthGoogleClientSecret
             - Name: DNS_NAME
               Value: !Ref DnsName
+            - Name: SERVERLESSOPS_CATALOG_API_URL
+              Value: !Ref ServerlessOpsCatalogApiUrl
+            - Name: SERVERLESSOPS_AUTH_ENDPOINT
+              Value: !Ref ServerlessOpsAuthEndpoint
+            - Name: SERVERLESSOPS_AUTH_CLIENT_ID
+              Value: !Ref ServerlessOpsAuthClientId
+            - Name: SERVERLESSOPS_AUTH_CLIENT_SECRET
+              Value: !Ref ServerlessOpsAuthClientSecret
           LogConfiguration:
             LogDriver: awslogs
             Options:
