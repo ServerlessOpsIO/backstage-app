@@ -12,6 +12,8 @@ import {
 } from '@backstage/plugin-catalog-node'
 import {
     LoggerService,
+    SchedulerServiceTaskRunner,
+    SchedulerServiceTaskScheduleDefinition
 } from '@backstage/backend-plugin-api'
 import { Config } from '@backstage/config'
  import { getJwt } from '../util/getJwt'
@@ -25,11 +27,13 @@ export interface ProviderConfig {
         endpoint: string
         clientId: string
         clientSecret: string
-    }
+    },
+    schedule: SchedulerServiceTaskScheduleDefinition
 }
 
 export interface ProviderOptions {
     logger: LoggerService
+    taskRunner: SchedulerServiceTaskRunner
 }
 
 export interface ApiEntityList {
@@ -40,6 +44,8 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
     private readonly providerConfig: ProviderConfig
     private connection?: EntityProviderConnection
     private readonly logger: LoggerService
+    private taskRunner: SchedulerServiceTaskRunner
+
     private jwt?: string
 
     constructor(
@@ -48,6 +54,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
     ) {
         this.providerConfig = providerConfig
         this.logger = options.logger.child({target: this.getProviderName()})
+        this.taskRunner = options.taskRunner
 
         this.logger.info('Initialized ServerlessOps Catalog')
     }
@@ -56,30 +63,9 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
         config: Config,
         options: ProviderOptions
     ): ServerlessOpsCatalogProvider {
-        const providerConfig: ProviderConfig = {
-            baseUrl: config.getString(
-                'catalog.providers.serverlessops-catalog.baseUrl'
-            ),
-            namespace: config.getString(
-                'catalog.providers.serverlessops-catalog.namespace'
-            ),
-            entityKinds: config.getOptionalStringArray(
-                'catalog.providers.serverlessops-catalog.entityKinds'
-            ) ?? ['Component'],
-            auth: {
-                endpoint: config.getString(
-                    'catalog.providers.serverlessops-catalog.auth.endpoint'
-                ),
-                clientId: config.getString(
-                    'catalog.providers.serverlessops-catalog.auth.clientId'
-                ),
-                clientSecret: config.getString(
-                    'catalog.providers.serverlessops-catalog.auth.clientSecret'
-                )
-            }
-        }
+        const providerConfig = config.get('catalog.providers.serverlessops-catalog') as ProviderConfig | undefined
 
-        return new ServerlessOpsCatalogProvider(providerConfig, options)
+        return new ServerlessOpsCatalogProvider(providerConfig as ProviderConfig, options)
     }
 
     async connect(connection: EntityProviderConnection): Promise<void> {
@@ -88,6 +74,15 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
             throw new Error('Not initialized');
         }
 
+        await this.taskRunner.run({
+            id: this.getProviderName(),
+            fn: async () => {
+                await this.run()
+            }
+        })
+    }
+
+    async run(): Promise<void> {
         this.jwt = await getJwt(
             this.providerConfig.auth.clientId,
             this.providerConfig.auth.clientSecret,
@@ -95,7 +90,6 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
         )
 
         const collectedEntities: Entity[] = []
-
         await Promise.all(this.providerConfig.entityKinds.map(async (kind) => {
             const entities = await this.getEntitiesByKind(kind, this.jwt as string)
 
