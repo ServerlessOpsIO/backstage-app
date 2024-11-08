@@ -1,4 +1,4 @@
-import { getJwt } from './getJwt'
+import { getJwt } from './jwt'
 import mockFetch from "jest-fetch-mock"
 
 describe('getJwt', () => {
@@ -39,7 +39,7 @@ describe('getJwt', () => {
         })
 
         describe('should fail when', () => {
-            it('throws error when no access token in response', async () => {
+            test('throws error when no access token in response', async () => {
                 mockFetch.mockResponse(
                     JSON.stringify({})
                 )
@@ -49,7 +49,7 @@ describe('getJwt', () => {
                 ).rejects.toThrow('No access token received in response')
             })
 
-            it('throws error when fetch fails', async () => {
+            test('throws error when fetch fails', async () => {
                 mockFetch.mockRejectedValueOnce(
                     new Error('Network error')
                 )
@@ -58,6 +58,12 @@ describe('getJwt', () => {
                     getJwt(mockClientId, mockClientSecret, mockUrl)
                 ).rejects.toThrow('Failed to get JWT: Network error')
             })
+        })
+    })
+
+    describe('isJwtExpired()', () => {
+        describe('should succeed when', () => {
+            test.skip('returns true when token is expired', () => {})
         })
     })
 })

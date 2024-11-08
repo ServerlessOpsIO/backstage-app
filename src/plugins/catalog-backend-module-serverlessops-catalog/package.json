@@ -27,7 +27,8 @@
     "@backstage/backend-plugin-api": "^1.0.0",
     "@backstage/catalog-model": "^1.7.0",
     "@backstage/config": "^1.2.0",
-    "@backstage/plugin-catalog-node": "^1.13.1"
+    "@backstage/plugin-catalog-node": "^1.13.1",
+    "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
     "@backstage/backend-test-utils": "^1.0.2",

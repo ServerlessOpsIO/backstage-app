@@ -135,7 +135,7 @@ describe('ServerlessOpsCatalogProvider', () => {
         })
     })
 
-    describe('getEntitiesByKind()', () => {
+    describe('getEntityByPath()', () => {
         describe('should succeed when', () => {
             test('getEntityByPath fetches single entity', async () => {
                 const mockEntity: Entity = {

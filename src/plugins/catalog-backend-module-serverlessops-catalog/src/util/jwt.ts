@@ -1,3 +1,5 @@
+import { jwtDecode } from 'jwt-decode'
+
 interface Response {
     access_token: string
 }
@@ -44,4 +46,17 @@ export async function getJwt(
     } catch (error) {
         throw new Error(`Failed to get JWT: ${(error as Error).message}`)
     }
+}
+
+/**
+ * Checks if a JWT token is expired.
+ * 
+ * @param token - The JWT token to check
+ * @returns True if the token is expired, false otherwise
+ */
+export function isJwtExpired(token: string): boolean {
+    const jwtExpiration = jwtDecode(token).exp || 0
+    const now = Date.now() / 1000
+
+    return jwtExpiration < now
 }

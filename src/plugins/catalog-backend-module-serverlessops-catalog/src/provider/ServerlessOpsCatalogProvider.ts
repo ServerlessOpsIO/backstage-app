@@ -16,7 +16,7 @@ import {
     SchedulerServiceTaskScheduleDefinition
 } from '@backstage/backend-plugin-api'
 import { Config } from '@backstage/config'
- import { getJwt } from '../util/getJwt'
+ import { getJwt, isJwtExpired } from '../util/jwt'
 
 /** Configuration for the ServerlessOps catalog provider */
 export interface ProviderConfig {
@@ -83,11 +83,13 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
     }
 
     async run(): Promise<void> {
-        this.jwt = await getJwt(
-            this.providerConfig.auth.clientId,
-            this.providerConfig.auth.clientSecret,
-            this.providerConfig.auth.endpoint
-        )
+        if (!this.jwt || isJwtExpired(this.jwt)) {
+            this.jwt = await getJwt(
+                this.providerConfig.auth.clientId,
+                this.providerConfig.auth.clientSecret,
+                this.providerConfig.auth.endpoint
+            )
+        }
 
         const collectedEntities: Entity[] = []
         await Promise.all(this.providerConfig.entityKinds.map(async (kind) => {
@@ -146,6 +148,10 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
                 }
             )
 
+            if (!response.ok) {
+                throw new Error(response.statusText)
+            }
+
             return await response.json()
         } catch (error) {
             throw new Error(`Failed to get entities by kind: ${error}`)
@@ -170,6 +176,10 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
                     }
                 }
             )
+
+            if (!response.ok) {
+                throw new Error(response.statusText)
+            }
 
             return response.json()
         } catch (error) {
