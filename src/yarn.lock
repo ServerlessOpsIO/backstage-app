@@ -3148,7 +3148,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@backstage/backend-test-utils@npm:^1.0.0":
+"@backstage/backend-test-utils@npm:^1.0.2":
   version: 1.0.2
   resolution: "@backstage/backend-test-utils@npm:1.0.2"
   dependencies:
@@ -6812,11 +6812,12 @@ __metadata:
   resolution: "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog@workspace:plugins/catalog-backend-module-serverlessops-catalog"
   dependencies:
     "@backstage/backend-plugin-api": "npm:^1.0.0"
-    "@backstage/backend-test-utils": "npm:^1.0.0"
+    "@backstage/backend-test-utils": "npm:^1.0.2"
     "@backstage/catalog-model": "npm:^1.7.0"
     "@backstage/cli": "npm:^0.27.1"
     "@backstage/config": "npm:^1.2.0"
     "@backstage/plugin-catalog-node": "npm:^1.13.1"
+    jest-fetch-mock: "npm:^3.0.3"
   languageName: unknown
   linkType: soft
 
@@ -15791,7 +15792,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:^3.1.5":
+"cross-fetch@npm:^3.0.4, cross-fetch@npm:^3.1.5":
   version: 3.1.8
   resolution: "cross-fetch@npm:3.1.8"
   dependencies:
@@ -21281,6 +21282,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-fetch-mock@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "jest-fetch-mock@npm:3.0.3"
+  dependencies:
+    cross-fetch: "npm:^3.0.4"
+    promise-polyfill: "npm:^8.1.3"
+  checksum: 10c0/21ffe8c902ca5adafa7ed61760e100e4c290e99b0b487645f5bb92938ea64c2d1d9dc8af46e65fb7917d6237586067d53af756583a77330dbb4fbda079a63c29
+  languageName: node
+  linkType: hard
+
 "jest-get-type@npm:^29.6.3":
   version: 29.6.3
   resolution: "jest-get-type@npm:29.6.3"
@@ -26307,6 +26318,13 @@ __metadata:
     "@opentelemetry/api": "npm:^1.4.0"
     tdigest: "npm:^0.1.1"
   checksum: 10c0/816525572e5799a2d1d45af78512fb47d073c842dc899c446e94d17cfc343d04282a1627c488c7ca1bcd47f766446d3e49365ab7249f6d9c22c7664a5bce7021
+  languageName: node
+  linkType: hard
+
+"promise-polyfill@npm:^8.1.3":
+  version: 8.3.0
+  resolution: "promise-polyfill@npm:8.3.0"
+  checksum: 10c0/97141f07a31a6be135ec9ed53700a3423a771cabec0ba5e08fcb2bf8cfda855479ff70e444fceb938f560be42b450cd032c14f4a940ed2ad1e5b4dcb78368dce
   languageName: node
   linkType: hard
 
