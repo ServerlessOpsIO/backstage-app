@@ -70,6 +70,12 @@ jobs:
         run: |
           echo -e "$CONTENTS" > src/app-config.d/github-app-credentials.yaml
 
+      - name: Compile Typescript
+        id: compile
+        shell: bash
+        working-directory: src
+        run: yarn run tsc:full
+
       - name: Build Application Code
         id: build
         shell: bash
