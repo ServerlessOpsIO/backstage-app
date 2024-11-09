@@ -68,7 +68,7 @@ catalog:
         clientSecret: ${SERVERLESSOPS_AUTH_CLIENT_SECRET}
       schedule:
         initialDelay: { seconds: 5 }
-        frequency: { hours: 1 }
+        frequency: { minutes: 1 }
         timeout: { seconds: 60 }
 
   # Overrides the default list locations from app-config.yaml as these contain example data.
