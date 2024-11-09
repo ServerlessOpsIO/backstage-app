@@ -37,6 +37,9 @@ export async function getJwt(
 
         const response_data: Response = await response.json()
 
+        if ( !response.ok ) {
+            throw new Error(`Failed to get JWT: ${response_data}`)
+        }
         if (!response_data.access_token) {
             throw new Error('No access token received in response')
         }
@@ -44,7 +47,7 @@ export async function getJwt(
         return response_data.access_token
 
     } catch (error) {
-        throw new Error(`Failed to get JWT: ${(error as Error).message}`)
+        throw error
     }
 }
 

@@ -51,7 +51,7 @@ describe('getJwt', () => {
 
             test('throws error when fetch fails', async () => {
                 mockFetch.mockRejectedValueOnce(
-                    new Error('Network error')
+                    new Error('Failed to get JWT: Network error')
                 )
 
                 await expect(
