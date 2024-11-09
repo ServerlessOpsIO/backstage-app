@@ -25,7 +25,7 @@
 	"PgPassword": $secrets.POSTGRES_PASSWORD,
 	"AuthGoogleClientId": $secrets.AUTH_GOOGLE_CLIENT_ID,
 	"AuthGoogleClientSecret": $secrets.AUTH_GOOGLE_CLIENT_SECRET,
-	"DnsName": $secrets.DNS_NAME,
+	"DnsName": $vars.DNS_NAME,
 	"ServerlessOpsCatalogApiUrl": $vars.SERVERLESSOPS_CATALOG_API_URL,
 	"ServerlessOpsAuthClientId": $secrets.SERVERLESSOPS_AUTH_CLIENT_ID,
 	"ServerlessOpsAuthClientSecret": $secrets.SERVERLESSOPS_AUTH_CLIENT_SECRET,
