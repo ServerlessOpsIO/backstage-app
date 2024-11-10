@@ -6,3 +6,6 @@
  */
 
 export { catalogModuleServerlessopsCatalog as default } from './module'
+
+export { type ProviderConfig } from './provider/ServerlessOpsCatalogProvider'
+export { getJwt, isJwtExpired } from './util/jwt'
