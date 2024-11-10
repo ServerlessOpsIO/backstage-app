@@ -6807,7 +6807,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog@npm:^0.1.0, @internal/backstage-plugin-catalog-backend-module-serverlessops-catalog@workspace:plugins/catalog-backend-module-serverlessops-catalog":
+"@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog@workspace:^, @internal/backstage-plugin-catalog-backend-module-serverlessops-catalog@workspace:plugins/catalog-backend-module-serverlessops-catalog":
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog@workspace:plugins/catalog-backend-module-serverlessops-catalog"
   dependencies:
@@ -6822,7 +6822,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@internal/backstage-plugin-scaffolder-backend-module-serverlessops@npm:^0.1.0, @internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops":
+"@internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:^, @internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops":
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops"
   dependencies:
@@ -14089,8 +14089,8 @@ __metadata:
     "@backstage/plugin-search-backend-module-techdocs": "npm:^0.2.2"
     "@backstage/plugin-search-backend-node": "npm:^1.3.2"
     "@backstage/plugin-techdocs-backend": "npm:^1.10.13"
-    "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "npm:^0.1.0"
-    "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "npm:^0.1.0"
+    "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"
+    "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^"
     "@types/express": "npm:^4.17.6"
     "@types/express-serve-static-core": "npm:^4.17.5"
     "@types/luxon": "npm:^2.0.4"
