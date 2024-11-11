@@ -79,8 +79,6 @@ export function createServerlessOpsCatalogAction(
                 params.config.auth.endpoint
             )
 
-            ctx.input.kind
-
             const entity: Entity = {
                 apiVersion: API_VERSION,
                 kind: ctx.input.kind as string,

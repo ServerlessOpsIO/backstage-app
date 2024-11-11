@@ -24,7 +24,7 @@ export const scaffolderModule = createBackendModule({
                 const configPath = 'catalog.providers.serverlessops-catalog'
                 const config = rootConfig.get(configPath) as ProviderConfig | undefined
 
-                if ( typeof config == 'undefined' ) {
+                if ( typeof config === 'undefined' ) {
                     logger.error(
                         `serverlessops:catalog scaffolder config not found at ${configPath}`
                     )
