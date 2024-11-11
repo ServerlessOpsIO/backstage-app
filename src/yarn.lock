@@ -6830,6 +6830,7 @@ __metadata:
     "@backstage/cli": "npm:^0.27.1"
     "@backstage/plugin-scaffolder-node": "npm:^0.4.11"
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"
+    jest-fetch-mock: "npm:^3.0.3"
   languageName: unknown
   linkType: soft
 

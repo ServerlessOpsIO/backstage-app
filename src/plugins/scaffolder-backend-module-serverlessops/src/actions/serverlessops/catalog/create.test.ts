@@ -1,32 +1,70 @@
 import { PassThrough } from 'stream';
+import {
+    getJwt,
+    ProviderConfig
+} from '@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'
+import mockFetch from "jest-fetch-mock"
+
+// Add mock before other imports
+jest.mock('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog', () => ({
+    ...jest.requireActual('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'),
+    getJwt: jest.fn()
+}))
+
 import { createServerlessOpsCatalogAction } from './create';
 
-describe('acme:example', () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-  });
+describe('serverlessops:catalog:create', () => {
+    let config: ProviderConfig;
+    beforeEach(() => {
+        config = {
+            baseUrl: 'https://example.com',
+            auth: {
+                endpoint: 'https://example.com/auth',
+                clientId: 'test',
+                clientSecret: 'test',
+            }
+        } as ProviderConfig
 
-  it('should call action', async () => {
-    const action = createServerlessOpsCatalogAction();
+        (getJwt as jest.Mock).mockResolvedValue('mock-jwt-token')
 
-    const logger = { info: jest.fn() };
-
-    await action.handler({
-      input: {
-        myParameter: 'test',
-      },
-      workspacePath: '/tmp',
-      logger: logger as any,
-      logStream: new PassThrough(),
-      output: jest.fn(),
-      createTemporaryDirectory() {
-        // Usage of createMockDirectory is recommended for testing of filesystem operations
-        throw new Error('Not implemented');
-      },
+        mockFetch.enableMocks()
+    })
+    afterEach(() => {
+        mockFetch.resetMocks()
+        jest.resetAllMocks();
     });
 
-    expect(logger.info).toHaveBeenCalledWith(
-      'Running example template with parameters: test',
-    );
-  });
+    it('should call action', async () => {
+        const action = createServerlessOpsCatalogAction({ config });
+
+        const logger = { info: jest.fn() };
+
+        mockFetch.mockResponse(JSON.stringify({}), {status: 201})
+
+        await action.handler({
+            input: {
+                kind: 'Domain',
+                namespace: 'default',
+                name: 'Test',
+                description: 'Test thing',
+                owner: 'test',
+            },
+            workspacePath: '/tmp',
+            logger: logger as any,
+            logStream: new PassThrough(),
+            output: jest.fn(),
+            createTemporaryDirectory() {
+                // Usage of createMockDirectory is recommended for testing of filesystem operations
+                throw new Error('Not implemented');
+            },
+            checkpoint() {
+                throw new Error('Not implemented');
+            },
+            getInitiatorCredentials() {
+                throw new Error('Not implemented');
+            }
+        });
+
+        expect(getJwt).toHaveBeenCalled();
+    });
 });
