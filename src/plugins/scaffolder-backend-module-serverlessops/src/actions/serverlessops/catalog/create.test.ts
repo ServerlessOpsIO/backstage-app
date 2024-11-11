@@ -1,5 +1,5 @@
 import { PassThrough } from 'stream';
-import { createAcmeExampleAction } from './example';
+import { createServerlessOpsCatalogAction } from './create';
 
 describe('acme:example', () => {
   afterEach(() => {
@@ -7,7 +7,7 @@ describe('acme:example', () => {
   });
 
   it('should call action', async () => {
-    const action = createAcmeExampleAction();
+    const action = createServerlessOpsCatalogAction();
 
     const logger = { info: jest.fn() };
 
