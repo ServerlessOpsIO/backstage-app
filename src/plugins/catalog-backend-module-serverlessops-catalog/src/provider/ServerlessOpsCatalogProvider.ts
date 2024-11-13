@@ -16,7 +16,18 @@ import {
     SchedulerServiceTaskScheduleDefinition
 } from '@backstage/backend-plugin-api'
 import { Config } from '@backstage/config'
- import { getJwt, isJwtExpired } from '../util/jwt'
+import axios from 'axios'
+import axiosRetry from 'axios-retry'
+import { getJwt, isJwtExpired } from '../util/jwt'
+
+axiosRetry(
+    axios,
+    {
+        retries: 3,
+        retryDelay: axiosRetry.exponentialDelay
+    }
+)
+
 
 /** Configuration for the ServerlessOps catalog provider */
 export interface ProviderConfig {
@@ -139,7 +150,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
         this.logger.info(`Getting entities by kind: ${kind}`)
         try {
             const url = `${this.providerConfig.baseUrl}/catalog/${this.providerConfig.namespace}/${kind.toLowerCase()}`
-            const response = await fetch(
+            const response = await axios.get(
                 url,
                 {
                     headers: {
@@ -148,13 +159,9 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
                 }
             )
 
-            if (!response.ok) {
-                throw new Error(response.statusText)
-            }
-
-            return await response.json()
+            return await response.data as ApiEntityList
         } catch (error) {
-            throw new Error(`Failed to get entities by kind: ${error}`)
+            throw new Error(`Failed to get entities by kind: ${(error as Error).message}`)
         }
     }
 
@@ -168,7 +175,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
      */
     async getEntityByPath(path: string, jwt: string): Promise<Entity> {
         try {
-            const response = await fetch(
+            const response = await axios.get(
                 `${this.providerConfig.baseUrl}/catalog/${path}`,
                 {
                     headers: {
@@ -177,13 +184,9 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
                 }
             )
 
-            if (!response.ok) {
-                throw new Error(response.statusText)
-            }
-
-            return response.json()
+            return response.data as Entity
         } catch (error) {
-            throw new Error(`Failed to get entity at ${path}: ${error}`)
+            throw new Error(`Failed to get entity at ${path}: ${(error as Error).message}`)
         }
     }
 }
