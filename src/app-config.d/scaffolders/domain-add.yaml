@@ -58,8 +58,11 @@ spec:
         owner: ${{parameters.owner}}
         kind: ${{parameters.kind}}
         namespace: ${{parameters.namespace}}
-    - id: register-backstage-entity
-      name: Registering entity in Backstage
-      action: serverlessops:catalog:register
-      input:
-        catalogInfoUrl: https://api.catalog.backstage.serverlessops.io/catalog/${{parameters.namespace}}/${{parameters.kind | lower}}/${{parameters.name | lower}}
+    # FIXME: using addLocation just adds a new location to the catalog which is then processed
+    # and that's not what we want because the URL location processor doesn't have creds for
+    # this service.
+    #- id: register-backstage-entity
+    #  name: Registering entity in Backstage
+    #  action: serverlessops:catalog:register
+    #  input:
+    #    catalogInfoUrl: https://api.catalog.backstage.serverlessops.io/catalog/${{parameters.namespace}}/${{parameters.kind | lower}}/${{parameters.name | lower}}
