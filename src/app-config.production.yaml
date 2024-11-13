@@ -90,3 +90,7 @@ catalog:
      target: /app/app-config.d/scaffolders/domain-add.yaml
      rules:
        - allow: [Template]
+   - type: file
+     target: ../../app-config.d/scaffolders/system-add.yaml
+     rules:
+       - allow: [Template]

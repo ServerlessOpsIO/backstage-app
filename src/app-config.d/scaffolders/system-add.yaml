@@ -1,0 +1,65 @@
+---
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: system-add
+  title: Add Application System
+  description: Add a new application system to Backstage
+spec:
+  type: system
+  owner: group:admins
+
+  parameters:
+    - title: System information
+      required:
+        - name
+        - description
+        - owner
+      properties:
+        name:
+          title: System
+          type: string
+          description: Name of application system
+          ui:autofocus: true
+          ui:placeholder: eg. Backstage, Infra Services
+        description:
+          title: Description
+          description: Description of application system
+          type: string
+        owner:
+          title: Owner
+          description: Owner of the systen
+          type: string
+          ui:field: OwnerPicker
+          ui:options:
+            allowArbitraryValues: false
+            allowedKinds:
+              - Group
+        kind:
+          title: Kind
+          description: Kind of entity
+          type: string
+          ui:widget: hidden
+          default: System
+        namespace:
+          title: Namespace
+          description: Namespace of system
+          type: string
+          ui:widget: hidden
+          default: default
+  steps:
+    - id: create-severlessops-entity
+      name: Creating entity in ServerlessOps Catalog
+      action: serverlessops:catalog:create
+      input:
+        title: ${{parameters.name}}
+        name: ${{parameters.name | lower}}
+        description: ${{parameters.description}}
+        owner: ${{parameters.owner}}
+        kind: ${{parameters.kind}}
+        namespace: ${{parameters.namespace}}
+    - id: register-backstage-entity
+      name: Registering entity in Backstage
+      action: serverlessops:catalog:register
+      input:
+        catalogInfoUrl: https://api.catalog.backstage.serverlessops.io/catalog/${{parameters.namespace}}/${{parameters.kind | lower}}/${{parameters.name | lower}}
