@@ -67,6 +67,7 @@ spec:
         owner: ${{parameters.owner}}
         kind: ${{parameters.kind}}
         namespace: ${{parameters.namespace}}
+        domain: ${{parameters.domain}}
     # FIXME: using addLocation just adds a new location to the catalog which is then processed
     # and that's not what we want because the URL location processor doesn't have creds for
     # this service.
