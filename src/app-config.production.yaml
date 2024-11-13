@@ -91,6 +91,6 @@ catalog:
       rules:
         - allow: [Template]
     - type: file
-      target: ../../app-config.d/scaffolders/system-add.yaml
+      target: /app/app-config.d/scaffolders/system-add.yaml
       rules:
         - allow: [Template]
