@@ -78,19 +78,19 @@ catalog:
   # See https://backstage.io/docs/features/software-catalog/#adding-components-to-the-catalog for more details
   # on how to get entities into the catalog.
   locations:
-   - type: file
-     target: /app/app-config.d/catalogs/users.yaml
-     rules:
-       - allow: [User]
-   - type: file
-     target: /app/app-config.d/catalogs/groups.yaml
-     rules:
-       - allow: [Groups]
-   - type: file
-     target: /app/app-config.d/scaffolders/domain-add.yaml
-     rules:
-       - allow: [Template]
-   - type: file
-     target: ../../app-config.d/scaffolders/system-add.yaml
-     rules:
-       - allow: [Template]
+    - type: file
+      target: /app/app-config.d/catalogs/users.yaml
+      rules:
+        - allow: [User]
+    - type: file
+      target: /app/app-config.d/catalogs/groups.yaml
+      rules:
+        - allow: [Groups]
+    - type: file
+      target: /app/app-config.d/scaffolders/domain-add.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ../../app-config.d/scaffolders/system-add.yaml
+      rules:
+        - allow: [Template]
