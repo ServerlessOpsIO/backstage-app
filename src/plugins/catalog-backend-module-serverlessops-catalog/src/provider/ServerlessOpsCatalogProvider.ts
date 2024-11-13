@@ -183,7 +183,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
 
             return response.json()
         } catch (error) {
-            throw new Error(`Failed to get entity by path: ${error}`)
+            throw new Error(`Failed to get entity at ${path}: ${error}`)
         }
     }
 }
