@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@backstage/backend-plugin-api": "^1.0.0",
+    "@backstage/catalog-client": "^1.7.1",
     "@backstage/catalog-model": "^1.7.0",
     "@backstage/plugin-scaffolder-node": "^0.4.11",
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"

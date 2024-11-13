@@ -35,7 +35,7 @@ describe('serverlessops:catalog:create', () => {
     });
 
     it('should call action', async () => {
-        const action = createServerlessOpsCatalogAction({ config });
+        const action = createServerlessOpsCatalogAction( config );
 
         const logger = { info: jest.fn() };
 

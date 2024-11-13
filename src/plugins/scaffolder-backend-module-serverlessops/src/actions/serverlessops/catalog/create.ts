@@ -9,12 +9,8 @@ import {
 
 const API_VERSION = 'backstage.io/v1alpha1'
 
-type createServerlessOpsCatalogActionParams = {
-    config: ProviderConfig
-}
-
 export function createServerlessOpsCatalogAction(
-    params: createServerlessOpsCatalogActionParams
+    config: ProviderConfig
 ) {
     return createTemplateAction({
         id: 'serverlessops:catalog:create',
@@ -74,9 +70,9 @@ export function createServerlessOpsCatalogAction(
             )
 
             const jwt = await getJwt(
-                params.config.auth.clientId,
-                params.config.auth.clientSecret,
-                params.config.auth.endpoint
+                config.auth.clientId,
+                config.auth.clientSecret,
+                config.auth.endpoint
             )
 
             const entity: Entity = {
@@ -94,7 +90,7 @@ export function createServerlessOpsCatalogAction(
                 }
             }
 
-            const url = `${params.config.baseUrl}/catalog`
+            const url = `${config.baseUrl}/catalog`
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {

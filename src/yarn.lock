@@ -6873,6 +6873,7 @@ __metadata:
   resolution: "@internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops"
   dependencies:
     "@backstage/backend-plugin-api": "npm:^1.0.0"
+    "@backstage/catalog-client": "npm:^1.7.1"
     "@backstage/catalog-model": "npm:^1.7.0"
     "@backstage/cli": "npm:^0.27.1"
     "@backstage/plugin-scaffolder-node": "npm:^0.4.11"
