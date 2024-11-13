@@ -21,6 +21,7 @@ spec:
           title: Domain
           type: string
           description: Domain of application system
+          ui:field: EntityPicker
           ui:options:
             allowArbitraryValues: false
             allowedKinds:
