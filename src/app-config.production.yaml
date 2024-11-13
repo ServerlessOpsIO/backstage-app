@@ -29,6 +29,9 @@ backend:
       ssl:
         ca: # if you have a CA file and want to verify it you can uncomment this section
           $file: rds-combined-ca-bundle.pem
+  reading:
+    allow:
+      - host: api.catalog.backstage.serverlessops.io
 
 auth:
   environment: production
