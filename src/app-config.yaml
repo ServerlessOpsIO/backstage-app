@@ -70,7 +70,6 @@ scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
 
 catalog:
-  orphanStrategy: delete
   providers:
     github:
       # the provider ID can be any camelCase string
