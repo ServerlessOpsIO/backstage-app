@@ -12,15 +12,23 @@ spec:
   parameters:
     - title: System information
       required:
+        - domain
         - name
         - description
         - owner
       properties:
+        domain:
+          title: Domain
+          type: string
+          description: Domain of application system
+          ui:options:
+            allowArbitraryValues: false
+            allowedKinds:
+              - Domain
         name:
           title: System
           type: string
           description: Name of application system
-          ui:autofocus: true
           ui:placeholder: eg. Backstage, Infra Services
         description:
           title: Description
@@ -28,7 +36,7 @@ spec:
           type: string
         owner:
           title: Owner
-          description: Owner of the systen
+          description: Owner of the system
           type: string
           ui:field: OwnerPicker
           ui:options:

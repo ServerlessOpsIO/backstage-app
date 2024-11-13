@@ -61,6 +61,11 @@ export function createServerlessOpsCatalogAction(
                         description: 'Owner of entity to create',
                         type: 'string',
                     },
+                    domain: {
+                        title: 'Entity domain',
+                        description: 'Domain of entity to create',
+                        type: 'string',
+                    },
                 },
             }
         },
@@ -87,6 +92,7 @@ export function createServerlessOpsCatalogAction(
                 spec: {
                     type: ctx.input.type,
                     owner: ctx.input.owner,
+                    domain: ctx.input.domain
                 }
             }
 
