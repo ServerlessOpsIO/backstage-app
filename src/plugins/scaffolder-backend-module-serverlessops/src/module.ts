@@ -8,6 +8,7 @@ import { ProviderConfig } from '@internal/backstage-plugin-catalog-backend-modul
 
 import {
     createServerlessOpsCatalogAction,
+    deleteServerlessOpsCatalogAction,
     registerServerlessOpsCatalogAction
 } from "./actions/serverlessops/catalog"
 
@@ -43,6 +44,11 @@ export const scaffolderModule = createBackendModule({
                     scaffolderActions.addActions(registerServerlessOpsCatalogAction(
                         catalogClient,
                         auth
+                    ))
+                    scaffolderActions.addActions(deleteServerlessOpsCatalogAction(
+                        catalogClient,
+                        auth,
+                        config
                     ))
                 }
             }

@@ -94,3 +94,7 @@ catalog:
       target: /app/app-config.d/scaffolders/system-add.yaml
       rules:
         - allow: [Template]
+    - type: file
+      target: /app/app-config.d/scaffolders/entity-delete.yaml
+      rules:
+        - allow: [Template]
