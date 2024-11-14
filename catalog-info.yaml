@@ -9,7 +9,7 @@ metadata:
 spec:
   type: application
   lifecycle: production
-  owner: group:admins
+  owner: group:developers
   system: backstage
   domain: infrastructure
   dependsOn:
