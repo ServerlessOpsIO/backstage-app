@@ -109,8 +109,8 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
             await Promise.all(entities.entities.map(async (entry) => {
                 const entity = await this.getEntityByPath(entry, this.jwt as string)
                 const locationAnnotations = {
-                    [ANNOTATION_LOCATION]: `url:${this.providerConfig.baseUrl}/${entry}`,
-                    [ANNOTATION_ORIGIN_LOCATION]: `url:${this.providerConfig.baseUrl}/${entry}`
+                    [ANNOTATION_LOCATION]: `url:${this.providerConfig.baseUrl}/catalog/${entry}`,
+                    [ANNOTATION_ORIGIN_LOCATION]: `url:${this.providerConfig.baseUrl}/catalog/${entry}`
                 }
 
                 entity.metadata.annotations = {
