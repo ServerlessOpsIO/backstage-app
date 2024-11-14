@@ -7,4 +7,4 @@ spec:
     displayName: Tom McLaughlin
     email: tom@serverlessops.io
     picture: https://2.gravatar.com/avatar/0c1efb912f3e0ea730f7cd10bfb32dba87a04214a34db6b50b20f1c6cbe1444a?size=512
-  memberOf: [developers]
+  memberOf: [developers, admins]
