@@ -3,8 +3,16 @@ import {
     EntityProviderConnection,
 } from '@backstage/plugin-catalog-node'
 import { Entity } from '@backstage/catalog-model'
+import axios from 'axios'
 import { ServerlessOpsCatalogProvider } from './ServerlessOpsCatalogProvider'
-import mockFetch from "jest-fetch-mock"
+import { getJwt, isJwtExpired } from '../util/jwt'
+
+jest.mock('axios')
+const mockedAxios = axios as jest.Mocked<typeof axios>
+
+jest.mock('../util/jwt')
+const mockGetJwt = getJwt as jest.MockedFunction<typeof getJwt>
+const mockIsJwtExpired = isJwtExpired as jest.MockedFunction<typeof isJwtExpired>
 
 const mockTaskRunner = {
     run: jest.fn()
@@ -40,12 +48,12 @@ describe('ServerlessOpsCatalogProvider', () => {
             ...jest.requireActual('@backstage/plugin-catalog-node').EntityProviderConnection,
             applyMutation: jest.fn()
         }
-        mockFetch.enableMocks()
-
+        mockGetJwt.mockResolvedValue('test-token')
+        mockIsJwtExpired.mockReturnValue(false)
     })
 
     afterEach(() => {
-        mockFetch.resetMocks()
+        jest.resetAllMocks()
     })
 
 
@@ -61,19 +69,19 @@ describe('ServerlessOpsCatalogProvider', () => {
         describe('should succeed when', () => {
             test('connects and runs successfully', async () => {
 
-                mockFetch
-                    .mockResponseOnce( // JWT fetch
+                mockedAxios.get
+                    .mockResolvedValueOnce( // JWT fetch
                         JSON.stringify({access_token: 'test-token' })
                     )
-                    .mockResponseOnce( // getEntitiesByKind
+                    .mockResolvedValueOnce( // getEntitiesByKind
                         JSON.stringify({ entities: ['entity1'] })
                     ) 
-                    .mockResponseOnce( // getEntityByPath
-                        JSON.stringify({
+                    .mockResolvedValueOnce( // getEntityByPath
+                        {
                             apiVersion: 'backstage.io/v1alpha1',
                             kind: 'Component',
                             metadata: { name: 'test-component' }
-                        })
+                        }
                     )
 
                 await provider.connect(mockConnection)
@@ -85,19 +93,18 @@ describe('ServerlessOpsCatalogProvider', () => {
     describe('run()', () => {
         describe('should succeed when', () => {
             test('runs successfully', async () => {
-                mockFetch
-                    .mockResponseOnce( // JWT fetch
-                        JSON.stringify({ access_token: 'test-token' })
+                mockedAxios.get
+                    .mockResolvedValueOnce( // getEntitiesByKind
+                        {data: { entities: ['entity1'] }}
                     )
-                    .mockResponseOnce( // getEntitiesByKind
-                        JSON.stringify({ entities: ['entity1'] })
-                    )
-                    .mockResponseOnce( // getEntityByPath
-                        JSON.stringify({
-                            apiVersion: 'backstage.io/v1alpha1',
-                            kind: 'Component',
-                            metadata: { name: 'test-component' }
-                        })
+                    .mockResolvedValueOnce( // getEntityByPath
+                        {
+                            data: {
+                                    apiVersion: 'backstage.io/v1alpha1',
+                                    kind: 'Component',
+                                    metadata: { name: 'test-component' }
+                            }
+                        }
                     )
 
                 await provider.connect(mockConnection)
@@ -111,12 +118,12 @@ describe('ServerlessOpsCatalogProvider', () => {
     describe('getEntitiesByKind()', () => {
         describe('should succeed when', () => {
             test('fetches entities', async () => {
-                const mockResponse = { entities: ['entity1', 'entity2'] }
-                mockFetch.mockResponse(JSON.stringify(mockResponse))
+                const mockResponse = { data: { entities: ['entity1', 'entity2'] } }
+                mockedAxios.get.mockResolvedValue(mockResponse)
 
                 const result = await provider.getEntitiesByKind('Component', 'test-token')
-                expect(result).toEqual(mockResponse)
-                expect(fetch).toHaveBeenCalledWith(
+                expect(result).toEqual(mockResponse.data)
+                expect(axios.get).toHaveBeenCalledWith(
                     'http://api.example.com/catalog/default/component',
                     expect.objectContaining({
                         headers: { Authorization: 'Bearer test-token' }
@@ -126,7 +133,7 @@ describe('ServerlessOpsCatalogProvider', () => {
         })
         describe('should fail when', () => {
             test('fetch fails', async () => {
-                mockFetch.mockRejectedValueOnce(new Error('Network error'))
+                mockedAxios.get.mockRejectedValue(new Error('Network error'))
 
                 await expect(
                     provider.getEntitiesByKind('Component', 'test-token')
@@ -143,11 +150,11 @@ describe('ServerlessOpsCatalogProvider', () => {
                     kind: 'Component',
                     metadata: { name: 'test-component' }
                 }
-                mockFetch.mockResponse(JSON.stringify(mockEntity))
+                mockedAxios.get.mockResolvedValue({ data: mockEntity })
 
                 const result = await provider.getEntityByPath('path/to/entity', 'test-token')
                 expect(result).toEqual(mockEntity)
-                expect(fetch).toHaveBeenCalledWith(
+                expect(mockedAxios.get).toHaveBeenCalledWith(
                     'http://api.example.com/catalog/path/to/entity',
                     expect.objectContaining({
                         headers: { Authorization: 'Bearer test-token' }
@@ -158,11 +165,11 @@ describe('ServerlessOpsCatalogProvider', () => {
 
         describe('should fail when', () => {
             test('handles fetch errors appropriately', async () => {
-                mockFetch.mockRejectedValueOnce(new Error('Network error'))
+                mockedAxios.get.mockRejectedValueOnce(new Error('Network error'))
 
                 await expect(
                     provider.getEntityByPath('path/to/entity', 'test-token')
-                ).rejects.toThrow('Failed to get entity by path')
+                ).rejects.toThrow('Failed to get entity at path/to/entity: Network error')
             })
         })
     })
