@@ -61,8 +61,7 @@ spec:
       name: Creating entity in ServerlessOps Catalog
       action: serverlessops:catalog:create
       input:
-        title: ${{parameters.name}}
-        name: ${{parameters.name | lower}}
+        name: ${{parameters.name}}
         description: ${{parameters.description}}
         owner: ${{parameters.owner}}
         kind: ${{parameters.kind}}

@@ -41,11 +41,6 @@ export function createServerlessOpsCatalogAction(
                         description: 'Name of entity to create',
                         type: 'string',
                     },
-                    title: {
-                        title: 'Entity title',
-                        description: 'Title of entity to create',
-                        type: 'string',
-                    },
                     description: {
                         title: 'Entity description',
                         description: 'Description of entity to create',
@@ -70,8 +65,12 @@ export function createServerlessOpsCatalogAction(
             }
         },
         async handler(ctx) {
+            const normalizedName = (ctx.input.name as string)
+                .replace(/[^\w\s]|[\s]/g, '-')
+                .toLowerCase()
+
             ctx.logger.info(
-                `Creating new catalog entity: ${(ctx.input.kind as string).toLocaleLowerCase()}/${ctx.input.namespace}/${ctx.input.name}`,
+                `Creating new ServerlessOps catalog entity: ${(ctx.input.kind as string).toLocaleLowerCase()}/${ctx.input.namespace}/${normalizedName}`,
             )
 
             const jwt = await getJwt(
@@ -85,8 +84,8 @@ export function createServerlessOpsCatalogAction(
                 kind: ctx.input.kind as string,
                 metadata: {
                     namespace: ctx.input.namespace as string | undefined,
-                    name: ctx.input.name as string,
-                    title: ctx.input.title as string | undefined,
+                    name: normalizedName as string,
+                    title: ctx.input.name as string,
                     description: ctx.input.description as string,
                 },
                 spec: {
@@ -108,11 +107,11 @@ export function createServerlessOpsCatalogAction(
 
             if (response.status !== 201) {
                 throw new Error(
-                    `Failed to create catalog entity: ${response.statusText}`
+                    `Failed to create ServerlessOps catalog entity: ${response.statusText}`
                 )
             } else {
                 ctx.logger.info(
-                    `Created catalog entity: ${ctx.input.namespace}/${(ctx.input.kind as string).toLowerCase() }/${ctx.input.name}`
+                    `Created ServerlessOps catalog entity: ${ctx.input.namespace}/${(ctx.input.kind as string).toLowerCase()}/${normalizedName}`
                 )
             }
         }
