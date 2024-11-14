@@ -6865,7 +6865,6 @@ __metadata:
     "@backstage/plugin-catalog-node": "npm:^1.13.1"
     axios: "npm:^1.7.7"
     axios-retry: "npm:^4.5.0"
-    jest-fetch-mock: "npm:^3.0.3"
     jwt-decode: "npm:^4.0.0"
   languageName: unknown
   linkType: soft

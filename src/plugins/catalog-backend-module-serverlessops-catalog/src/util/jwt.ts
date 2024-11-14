@@ -1,4 +1,5 @@
 import { jwtDecode } from 'jwt-decode'
+import axios from 'axios'
 
 interface Response {
     access_token: string
@@ -20,26 +21,22 @@ export async function getJwt(
     url: string
 ): Promise<string> {
     try {
-        const response = await fetch(
+        const response = await axios.post(
             url,
+            new URLSearchParams({
+                grant_type: 'client_credentials',
+                client_id: clientId,
+                client_secret: clientSecret
+            }),
             {
-                method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: new URLSearchParams({
-                    grant_type: 'client_credentials',
-                    client_id: clientId,
-                    client_secret: clientSecret
-                })
             }
         )
 
-        const response_data: Response = await response.json()
+        const response_data: Response = await response.data
 
-        if ( !response.ok ) {
-            throw new Error(`Failed to get JWT: ${response_data}`)
-        }
         if (!response_data.access_token) {
             throw new Error('No access token received in response')
         }

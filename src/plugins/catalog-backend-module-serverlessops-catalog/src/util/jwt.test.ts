@@ -1,5 +1,8 @@
 import { getJwt } from './jwt'
-import mockFetch from "jest-fetch-mock"
+import axios from 'axios'
+
+jest.mock('axios')
+const mockedAxios = axios as jest.Mocked<typeof axios>
 
 describe('getJwt', () => {
     const mockClientId = 'test-client-id'
@@ -7,32 +10,27 @@ describe('getJwt', () => {
     const mockUrl = 'https://api.example.com/oauth/token'
     const mockToken = 'mock-access-token'
 
-    beforeEach(() => {
-        mockFetch.enableMocks()
-    })
-
     afterEach(() => {
-        mockFetch.resetMocks()
+        jest.resetAllMocks()
     })
 
     describe('getJwt()', () => {
         describe('should succeed when', () => {
             test('successfully retrieves a JWT token', async () => {
-                mockFetch.mockResponse(
-                    JSON.stringify({ access_token: mockToken })
+                mockedAxios.post.mockResolvedValue(
+                    {data: { access_token: mockToken }}
                 )
 
                 const token = await getJwt(mockClientId, mockClientSecret, mockUrl)
 
                 expect(token).toBe(mockToken)
-                expect(global.fetch).toHaveBeenCalledWith(
+                expect(mockedAxios.post).toHaveBeenCalledWith(
                     mockUrl,
+                    expect.any(URLSearchParams),
                     {
-                        method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
-                        body: expect.any(URLSearchParams)
                     }
                 )
             })
@@ -40,9 +38,7 @@ describe('getJwt', () => {
 
         describe('should fail when', () => {
             test('throws error when no access token in response', async () => {
-                mockFetch.mockResponse(
-                    JSON.stringify({})
-                )
+                mockedAxios.post.mockResolvedValue({data:{}})
 
                 await expect(
                     getJwt(mockClientId, mockClientSecret, mockUrl)
@@ -50,7 +46,7 @@ describe('getJwt', () => {
             })
 
             test('throws error when fetch fails', async () => {
-                mockFetch.mockRejectedValueOnce(
+                mockedAxios.post.mockRejectedValue(
                     new Error('Failed to get JWT: Network error')
                 )
 
