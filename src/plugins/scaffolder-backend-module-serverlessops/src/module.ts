@@ -34,7 +34,7 @@ export const scaffolderModule = createBackendModule({
                     discoveryApi: discovery,
                 })
 
-                if ( typeof config === 'undefined' ) {
+                if (typeof config === 'undefined') {
                     logger.error(
                         `serverlessops:catalog scaffolder config not found at ${configPath}`
                     )
@@ -44,7 +44,7 @@ export const scaffolderModule = createBackendModule({
                         catalogClient,
                         auth
                     ))
-               }
+                }
             }
         })
     }
