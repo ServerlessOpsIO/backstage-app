@@ -1,0 +1,1 @@
+export { TabbedDirectoryIndexPage } from './TabbedDirectoryIndexPage'

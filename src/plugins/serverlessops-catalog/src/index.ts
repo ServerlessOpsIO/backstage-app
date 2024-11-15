@@ -1,1 +1,6 @@
-export { catalogPlugin, SoCatalogIndexPage } from './plugin';
+export {
+    SoCatalogPlugin,
+    SoCatalogIndexPageEntityList,
+    SoTabbedCatalogIndexPage,
+    SoTabbedDirectoryIndexPage
+} from './plugin';

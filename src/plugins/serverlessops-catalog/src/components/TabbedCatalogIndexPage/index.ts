@@ -1,0 +1,1 @@
+export { TabbedCatalogIndexPage } from './TabbedCatalogIndexPage'

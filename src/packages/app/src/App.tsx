@@ -40,6 +40,12 @@ import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/
 // Added imports
 import { googleAuthApiRef } from '@backstage/core-plugin-api';
 
+// ServerlessOps Catalog
+import {
+  SoTabbedCatalogIndexPage,
+  SoTabbedDirectoryIndexPage
+} from '@internal/backstage-plugin-serverlessops-catalog';
+
 const app = createApp({
   apis,
   bindRoutes({ bind }) {
@@ -83,12 +89,17 @@ const app = createApp({
 const routes = (
   <FlatRoutes>
     <Route path="/" element={<Navigate to="catalog" />} />
-    <Route path="/catalog" element={<CatalogIndexPage />} />
+    <Route path="/catalog" element={<CatalogIndexPage /> }>
+      <SoTabbedCatalogIndexPage />
+    </Route>
     <Route
       path="/catalog/:namespace/:kind/:name"
       element={<CatalogEntityPage />}
     >
       {entityPage}
+    </Route>
+    <Route path="/directory" element={<CatalogIndexPage /> }>
+      <SoTabbedDirectoryIndexPage />
     </Route>
     <Route path="/docs" element={<TechDocsIndexPage />} />
     <Route
