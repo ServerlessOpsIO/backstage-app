@@ -6,17 +6,17 @@ import {
 import { rootRouteRef } from './routes';
 
 export const catalogPlugin = createPlugin({
-  id: 'catalog',
+  id: 'serverlessops-catalog',
   routes: {
     root: rootRouteRef,
   },
 });
 
-export const CatalogPage = catalogPlugin.provide(
+export const SoCatalogIndexPage = catalogPlugin.provide(
   createRoutableExtension({
-    name: 'CatalogPage',
+    name: 'SoCatalogIndexPage',
     component: () =>
-      import('./components/ExampleComponent').then(m => m.ExampleComponent),
+      import('./components/CatalogIndexPage').then(m => m.CatalogIndexPage),
     mountPoint: rootRouteRef,
   }),
 );
