@@ -5,6 +5,7 @@ import {
   ApiCatalogIndexPageEntityList,
   ComponentCatalogIndexPageEntityList,
   DomainCatalogIndexPageEntityList,
+  LocationCatalogIndexPageEntityList,
   ResourceCatalogIndexPageEntityList,
   SystemCatalogIndexPageEntityList
 } from '../CatalogIndexPageEntityList';
@@ -37,6 +38,9 @@ export function TabbedCatalogIndexPage() {
         </TabbedLayout.Route>
         <TabbedLayout.Route path="/apis" title="APIs">
           <ApiCatalogIndexPageEntityList />
+        </TabbedLayout.Route>
+        <TabbedLayout.Route path="/locations" title="Locations">
+          <LocationCatalogIndexPageEntityList />
         </TabbedLayout.Route>
       </TabbedLayout>
     </PageWithHeader>
