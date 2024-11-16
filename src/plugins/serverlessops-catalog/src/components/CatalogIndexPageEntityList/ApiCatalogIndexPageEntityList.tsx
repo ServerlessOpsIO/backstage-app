@@ -15,7 +15,7 @@ export function ApiCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='api'
-            hidden={true}
+            hidden
           />
           <EntityTypePicker />
           <UserListPicker

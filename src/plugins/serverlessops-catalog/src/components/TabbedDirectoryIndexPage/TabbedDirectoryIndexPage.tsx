@@ -17,7 +17,7 @@ export function TabbedDirectoryIndexPage() {
     <PageWithHeader
       themeId="service"
       title={`${organizationName} Directory`}
-      subtitle={`Organization users & groups`}
+      subtitle='Organization users & groups'
     >
       <TabbedLayout>
         <TabbedLayout.Route path="/users" title="Users">

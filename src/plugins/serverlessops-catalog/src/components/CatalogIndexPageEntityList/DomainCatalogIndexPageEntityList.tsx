@@ -15,7 +15,7 @@ export function DomainCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='domain'
-            hidden={true}
+            hidden
           />
           <EntityTypePicker />
           <UserListPicker

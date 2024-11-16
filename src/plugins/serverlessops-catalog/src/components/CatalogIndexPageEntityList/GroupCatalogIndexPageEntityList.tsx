@@ -12,7 +12,7 @@ export function GroupCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='group'
-            hidden={true}
+            hidden
           />
           <EntityTypePicker />
         </>

@@ -11,7 +11,7 @@ export function UserCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='user'
-            hidden={true}
+            hidden
           />
         </>
       }

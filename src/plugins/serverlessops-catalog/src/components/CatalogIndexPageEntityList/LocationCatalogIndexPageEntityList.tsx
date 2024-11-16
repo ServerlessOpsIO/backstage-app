@@ -15,7 +15,7 @@ export function LocationCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='location'
-            hidden={true}
+            hidden
           />
           <EntityTypePicker />
           <UserListPicker

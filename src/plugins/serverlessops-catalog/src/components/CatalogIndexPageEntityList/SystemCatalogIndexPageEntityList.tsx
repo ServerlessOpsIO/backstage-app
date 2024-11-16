@@ -15,7 +15,7 @@ export function SystemCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='system'
-            hidden={true}
+            hidden
           />
           <EntityTypePicker />
           <UserListPicker

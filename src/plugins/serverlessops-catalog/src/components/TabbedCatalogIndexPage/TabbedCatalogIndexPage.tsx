@@ -21,7 +21,7 @@ export function TabbedCatalogIndexPage() {
     <PageWithHeader
       themeId="service"
       title={`${organizationName} Catalog`}
-      subtitle={`Organization software entities`}
+      subtitle='Organization software entities'
     >
       <TabbedLayout>
         <TabbedLayout.Route path="/components" title="Components">

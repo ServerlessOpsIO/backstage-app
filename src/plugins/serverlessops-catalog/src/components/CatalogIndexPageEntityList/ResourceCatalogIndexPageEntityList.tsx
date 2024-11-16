@@ -15,7 +15,7 @@ export function ResourceCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='resource'
-            hidden={true}
+            hidden
           />
           <EntityTypePicker />
           <UserListPicker

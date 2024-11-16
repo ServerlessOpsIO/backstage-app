@@ -15,7 +15,7 @@ export function ComponentCatalogIndexPageEntityList() {
         <>
           <EntityKindPicker
             initialFilter='component'
-            hidden={true}
+            hidden
           />
           <EntityTypePicker />
           <UserListPicker
