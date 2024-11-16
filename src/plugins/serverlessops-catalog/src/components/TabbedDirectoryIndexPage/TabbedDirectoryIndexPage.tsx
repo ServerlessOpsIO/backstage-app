@@ -1,5 +1,5 @@
 import React from 'react';
-import { Content, PageWithHeader, TabbedLayout } from '@backstage/core-components';
+import {  PageWithHeader, TabbedLayout } from '@backstage/core-components';
 import { configApiRef, useApi } from '@backstage/core-plugin-api';
 import {
   GroupCatalogIndexPageEntityList,
