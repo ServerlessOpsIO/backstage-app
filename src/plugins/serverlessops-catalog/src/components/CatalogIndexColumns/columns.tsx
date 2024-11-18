@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 import React from 'react';
+import { CatalogTableRow } from '@backstage/plugin-catalog'
 import {
   humanizeEntityRef,
   EntityRefLink,
   EntityRefLinks,
 } from '@backstage/plugin-catalog-react';
 import Chip from '@material-ui/core/Chip';
-import { CatalogTableRow } from './types';
 import { OverflowTooltip, TableColumn } from '@backstage/core-components';
 import { Entity } from '@backstage/catalog-model';
 import { JsonArray } from '@backstage/types';
@@ -31,6 +31,7 @@ import { JsonArray } from '@backstage/types';
 export const columnFactories = Object.freeze({
   createNameColumn(options?: {
     defaultKind?: string;
+    width?: string;
   }): TableColumn<CatalogTableRow> {
     function formatContent(entity: Entity): string {
       return (
@@ -45,6 +46,7 @@ export const columnFactories = Object.freeze({
       title: 'Name',
       field: 'resolved.entityRef',
       highlight: true,
+      width: options?.width || 'auto',
       customSort({ entity: entity1 }, { entity: entity2 }) {
         // TODO: We could implement this more efficiently by comparing field by field.
         // This has similar issues as above.
@@ -58,10 +60,11 @@ export const columnFactories = Object.freeze({
       ),
     };
   },
-  createSystemColumn(): TableColumn<CatalogTableRow> {
+  createSystemColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'System',
       field: 'resolved.partOfSystemRelationTitle',
+      width: options?.width,
       render: ({ resolved }) => (
         <EntityRefLinks
           entityRefs={resolved.partOfSystemRelations}
@@ -70,10 +73,11 @@ export const columnFactories = Object.freeze({
       ),
     };
   },
-  createOwnerColumn(): TableColumn<CatalogTableRow> {
+  createOwnerColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'Owner',
       field: 'resolved.ownedByRelationsTitle',
+      width: options?.width,
       render: ({ resolved }) => (
         <EntityRefLinks
           entityRefs={resolved.ownedByRelations}
@@ -82,10 +86,11 @@ export const columnFactories = Object.freeze({
       ),
     };
   },
-  createSpecTargetsColumn(): TableColumn<CatalogTableRow> {
+  createSpecTargetsColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'Targets',
       field: 'entity.spec.targets',
+      width: options?.width,
       customFilterAndSearch: (query, row) => {
         let targets: JsonArray = [];
         if (
@@ -116,24 +121,26 @@ export const columnFactories = Object.freeze({
     };
   },
   createSpecTypeColumn(
-    options: {
-      hidden: boolean;
-    } = { hidden: false },
+    options?: {
+      hidden?: boolean;
+      width?: string;
+    }
   ): TableColumn<CatalogTableRow> {
     return {
       title: 'Type',
       field: 'entity.spec.type',
-      hidden: options.hidden,
-      width: 'auto',
+      hidden: options?.hidden,
+      width: options?.width || 'auto',
     };
   },
-  createSpecLifecycleColumn(): TableColumn<CatalogTableRow> {
+  createSpecLifecycleColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'Lifecycle',
       field: 'entity.spec.lifecycle',
+      width: options?.width,
     };
   },
-  createMetadataDescriptionColumn(): TableColumn<CatalogTableRow> {
+  createMetadataDescriptionColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'Description',
       field: 'entity.metadata.description',
@@ -143,10 +150,10 @@ export const columnFactories = Object.freeze({
           placement="bottom-start"
         />
       ),
-      width: 'auto',
+      width: options?.width || 'auto'
     };
   },
-  createTagsColumn(): TableColumn<CatalogTableRow> {
+  createTagsColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'Tags',
       field: 'entity.metadata.tags',
@@ -167,22 +174,24 @@ export const columnFactories = Object.freeze({
             ))}
         </>
       ),
-      width: 'auto',
+      width: options?.width || 'auto',
     };
   },
   createTitleColumn(options?: {
     hidden?: boolean;
+    width?: string;
   }): TableColumn<CatalogTableRow> {
     return {
       title: 'Title',
       field: 'entity.metadata.title',
       hidden: options?.hidden,
       searchable: true,
+      width: options?.width,
     };
   },
   createLabelColumn(
     key: string,
-    options?: { title?: string; defaultValue?: string },
+    options?: { title?: string; defaultValue?: string, width?: string },
   ): TableColumn<CatalogTableRow> {
     function formatContent(keyLabel: string, entity: Entity): string {
       const labels: Record<string, string> | undefined =
@@ -219,14 +228,14 @@ export const columnFactories = Object.freeze({
           </>
         );
       },
-      width: 'auto',
+      width: options?.width || 'auto',
     };
   },
-  createNamespaceColumn(): TableColumn<CatalogTableRow> {
+  createNamespaceColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'Namespace',
       field: 'entity.metadata.namespace',
-      width: 'auto',
+      width: options?.width,
     };
   },
 });
