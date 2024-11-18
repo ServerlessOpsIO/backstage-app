@@ -5,14 +5,14 @@ import {
 
 import { rootRouteRef } from './routes';
 
-export const SoCatalogPlugin = createPlugin({
+export const soCatalogPlugin = createPlugin({
   id: 'serverlessops-catalog',
   routes: {
     root: rootRouteRef,
   },
 });
 
-export const SoCatalogIndexPageEntityList = SoCatalogPlugin.provide(
+export const SoCatalogIndexPageEntityList = soCatalogPlugin.provide(
   createRoutableExtension({
     name: 'SoCatalogIndexPageEntityList',
     component: () =>
@@ -21,7 +21,7 @@ export const SoCatalogIndexPageEntityList = SoCatalogPlugin.provide(
   }),
 );
 
-export const SoTabbedCatalogIndexPage = SoCatalogPlugin.provide(
+export const SoTabbedCatalogIndexPage = soCatalogPlugin.provide(
   createRoutableExtension({
     name: 'SoTabbedCatalogIndexPage',
     component: () =>
@@ -30,7 +30,7 @@ export const SoTabbedCatalogIndexPage = SoCatalogPlugin.provide(
   }),
 );
 
-export const SoTabbedDirectoryIndexPage = SoCatalogPlugin.provide(
+export const SoTabbedDirectoryIndexPage = soCatalogPlugin.provide(
   createRoutableExtension({
     name: 'SoTabbedDirectoryIndexPage',
     component: () =>

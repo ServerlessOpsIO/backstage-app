@@ -16,7 +16,7 @@ const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createTitleColumn({ hidden: true }),
   columnFactories.createNameColumn({ defaultKind: 'System', width: '25%' }),
   // FIXME: Does not currently exist
-  //columnFactories.createDomainColumn({ width: 'auto' }),
+  // columnFactories.createDomainColumn({ width: 'auto' }),
   columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
 export function SystemCatalogIndexPageEntityList() {

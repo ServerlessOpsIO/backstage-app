@@ -1,5 +1,5 @@
 export {
-    SoCatalogPlugin,
+    soCatalogPlugin,
     SoCatalogIndexPageEntityList,
     SoTabbedCatalogIndexPage,
     SoTabbedDirectoryIndexPage

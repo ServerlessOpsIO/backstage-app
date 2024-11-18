@@ -1,11 +1,11 @@
 import React from 'react';
 import { createDevApp } from '@backstage/dev-utils';
-import { catalogPlugin, CatalogPage } from '../src/plugin';
+import { soCatalogPlugin, SoTabbedCatalogIndexPage } from '../src/plugin';
 
 createDevApp()
-  .registerPlugin(catalogPlugin)
+  .registerPlugin(soCatalogPlugin)
   .addPage({
-    element: <CatalogPage />,
+    element: <SoTabbedCatalogIndexPage />,
     title: 'Root Page',
     path: '/catalog',
   })
