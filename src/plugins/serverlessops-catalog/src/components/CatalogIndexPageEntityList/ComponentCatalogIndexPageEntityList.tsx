@@ -1,5 +1,6 @@
 import React from 'react';
-import { CatalogIndexPageEntityList } from './CatalogIndexPageEntityList'
+import { TableColumn } from '@backstage/core-components';
+import { CatalogTableRow } from '@backstage/plugin-catalog'
 import {
   EntityKindPicker,
   EntityTypePicker,
@@ -7,6 +8,16 @@ import {
   EntityProcessingStatusPicker,
   UserListPicker,
 } from '@backstage/plugin-catalog-react';
+import { CatalogIndexPageEntityList } from './CatalogIndexPageEntityList'
+import { columnFactories } from '../CatalogIndexColumns/columns'
+
+const defaultColumns: TableColumn<CatalogTableRow>[] = [
+  columnFactories.createTitleColumn({ hidden: true }),
+  columnFactories.createNameColumn({ defaultKind: 'Component', width: '25%' }),
+  columnFactories.createSystemColumn({ width: 'auto' }),
+  columnFactories.createSpecTypeColumn({ width: 'auto' }),
+  columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
+]
 
 export function ComponentCatalogIndexPageEntityList() {
   return (
@@ -27,6 +38,7 @@ export function ComponentCatalogIndexPageEntityList() {
       }
       initialKind="component"
       initiallySelectedFilter="all"
+      columns={defaultColumns}
     />
   )
 }

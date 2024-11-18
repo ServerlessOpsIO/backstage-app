@@ -140,6 +140,13 @@ export const columnFactories = Object.freeze({
       width: options?.width,
     };
   },
+  createSpecEmailColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
+    return {
+      title: 'Email',
+      field: 'entity.spec.profile.email',
+      width: options?.width,
+    };
+  },
   createMetadataDescriptionColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
     return {
       title: 'Description',
@@ -235,6 +242,13 @@ export const columnFactories = Object.freeze({
     return {
       title: 'Namespace',
       field: 'entity.metadata.namespace',
+      width: options?.width,
+    };
+  },
+  createUsernameColumn(options?: { width?: string }): TableColumn<CatalogTableRow> {
+    return {
+      title: 'Username',
+      field: 'entity.metadata.name',
       width: options?.width,
     };
   },
