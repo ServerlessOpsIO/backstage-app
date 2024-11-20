@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { renderString } from 'nunjucks';
+
 import {
   type EntityFilterQuery,
   CATALOG_FILTER_EXISTS,
@@ -35,7 +37,7 @@ import Autocomplete, {
   AutocompleteChangeReason,
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useAsync from 'react-use/esm/useAsync';
 import {
   EntityPickerFilterQueryValue,
@@ -55,7 +57,7 @@ export { EntityPickerSchema } from './schema';
  *
  * @public
  */
-export const EntityPicker = (props: EntityPickerProps) => {
+export const ContextualEntityPicker = (props: EntityPickerProps) => {
   const { t } = useTranslationRef(scaffolderTranslationRef);
   const {
     onChange,
@@ -68,8 +70,9 @@ export const EntityPicker = (props: EntityPickerProps) => {
     rawErrors,
     formData,
     idSchema,
+    formContext
   } = props;
-  const catalogFilter = buildCatalogFilter(uiSchema);
+  const [catalogFilter, setCatalogFilter] = useState<EntityFilterQuery>();
   const defaultKind = uiSchema['ui:options']?.defaultKind;
   const defaultNamespace =
     uiSchema['ui:options']?.defaultNamespace || undefined;
@@ -107,7 +110,7 @@ export const EntityPicker = (props: EntityPickerProps) => {
     );
 
     return { catalogEntities: items, entityRefToPresentation };
-  });
+  }, [catalogFilter]);
 
   const allowArbitraryValues =
     uiSchema['ui:options']?.allowArbitraryValues ?? true;
@@ -167,10 +170,27 @@ export const EntityPicker = (props: EntityPickerProps) => {
     (allowArbitraryValues && formData ? getLabel(formData) : '');
 
   useEffect(() => {
+    setCatalogFilter(
+      buildCatalogFilter(uiSchema, {
+        parameters: formContext.formData,
+      }),
+    );
+  }, [formContext.formData, uiSchema]);
+
+  useEffect(() => {
+    if (
+      formData &&
+      entities &&
+      !entities.catalogEntities.find(e => stringifyEntityRef(e) === formData)
+    ) {
+      onChange(undefined);
+      return;
+    }
+
     if (entities?.catalogEntities.length === 1 && selectedEntity === '') {
       onChange(stringifyEntityRef(entities.catalogEntities[0]));
     }
-  }, [entities, onChange, selectedEntity]);
+  }, [entities, onChange, selectedEntity, formData]);
 
   return (
     <FormControl
@@ -244,11 +264,14 @@ function convertOpsValues(
  */
 function convertSchemaFiltersToQuery(
   schemaFilters: EntityPickerFilterQuery,
+  context: object
 ): Exclude<EntityFilterQuery, Array<any>> {
   const query: EntityFilterQuery = {};
 
   for (const [key, value] of Object.entries(schemaFilters)) {
-    if (Array.isArray(value)) {
+    if (typeof value === 'string') {
+      query[key] = renderString(value, context);
+    } else if (Array.isArray(value)) {
       query[key] = value;
     } else {
       query[key] = convertOpsValues(value);
@@ -268,6 +291,7 @@ function convertSchemaFiltersToQuery(
  */
 function buildCatalogFilter(
   uiSchema: EntityPickerProps['uiSchema'],
+  context: object
 ): EntityFilterQuery | undefined {
   const allowedKinds = uiSchema['ui:options']?.allowedKinds;
 
@@ -280,8 +304,10 @@ function buildCatalogFilter(
   }
 
   if (Array.isArray(catalogFilter)) {
-    return catalogFilter.map(convertSchemaFiltersToQuery);
+    return catalogFilter.map(schemaFilter =>
+      convertSchemaFiltersToQuery(schemaFilter, context)
+    );
   }
 
-  return convertSchemaFiltersToQuery(catalogFilter);
+  return convertSchemaFiltersToQuery(catalogFilter, context);
 }
