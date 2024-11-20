@@ -36,6 +36,7 @@ import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
+import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
 
 // Added imports
 import { googleAuthApiRef } from '@backstage/core-plugin-api';
@@ -45,6 +46,7 @@ import {
   SoTabbedCatalogIndexPage,
   SoTabbedDirectoryIndexPage
 } from '@internal/backstage-plugin-serverlessops-catalog';
+import { SoContextualEntityPickerFieldExtension } from '@internal/backstage-plugin-scaffolder-entity-pickers';
 
 const app = createApp({
   apis,
@@ -110,7 +112,11 @@ const routes = (
         <ReportIssue />
       </TechDocsAddons>
     </Route>
-    <Route path="/create" element={<ScaffolderPage />} />
+    <Route path="/create" element={<ScaffolderPage />} >
+      <ScaffolderFieldExtensions>
+        <SoContextualEntityPickerFieldExtension />
+      </ScaffolderFieldExtensions>
+    </Route>
     <Route path="/api-docs" element={<ApiExplorerPage />} />
     <Route
       path="/catalog-import"
