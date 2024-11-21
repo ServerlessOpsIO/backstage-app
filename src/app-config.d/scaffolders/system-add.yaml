@@ -5,6 +5,8 @@ metadata:
   name: system-add
   title: Add Application System
   description: Add a new application system to Backstage
+  tags:
+    - catalog
 spec:
   type: system
   owner: group:admins

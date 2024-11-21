@@ -5,6 +5,8 @@ metadata:
   name: domain-add
   title: Add Application Domain
   description: Add a new application domain to Backstage
+  tags:
+    - catalog
 spec:
   type: domain
   owner: group:admins
