@@ -98,3 +98,7 @@ catalog:
       target: /app/app-config.d/scaffolders/entity-delete.yaml
       rules:
         - allow: [Template]
+    - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-aws-sam-ecs-template/blob/main/template.yaml
+      rules:
+        - allow: [Template]
