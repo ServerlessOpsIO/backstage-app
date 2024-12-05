@@ -99,6 +99,14 @@ catalog:
       rules:
         - allow: [Template]
     - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-aws-sam-python-template/blob/main/template.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-aws-sam-nodejs-template/blob/main/template.yaml
+      rules:
+        - allow: [Template]
+    - type: url
       target: https://github.com/ServerlessOpsIO/backstage-aws-sam-ecs-template/blob/main/template.yaml
       rules:
         - allow: [Template]
