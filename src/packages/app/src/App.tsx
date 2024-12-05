@@ -112,7 +112,24 @@ const routes = (
         <ReportIssue />
       </TechDocsAddons>
     </Route>
-    <Route path="/create" element={<ScaffolderPage />} >
+    <Route path="/create" element={
+      <ScaffolderPage groups={
+        [
+          {
+            title: "Catalog",
+            filter: entity => entity?.metadata?.tags?.includes('catalog') ?? false
+          },
+          {
+            title: "Serverless",
+            filter: entity => entity?.metadata?.tags?.includes('serverless') ?? false
+          },
+          {
+            title: "Containerization",
+            filter: entity => entity?.metadata?.tags?.includes('containerization') ?? false
+          },
+        ]
+      }/>
+    }>
       <ScaffolderFieldExtensions>
         <SoContextualEntityPickerFieldExtension />
       </ScaffolderFieldExtensions>
