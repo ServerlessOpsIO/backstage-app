@@ -56,6 +56,15 @@ integrations:
 
 catalog:
   providers:
+    google:
+      baseUrl: https://google.com
+      auth:
+        clientId: ${CATALOG_GOOGLE_CLIENT_ID}
+        clientSecret: ${CATALOG_GOOGLE_CLIENT_SECRET}
+      schedule:
+        initialDelay: { seconds: 5 }
+        frequency: { minutes: 15 }
+        timeout: { seconds: 60 }
     serverlessops-catalog:
       baseUrl: ${SERVERLESSOPS_CATALOG_API_URL}
       namespace: default
