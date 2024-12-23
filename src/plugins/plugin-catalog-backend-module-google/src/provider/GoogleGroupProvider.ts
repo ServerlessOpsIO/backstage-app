@@ -8,7 +8,6 @@ import {
 } from '@backstage/plugin-catalog-node'
 import { Config } from '@backstage/config'
 import { google } from 'googleapis'
-import { JWT } from 'google-auth-library'
 import { GoogleBaseProvider, ProviderConfig, ProviderOptions } from './GoogleBaseProvider'
 
 
@@ -22,6 +21,14 @@ export class GoogleGroupProvider extends GoogleBaseProvider {
         options: ProviderOptions
     ) {
         super(providerConfig, options)
+
+        const jwt = this.getCredentials(
+            this.providerConfig.auth.adminAccountEmail,
+            this.providerConfig.auth.clientCredentials,
+            SCOPES
+        )
+        this.googleAdmin = google.admin({ version: 'directory_v1', auth: jwt })
+
         this.logger.info('Initialized Google Group Provider')
     }
 
@@ -48,21 +55,16 @@ export class GoogleGroupProvider extends GoogleBaseProvider {
         })
     }
 
-    async listGroups(jwt: JWT): Promise<any[]> {
-        const service = google.admin({ version: 'directory_v1', auth: jwt })
-        const res = await service.groups.list({
+    async listGroups(): Promise<any[]> {
+        const res = await this.googleAdmin.groups.list({
             customer: 'my_customer',
         })
         return res.data.groups || []
     }
 
     async run(): Promise<void> {
-        const jwt = this.getCredentials(
-            this.providerConfig.auth.adminAccountEmail,
-            this.providerConfig.auth.clientCredentials,
-            SCOPES
-        )
-        const groups = await this.listGroups(jwt)
+        const groups = await this.listGroups()
+
         const collectedEntities: Entity[] = groups.map(group => ({
             apiVersion: 'backstage.io/v1alpha1',
             kind: 'Group',

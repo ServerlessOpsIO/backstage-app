@@ -8,7 +8,6 @@ import {
 } from '@backstage/plugin-catalog-node'
 import { Config } from '@backstage/config'
 import { google } from 'googleapis'
-import { JWT } from 'google-auth-library'
 import { GoogleBaseProvider, ProviderConfig, ProviderOptions } from './GoogleBaseProvider'
 
 
@@ -25,6 +24,14 @@ export class GoogleUserProvider extends GoogleBaseProvider {
         options: ProviderOptions
     ) {
         super (providerConfig, options)
+
+        const jwt = this.getCredentials(
+            this.providerConfig.auth.adminAccountEmail,
+            this.providerConfig.auth.clientCredentials,
+            SCOPES
+        )
+        this.googleAdmin = google.admin({ version: 'directory_v1', auth: jwt })
+
         this.logger.info('Initialized Google User Provider')
     }
 
@@ -51,17 +58,15 @@ export class GoogleUserProvider extends GoogleBaseProvider {
         })
     }
 
-    async getUserGroups(userId: string, jwt: JWT): Promise<any[]> {
-        const service = google.admin({ version: 'directory_v1', auth: jwt })
-        const res = await service.groups.list({
+    async getUserGroups(userId: string): Promise<any[]> {
+        const res = await this.googleAdmin.groups.list({
             userKey: userId,
         })
         return res.data.groups || []
     }
 
-    async listUsers(jwt: JWT): Promise<any[]> {
-        const service = google.admin({ version: 'directory_v1', auth: jwt })
-        const res = await service.users.list({
+    async listUsers(): Promise<any[]> {
+        const res = await this.googleAdmin.users.list({
             customer: 'my_customer',
             viewType: 'domain_public'
         })
@@ -69,12 +74,7 @@ export class GoogleUserProvider extends GoogleBaseProvider {
     }
 
     async run(): Promise<void> {
-        const jwt = this.getCredentials(
-            this.providerConfig.auth.adminAccountEmail,
-            this.providerConfig.auth.clientCredentials,
-            SCOPES
-        )
-        const users = await this.listUsers(jwt)
+        const users = await this.listUsers()
 
         const collectedEntities: UserEntityV1alpha1[] = await Promise.all(users.map( async (user) => {
             const entity: UserEntityV1alpha1 = {
@@ -98,7 +98,7 @@ export class GoogleUserProvider extends GoogleBaseProvider {
                 }
             }
 
-            const groups = await this.getUserGroups(user.primaryEmail, jwt)
+            const groups = await this.getUserGroups(user.primaryEmail)
             entity.spec.memberOf = groups.map( group => group.id )
 
             return entity

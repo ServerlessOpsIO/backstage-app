@@ -61,12 +61,7 @@ describe('GoogleGroupProvider', () => {
     describe('listGroups()', () => {
         describe('should succeed', () => {
             test('when listing groups', async () => {
-                const credentials = provider.getCredentials(
-                    mockConfig.auth.adminAccountEmail,
-                    mockConfig.auth.clientCredentials,
-                    SCOPES
-                )
-                const groups = await provider.listGroups(credentials)
+                const groups = await provider.listGroups()
                 expect(groups.length).toBeGreaterThan(0)
             }, 20 * 1000)
         })

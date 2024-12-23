@@ -9,6 +9,7 @@ import {
 } from '@backstage/backend-plugin-api'
 import { Config } from '@backstage/config'
 import { JWT, JWTInput } from 'google-auth-library'
+import { admin_directory_v1 } from 'googleapis'
 
 
 export interface ProviderConfig {
@@ -30,6 +31,7 @@ export class GoogleBaseProvider implements EntityProvider {
     connection?: EntityProviderConnection
     readonly logger: LoggerService
     taskRunner: SchedulerServiceTaskRunner
+    googleAdmin?: admin_directory_v1.Admin
 
     constructor(
         providerConfig: ProviderConfig,

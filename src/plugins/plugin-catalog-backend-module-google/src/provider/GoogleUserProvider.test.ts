@@ -61,12 +61,7 @@ describe('GoogleUserProvider', () => {
     describe('getUserGroups()', () => {
         describe('should succeed', () => {
             test('when listing users', async () => {
-                const credentials = provider.getCredentials(
-                    mockConfig.auth.adminAccountEmail,
-                    mockConfig.auth.clientCredentials,
-                    SCOPES
-                )
-                const users = await provider.getUserGroups('tom@serverlessops.io', credentials)
+                const users = await provider.getUserGroups('tom@serverlessops.io')
                 expect(users.length).toBeGreaterThan(0)
             }, 20 * 1000)
         })
@@ -75,12 +70,7 @@ describe('GoogleUserProvider', () => {
     describe('listUsers()', () => {
         describe('should succeed', () => {
             test('when listing users', async () => {
-                const credentials = provider.getCredentials(
-                    mockConfig.auth.adminAccountEmail,
-                    mockConfig.auth.clientCredentials,
-                    SCOPES
-                )
-                const users = await provider.listUsers(credentials)
+                const users = await provider.listUsers()
                 expect(users.length).toBeGreaterThan(0)
             }, 20 * 1000)
         })
