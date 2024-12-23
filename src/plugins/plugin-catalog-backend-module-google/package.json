@@ -1,5 +1,5 @@
 {
-  "name": "@internal/backstage-plugin-plugin-catalog-backend-module-google",
+  "name": "@internal/backstage-plugin-catalog-backend-module-google",
   "description": "The google backend module for the plugin-catalog plugin.",
   "version": "0.1.0",
   "main": "src/index.ts",
