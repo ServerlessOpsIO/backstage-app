@@ -1,7 +1,7 @@
 import {
     ANNOTATION_LOCATION,
     ANNOTATION_ORIGIN_LOCATION,
-    Entity
+    UserEntityV1alpha1
 } from '@backstage/catalog-model'
 import {
     EntityProviderConnection,
@@ -13,7 +13,10 @@ import { GoogleBaseProvider, ProviderConfig, ProviderOptions } from './GoogleBas
 
 
 const PROVIDER_ANNOTATION_LOCATION = 'url:https://admin.googleapis.com/admin/directory/v1/users'
-const SCOPES = [ 'https://www.googleapis.com/auth/admin.directory.user.readonly' ]
+export const SCOPES = [
+    'https://www.googleapis.com/auth/admin.directory.user.readonly',
+    'https://www.googleapis.com/auth/admin.directory.group.readonly'
+]
 
 
 export class GoogleUserProvider extends GoogleBaseProvider {
@@ -48,6 +51,14 @@ export class GoogleUserProvider extends GoogleBaseProvider {
         })
     }
 
+    async getUserGroups(userId: string, jwt: JWT): Promise<any[]> {
+        const service = google.admin({ version: 'directory_v1', auth: jwt })
+        const res = await service.groups.list({
+            userKey: userId,
+        })
+        return res.data.groups || []
+    }
+
     async listUsers(jwt: JWT): Promise<any[]> {
         const service = google.admin({ version: 'directory_v1', auth: jwt })
         const res = await service.users.list({
@@ -64,26 +75,33 @@ export class GoogleUserProvider extends GoogleBaseProvider {
             SCOPES
         )
         const users = await this.listUsers(jwt)
-        const collectedEntities: Entity[] = users.map(user => ({
-            apiVersion: 'backstage.io/v1alpha1',
-            kind: 'User',
-            metadata: {
-                name: `${user.name.givenName.toLowerCase()}.${user.name.familyName.toLowerCase()}`,
-                annotations: {
-                    'google.com/user-id': user.id,
-                    'google.com/user-kind': user.kind,
-                    [ANNOTATION_LOCATION]: PROVIDER_ANNOTATION_LOCATION,
-                    [ANNOTATION_ORIGIN_LOCATION]: PROVIDER_ANNOTATION_LOCATION
-                }
-            },
-            spec: {
-                memberOf: [],
-                profile: {
-                    displayName: user.name.fullName,
-                    email: user.primaryEmail,
-                    picture: user.thumbnailPhotoUrl
+
+        const collectedEntities: UserEntityV1alpha1[] = await Promise.all(users.map( async (user) => {
+            const entity: UserEntityV1alpha1 = {
+                apiVersion: 'backstage.io/v1alpha1',
+                kind: 'User',
+                metadata: {
+                    name: `${user.name.givenName.toLowerCase()}.${user.name.familyName.toLowerCase()}`,
+                    annotations: {
+                        'google.com/user-id': user.id,
+                        'google.com/user-kind': user.kind,
+                        [ANNOTATION_LOCATION]: PROVIDER_ANNOTATION_LOCATION,
+                        [ANNOTATION_ORIGIN_LOCATION]: PROVIDER_ANNOTATION_LOCATION
+                    }
+                },
+                spec: {
+                    profile: {
+                        displayName: user.name.fullName,
+                        email: user.primaryEmail,
+                        picture: user.thumbnailPhotoUrl
+                    }
                 }
             }
+
+            const groups = await this.getUserGroups(user.primaryEmail, jwt)
+            entity.spec.memberOf = groups.map( group => group.id )
+
+            return entity
         }))
 
         this.logger.info(

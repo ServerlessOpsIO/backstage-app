@@ -1,5 +1,5 @@
 import { mockServices } from '@backstage/backend-test-utils'
-import { GoogleUserProvider } from './GoogleUserProvider'
+import { GoogleUserProvider, SCOPES } from './GoogleUserProvider'
 import * as creds from '../../../../jwt.keys.json'
 
 describe('GoogleUserProvider', () => {
@@ -51,10 +51,24 @@ describe('GoogleUserProvider', () => {
                 const credentials = provider.getCredentials(
                     mockConfig.auth.adminAccountEmail,
                     mockConfig.auth.clientCredentials,
-                    [ 'https://www.googleapis.com/auth/admin.directory.user.readonly']
+                    SCOPES
                 )
                 expect(credentials).toBeDefined()
             })
+        })
+    })
+
+    describe('getUserGroups()', () => {
+        describe('should succeed', () => {
+            test('when listing users', async () => {
+                const credentials = provider.getCredentials(
+                    mockConfig.auth.adminAccountEmail,
+                    mockConfig.auth.clientCredentials,
+                    SCOPES
+                )
+                const users = await provider.getUserGroups('tom@serverlessops.io', credentials)
+                expect(users.length).toBeGreaterThan(0)
+            }, 20 * 1000)
         })
     })
 
@@ -64,7 +78,7 @@ describe('GoogleUserProvider', () => {
                 const credentials = provider.getCredentials(
                     mockConfig.auth.adminAccountEmail,
                     mockConfig.auth.clientCredentials,
-                    [ 'https://www.googleapis.com/auth/admin.directory.user.readonly']
+                    SCOPES
                 )
                 const users = await provider.listUsers(credentials)
                 expect(users.length).toBeGreaterThan(0)

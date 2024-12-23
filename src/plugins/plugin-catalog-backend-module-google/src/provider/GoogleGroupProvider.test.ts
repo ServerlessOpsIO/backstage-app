@@ -1,5 +1,5 @@
 import { mockServices } from '@backstage/backend-test-utils'
-import { GoogleGroupProvider } from './GoogleGroupProvider'
+import { GoogleGroupProvider, SCOPES } from './GoogleGroupProvider'
 import * as creds from '../../../../jwt.keys.json'
 
 describe('GoogleGroupProvider', () => {
@@ -51,7 +51,7 @@ describe('GoogleGroupProvider', () => {
                 const credentials = provider.getCredentials(
                     mockConfig.auth.adminAccountEmail,
                     mockConfig.auth.clientCredentials,
-                    [ 'https://www.googleapis.com/auth/admin.directory.group.readonly' ]
+                    SCOPES
                 )
                 expect(credentials).toBeDefined()
             })
@@ -64,7 +64,7 @@ describe('GoogleGroupProvider', () => {
                 const credentials = provider.getCredentials(
                     mockConfig.auth.adminAccountEmail,
                     mockConfig.auth.clientCredentials,
-                    [ 'https://www.googleapis.com/auth/admin.directory.group.readonly']
+                    SCOPES
                 )
                 const groups = await provider.listGroups(credentials)
                 expect(groups.length).toBeGreaterThan(0)

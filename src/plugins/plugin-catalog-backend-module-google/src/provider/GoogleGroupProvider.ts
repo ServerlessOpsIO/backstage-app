@@ -13,7 +13,7 @@ import { GoogleBaseProvider, ProviderConfig, ProviderOptions } from './GoogleBas
 
 
 const PROVIDER_ANNOTATION_LOCATION = 'url:https://admin.googleapis.com/admin/directory/v1/groups'
-const SCOPES = ['https://www.googleapis.com/auth/admin.directory.group.readonly']
+export const SCOPES = ['https://www.googleapis.com/auth/admin.directory.group.readonly']
 
 
 export class GoogleGroupProvider extends GoogleBaseProvider {
