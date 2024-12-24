@@ -92,7 +92,7 @@ export class GoogleGroupProvider extends GoogleBaseProvider {
                 }
             },
             spec: {
-                type: 'security-group',
+                type: 'group',
                 children: [],
                 profile: {
                     email: group.email || undefined,
