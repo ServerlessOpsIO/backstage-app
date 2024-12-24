@@ -70,13 +70,20 @@ jobs:
         run: |
           echo -e "$CONTENTS" > src/app-config.d/github-app-credentials.yaml
 
+      # Couldn't store JSON creds while retaining proper formatting so going to do this in two steps
       - name: Write Google Admin API creds
         id: google-admin-creds
         shell: bash
         env:
           CONTENTS: ${{ secrets.CATALOG_GOOGLE_JWT_KEYS }}
         run: |
-          echo -e "$CONTENTS" > src/app-config.d/credentials/google-jwt.keys.json
+          echo -e "$CONTENTS" > src/app-config.d/credentials/google-jwt.keys.yaml
+
+      - name: Convert Google Admin API creds to YAML
+        id: google-admin-creds-yaml
+        shell: bash
+        run: |
+          yq -p yaml -o json src/app-config.d/credentials/google-jwt.keys.yaml > src/app-config.d/credentials/google-jwt.keys.json
 
       - name: Compile Typescript
         id: compile

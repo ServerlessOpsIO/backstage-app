@@ -60,7 +60,7 @@ catalog:
       auth:
         adminAccountEmail: tom@serverlessops.io
         clientCredentials:
-          $include: /app/app-config.d/credentials/google-jwt.keys.json
+          $include: /app/app-config.d/credentials/google-jwt.keys.yaml
       schedule:
         initialDelay: { seconds: 5 }
         frequency: { minutes: 1 }
