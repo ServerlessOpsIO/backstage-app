@@ -1,7 +1,7 @@
 import { mockServices } from '@backstage/backend-test-utils'
 import { GoogleGroupProvider, SCOPES } from './GoogleGroupProvider'
 import { admin_directory_v1 } from 'googleapis'
-import * as creds from '../../../../app-config.d/credentials/google-jwt.keys.json'
+import * as creds from '../../../../app-config.d/credentials/google-jwt.keys.json' /* eslint @backstage/no-relative-monorepo-imports: off */
 
 
 jest.mock('googleapis', () => {

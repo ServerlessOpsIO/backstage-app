@@ -1,6 +1,6 @@
 import { mockServices } from '@backstage/backend-test-utils'
 import { GoogleBaseProvider } from './GoogleBaseProvider'
-import * as creds from '../../../../app-config.d/credentials/google-jwt.keys.json'
+import * as creds from '../../../../app-config.d/credentials/google-jwt.keys.json' /* eslint @backstage/no-relative-monorepo-imports: off */
 
 describe('GoogleUserProvider', () => {
     let mockConfig: any
@@ -71,7 +71,7 @@ describe('GoogleUserProvider', () => {
         describe('should succeed when', () => {
             test('runs successfully', async () => {
                 await provider.connect(mockConnection)
-                await provider.run()
+                expect( async () => await provider.run()).not.toThrow()
             }, 10 * 1000)
         })
     })
