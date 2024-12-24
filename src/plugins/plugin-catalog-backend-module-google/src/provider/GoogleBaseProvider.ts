@@ -18,6 +18,7 @@ export interface ProviderConfig {
         clientCredentials: JWTInput
     }
     schedule: SchedulerServiceTaskScheduleDefinition
+    pageSize?: number
 }
 
 export interface ProviderOptions {

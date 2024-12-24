@@ -7,7 +7,7 @@ import {
     EntityProviderConnection,
 } from '@backstage/plugin-catalog-node'
 import { Config } from '@backstage/config'
-import { google } from 'googleapis'
+import { google, admin_directory_v1 } from 'googleapis'
 import { GoogleBaseProvider, ProviderConfig, ProviderOptions } from './GoogleBaseProvider'
 
 
@@ -58,19 +58,37 @@ export class GoogleUserProvider extends GoogleBaseProvider {
         })
     }
 
-    async getUserGroups(userId: string): Promise<any[]> {
-        const res = await this.googleAdmin.groups.list({
-            userKey: userId,
-        })
-        return res.data.groups || []
+    async getUserGroups(userId: string): Promise<admin_directory_v1.Schema$Group[]> {
+        let pageToken: string | undefined
+        let groups: admin_directory_v1.Schema$Group[] = []
+        do {
+            const res = await this.googleAdmin.groups.list({
+                userKey: userId,
+                maxResults: this.providerConfig.pageSize || 200,
+                pageToken
+            })
+            groups = groups.concat(res.data.groups || [])
+            pageToken = res.data.nextPageToken || undefined
+            this.logger.debug(`groups.list() pageToken: ${pageToken}`)
+        } while (pageToken)
+        return groups
     }
 
-    async listUsers(): Promise<any[]> {
-        const res = await this.googleAdmin.users.list({
-            customer: 'my_customer',
-            viewType: 'domain_public'
-        })
-        return res.data.users || []
+    async listUsers(): Promise<admin_directory_v1.Schema$User[]> {
+        let pageToken: string | undefined
+        let users: admin_directory_v1.Schema$User[] = []
+        do {
+            const res = await this.googleAdmin.users.list({
+                customer: 'my_customer',
+                viewType: 'domain_public',
+                maxResults: this.providerConfig.pageSize || 200,
+                pageToken
+            })
+            users = users.concat(res.data.users || [])
+            pageToken = res.data.nextPageToken || undefined
+            this.logger.debug(`users.list() pageToken: ${pageToken}`)
+        } while(pageToken)
+        return users
     }
 
     async run(): Promise<void> {
@@ -81,25 +99,25 @@ export class GoogleUserProvider extends GoogleBaseProvider {
                 apiVersion: 'backstage.io/v1alpha1',
                 kind: 'User',
                 metadata: {
-                    name: `${user.name.givenName.toLowerCase()}.${user.name.familyName.toLowerCase()}`,
+                    name: `${(user.name?.givenName as string).toLowerCase()}.${(user.name?.familyName as string).toLowerCase()}`,
                     annotations: {
-                        'google.com/user-id': user.id,
-                        'google.com/user-kind': user.kind,
+                        'google.com/user-id': user.id as string,
+                        'google.com/user-kind': user.kind as string,
                         [ANNOTATION_LOCATION]: PROVIDER_ANNOTATION_LOCATION,
                         [ANNOTATION_ORIGIN_LOCATION]: PROVIDER_ANNOTATION_LOCATION
                     }
                 },
                 spec: {
                     profile: {
-                        displayName: user.name.fullName,
-                        email: user.primaryEmail,
-                        picture: user.thumbnailPhotoUrl
+                        displayName: user.name?.fullName || undefined,
+                        email: user.primaryEmail || undefined,
+                        picture: user.thumbnailPhotoUrl || undefined
                     }
                 }
             }
 
-            const groups = await this.getUserGroups(user.primaryEmail)
-            entity.spec.memberOf = groups.map( group => group.id )
+            const groups = await this.getUserGroups(user.id as string)
+            entity.spec.memberOf = groups.map( group => group.id as string)
 
             return entity
         }))

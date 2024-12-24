@@ -1,6 +1,14 @@
 import { mockServices } from '@backstage/backend-test-utils'
 import { GoogleGroupProvider, SCOPES } from './GoogleGroupProvider'
+import { admin_directory_v1 } from 'googleapis'
 import * as creds from '../../../../jwt.keys.json'
+
+
+jest.mock('googleapis', () => {
+    return {
+        ...jest.requireActual('googleapis')
+    }
+})
 
 describe('GoogleGroupProvider', () => {
     let mockConfig: any
@@ -9,6 +17,8 @@ describe('GoogleGroupProvider', () => {
     let mockTaskRunner: any
 
     beforeEach(() => {
+        jest.resetAllMocks()
+
         mockConnection = {
             applyMutation: jest.fn()
         }
@@ -63,6 +73,26 @@ describe('GoogleGroupProvider', () => {
             test('when listing groups', async () => {
                 const groups = await provider.listGroups()
                 expect(groups.length).toBeGreaterThan(0)
+            }, 20 * 1000)
+
+            test('when listing groups with multiple pages of results', async () => {
+                const mockListResponse = jest.fn()
+                mockListResponse
+                    .mockReturnValueOnce({ data: { groups: [{ id: '1' }], nextPageToken: 'next' }})
+                    .mockReturnValueOnce({data: { groups: [{ id: '2' }]}})
+                const mockAdmin = jest.fn().mockReturnValue({
+                    groups: {
+                        list: mockListResponse
+                    }
+                })
+
+                // Set page size to 1 to force multiple pages of results
+                provider.providerConfig.pageSize = 1
+                provider.googleAdmin = mockAdmin() as unknown as admin_directory_v1.Admin
+
+                const groups = await provider.listGroups()
+                expect(groups.length).toEqual(2)
+                expect(mockListResponse).toHaveBeenCalledTimes(2)
             }, 20 * 1000)
         })
     })
