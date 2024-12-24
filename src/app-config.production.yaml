@@ -52,19 +52,19 @@ integrations:
   github:
     - host: github.com
       apps:
-        - $include: /app/app-config.d/github-app-credentials.yaml
+        - $include: /app/app-config.d/credentials/github-app-credentials.yaml
 
 catalog:
   providers:
     google:
-      baseUrl: https://google.com
       auth:
-        clientId: ${CATALOG_GOOGLE_CLIENT_ID}
-        clientSecret: ${CATALOG_GOOGLE_CLIENT_SECRET}
+        adminAccountEmail: tom@serverlessops.io
+        clientCredentials:
+          $include: /app/app-config.d/credentials/google-jwt.keys.json
       schedule:
         initialDelay: { seconds: 5 }
-        frequency: { minutes: 15 }
-        timeout: { seconds: 60 }
+        frequency: { minutes: 1 }
+        timeout: { seconds: 30 }
     serverlessops-catalog:
       baseUrl: ${SERVERLESSOPS_CATALOG_API_URL}
       namespace: default
@@ -87,14 +87,6 @@ catalog:
   # See https://backstage.io/docs/features/software-catalog/#adding-components-to-the-catalog for more details
   # on how to get entities into the catalog.
   locations:
-    - type: file
-      target: /app/app-config.d/catalogs/users.yaml
-      rules:
-        - allow: [User]
-    - type: file
-      target: /app/app-config.d/catalogs/groups.yaml
-      rules:
-        - allow: [Groups]
     - type: file
       target: /app/app-config.d/scaffolders/domain-add.yaml
       rules:

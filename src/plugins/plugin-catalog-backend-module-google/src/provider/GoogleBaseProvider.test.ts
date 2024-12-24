@@ -1,6 +1,6 @@
 import { mockServices } from '@backstage/backend-test-utils'
 import { GoogleBaseProvider } from './GoogleBaseProvider'
-import * as creds from '../../../../jwt.keys.json'
+import * as creds from '../../../../app-config.d/credentials/google-jwt.keys.json'
 
 describe('GoogleUserProvider', () => {
     let mockConfig: any

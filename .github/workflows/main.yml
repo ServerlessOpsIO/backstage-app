@@ -68,7 +68,15 @@ jobs:
         env:
           CONTENTS: ${{ secrets.X_GITHUB_APP_CREDS }}
         run: |
-          echo -e "$CONTENTS" > src/app-config.d/github-app-credentials.yaml
+          echo -e "$CONTENTS" > src/app-config.d/credentials/github-app-credentials.yaml
+
+      - name: Write Google Admin API creds
+        id: google-admin-creds
+        shell: bash
+        env:
+          CONTENTS: ${{ secrets.CATALOG_GOOGLE_JWT_KEYS }}
+        run: |
+          echo -e "$CONTENTS" > src/app-config.d/credentials/google-jwt.keys.json
 
       - name: Compile Typescript
         id: compile

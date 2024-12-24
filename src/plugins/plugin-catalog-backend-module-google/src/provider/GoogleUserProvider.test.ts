@@ -1,7 +1,7 @@
 import { mockServices } from '@backstage/backend-test-utils'
 import { GoogleUserProvider, SCOPES } from './GoogleUserProvider'
 import { admin_directory_v1 } from 'googleapis'
-import * as creds from '../../../../jwt.keys.json'
+import * as creds from '../../../../app-config.d/credentials/google-jwt.keys.json'
 
 jest.mock('googleapis', () => {
     return {
