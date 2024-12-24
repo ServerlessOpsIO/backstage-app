@@ -63,8 +63,8 @@ catalog:
           $include: /app/app-config.d/credentials/google-jwt.keys.yaml
       schedule:
         initialDelay: { seconds: 5 }
-        frequency: { minutes: 1 }
-        timeout: { seconds: 30 }
+        frequency: { minutes: 15 }
+        timeout: { seconds: 60 }
     serverlessops-catalog:
       baseUrl: ${SERVERLESSOPS_CATALOG_API_URL}
       namespace: default
