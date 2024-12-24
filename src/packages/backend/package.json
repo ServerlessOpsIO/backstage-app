@@ -41,6 +41,7 @@
     "@backstage/plugin-search-backend-module-techdocs": "^0.2.2",
     "@backstage/plugin-search-backend-node": "^1.3.2",
     "@backstage/plugin-techdocs-backend": "^1.10.13",
+    "@internal/backstage-plugin-catalog-backend-module-google": "workspace:^",
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^",
     "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^",
     "app": "link:../app",

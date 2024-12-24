@@ -76,3 +76,6 @@ codepipeline-config-*.yaml
 
 # AWS SAM
 .aws-sam/
+
+# Backstage credentials
+src/app-config.d/credentials
