@@ -1,7 +1,7 @@
 import {
     ANNOTATION_LOCATION,
     ANNOTATION_ORIGIN_LOCATION,
-    Entity
+    GroupEntityV1alpha1
 } from '@backstage/catalog-model'
 import {
     EntityProviderConnection,
@@ -56,6 +56,10 @@ export class GoogleGroupProvider extends GoogleBaseProvider {
     }
 
     async listGroups(): Promise<admin_directory_v1.Schema$Group[]> {
+        if (!this.googleAdmin) {
+            throw new Error('Google Admin not initialized')
+        }
+
         let pageToken: string | undefined
         let groups: admin_directory_v1.Schema$Group[] = []
         do {

@@ -59,6 +59,10 @@ export class GoogleUserProvider extends GoogleBaseProvider {
     }
 
     async getUserGroups(userId: string): Promise<admin_directory_v1.Schema$Group[]> {
+        if ( !this.googleAdmin ) {
+            throw new Error('Google Admin not initialized')
+        }
+
         let pageToken: string | undefined
         let groups: admin_directory_v1.Schema$Group[] = []
         do {
@@ -75,6 +79,10 @@ export class GoogleUserProvider extends GoogleBaseProvider {
     }
 
     async listUsers(): Promise<admin_directory_v1.Schema$User[]> {
+        if ( !this.googleAdmin ) {
+            throw new Error('Google Admin not initialized')
+        }
+
         let pageToken: string | undefined
         let users: admin_directory_v1.Schema$User[] = []
         do {
