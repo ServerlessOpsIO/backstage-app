@@ -83,6 +83,7 @@ export class GoogleGroupProvider extends GoogleBaseProvider {
             kind: 'Group',
             metadata: {
                 name: group.id as string,
+                title: group.name || undefined,
                 description: group.description || undefined,
                 annotations: {
                     'google.com/group-id': group.id as string,
