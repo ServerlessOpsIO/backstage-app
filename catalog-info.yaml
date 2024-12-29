@@ -9,7 +9,7 @@ metadata:
 spec:
   type: application
   lifecycle: production
-  owner: group:developers
+  owner: group:00gjdgxs1ur6lsu
   system: backstage
   domain: infrastructure
   dependsOn:
@@ -29,7 +29,7 @@ metadata:
 spec:
   type: container-service
   lifecycle: production
-  owner: group:developers
+  owner: group:00gjdgxs1ur6lsu
   system: backstage
   domain: infrastructure
   dependsOn:
