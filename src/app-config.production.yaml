@@ -95,10 +95,6 @@ catalog:
       target: /app/app-config.d/scaffolders/system-add.yaml
       rules:
         - allow: [Template]
-    - type: file
-      target: /app/app-config.d/scaffolders/entity-delete.yaml
-      rules:
-        - allow: [Template]
     - type: url
       target: https://github.com/ServerlessOpsIO/backstage-aws-sam-python-template/blob/main/template-crud-api.yaml
       rules:
