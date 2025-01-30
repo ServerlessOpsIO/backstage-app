@@ -193,6 +193,9 @@ Resources:
       ServiceName: !Ref Component
       Cluster: !Ref ClusterName
       LaunchType: FARGATE
+      CapacityProviderStrategy:
+        # Not setting Base or Weight because we have only one provider
+        - CapacityProvider: FARGATE_SPOT
       EnableECSManagedTags: true
       PropagateTags: TASK_DEFINITION
       EnableExecuteCommand: true
