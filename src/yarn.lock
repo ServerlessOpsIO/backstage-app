@@ -7512,6 +7512,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@datadog/datadog-api-client@npm:^1.31.0":
+  version: 1.31.0
+  resolution: "@datadog/datadog-api-client@npm:1.31.0"
+  dependencies:
+    "@types/buffer-from": "npm:^1.1.0"
+    "@types/node": "npm:*"
+    "@types/pako": "npm:^1.0.3"
+    buffer-from: "npm:^1.1.2"
+    cross-fetch: "npm:^3.1.5"
+    es6-promise: "npm:^4.2.8"
+    form-data: "npm:^4.0.0"
+    loglevel: "npm:^1.8.1"
+    pako: "npm:^2.0.4"
+  checksum: 10c0/ea406c3c4c5d894435bf38b30692f4ea21d5ca42997bd86d198674e661173b9982abfdfa0e7b3bad26ec61b81ea60f1c8eaec34dffb8cb0d301f774569d7f07a
+  languageName: node
+  linkType: hard
+
 "@date-io/core@npm:1.x, @date-io/core@npm:^1.3.13":
   version: 1.3.13
   resolution: "@date-io/core@npm:1.3.13"
@@ -8746,13 +8763,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@internal/backstage-plugin-scaffolder-backend-module-datadog@npm:^0.1.0, @internal/backstage-plugin-scaffolder-backend-module-datadog@workspace:plugins/scaffolder-backend-module-datadog":
+"@internal/backstage-plugin-scaffolder-backend-module-datadog@workspace:^, @internal/backstage-plugin-scaffolder-backend-module-datadog@workspace:plugins/scaffolder-backend-module-datadog":
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-scaffolder-backend-module-datadog@workspace:plugins/scaffolder-backend-module-datadog"
   dependencies:
     "@backstage/backend-plugin-api": "npm:^1.0.0"
     "@backstage/cli": "npm:^0.27.1"
     "@backstage/plugin-scaffolder-node": "npm:^0.4.11"
+    "@datadog/datadog-api-client": "npm:^1.31.0"
   languageName: unknown
   linkType: soft
 
@@ -13920,6 +13938,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/buffer-from@npm:^1.1.0":
+  version: 1.1.3
+  resolution: "@types/buffer-from@npm:1.1.3"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/c8e0e3a9e24085a3af83b8c10ce1630aa3e21d6800263d4bdcb0b734afa75addc02a2ccb1d404f83ccff4619e5100219d3aaae8d558df6709c97e6c458c99e05
+  languageName: node
+  linkType: hard
+
 "@types/cacheable-request@npm:^6.0.1":
   version: 6.0.3
   resolution: "@types/cacheable-request@npm:6.0.3"
@@ -14396,6 +14423,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/2f3e4ee1059fd28fc2cb6dd9d0973365a0630ea1fa305ac5455ea9666220b73d8ac42e5bee42367a0f12a1041ef103a16c55bf7803d0a82898319c3e32095b4a
+  languageName: node
+  linkType: hard
+
+"@types/pako@npm:^1.0.3":
+  version: 1.0.7
+  resolution: "@types/pako@npm:1.0.7"
+  checksum: 10c0/1ba133db0b30a974c3d651c85651fd30135f629727b4b4d7ef2649c8f8b01014d5ef41f75399d939e320a50bfa87c32beccbb513badfeaf85d74ea6d5370fdcc
   languageName: node
   linkType: hard
 
@@ -16306,7 +16340,7 @@ __metadata:
     "@backstage/plugin-techdocs-backend": "npm:^1.10.13"
     "@internal/backstage-plugin-catalog-backend-module-google": "workspace:^"
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"
-    "@internal/backstage-plugin-scaffolder-backend-module-datadog": "npm:^0.1.0"
+    "@internal/backstage-plugin-scaffolder-backend-module-datadog": "workspace:^"
     "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^"
     "@types/express": "npm:^4.17.6"
     "@types/express-serve-static-core": "npm:^4.17.5"
@@ -16796,7 +16830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-from@npm:^1.0.0":
+"buffer-from@npm:^1.0.0, buffer-from@npm:^1.1.2":
   version: 1.1.2
   resolution: "buffer-from@npm:1.1.2"
   checksum: 10c0/124fff9d66d691a86d3b062eff4663fe437a9d9ee4b47b1b9e97f5a5d14f6d5399345db80f796827be7c95e70a8e765dd404b7c3ff3b3324f98e9b0c8826cc34
@@ -19596,6 +19630,13 @@ __metadata:
   version: 4.1.1
   resolution: "es6-error@npm:4.1.1"
   checksum: 10c0/357663fb1e845c047d548c3d30f86e005db71e122678f4184ced0693f634688c3f3ef2d7de7d4af732f734de01f528b05954e270f06aa7d133679fb9fe6600ef
+  languageName: node
+  linkType: hard
+
+"es6-promise@npm:^4.2.8":
+  version: 4.2.8
+  resolution: "es6-promise@npm:4.2.8"
+  checksum: 10c0/2373d9c5e9a93bdd9f9ed32ff5cb6dd3dd785368d1c21e9bbbfd07d16345b3774ae260f2bd24c8f836a6903f432b4151e7816a7fa8891ccb4e1a55a028ec42c3
   languageName: node
   linkType: hard
 
@@ -25139,6 +25180,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"loglevel@npm:^1.8.1":
+  version: 1.9.2
+  resolution: "loglevel@npm:1.9.2"
+  checksum: 10c0/1e317fa4648fe0b4a4cffef6de037340592cee8547b07d4ce97a487abe9153e704b98451100c799b032c72bb89c9366d71c9fb8192ada8703269263ae77acdc7
+  languageName: node
+  linkType: hard
+
 "long-timeout@npm:0.1.1":
   version: 0.1.1
   resolution: "long-timeout@npm:0.1.1"
@@ -27491,6 +27539,13 @@ __metadata:
   version: 1.0.11
   resolution: "pako@npm:1.0.11"
   checksum: 10c0/86dd99d8b34c3930345b8bbeb5e1cd8a05f608eeb40967b293f72fe469d0e9c88b783a8777e4cc7dc7c91ce54c5e93d88ff4b4f060e6ff18408fd21030d9ffbe
+  languageName: node
+  linkType: hard
+
+"pako@npm:^2.0.4":
+  version: 2.1.0
+  resolution: "pako@npm:2.1.0"
+  checksum: 10c0/8e8646581410654b50eb22a5dfd71159cae98145bd5086c9a7a816ec0370b5f72b4648d08674624b3870a521e6a3daffd6c2f7bc00fdefc7063c9d8232ff5116
   languageName: node
   linkType: hard
 

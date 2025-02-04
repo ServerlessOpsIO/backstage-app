@@ -43,7 +43,7 @@
     "@backstage/plugin-techdocs-backend": "^1.10.13",
     "@internal/backstage-plugin-catalog-backend-module-google": "workspace:^",
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^",
-    "@internal/backstage-plugin-scaffolder-backend-module-datadog": "^0.1.0",
+    "@internal/backstage-plugin-scaffolder-backend-module-datadog": "workspace:^",
     "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^",
     "app": "link:../app",
     "better-sqlite3": "^9.0.0",
