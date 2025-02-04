@@ -8746,6 +8746,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@internal/backstage-plugin-scaffolder-backend-module-datadog@npm:^0.1.0, @internal/backstage-plugin-scaffolder-backend-module-datadog@workspace:plugins/scaffolder-backend-module-datadog":
+  version: 0.0.0-use.local
+  resolution: "@internal/backstage-plugin-scaffolder-backend-module-datadog@workspace:plugins/scaffolder-backend-module-datadog"
+  dependencies:
+    "@backstage/backend-plugin-api": "npm:^1.0.0"
+    "@backstage/cli": "npm:^0.27.1"
+    "@backstage/plugin-scaffolder-node": "npm:^0.4.11"
+  languageName: unknown
+  linkType: soft
+
 "@internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:^, @internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops":
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops"
@@ -16296,6 +16306,7 @@ __metadata:
     "@backstage/plugin-techdocs-backend": "npm:^1.10.13"
     "@internal/backstage-plugin-catalog-backend-module-google": "workspace:^"
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"
+    "@internal/backstage-plugin-scaffolder-backend-module-datadog": "npm:^0.1.0"
     "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^"
     "@types/express": "npm:^4.17.6"
     "@types/express-serve-static-core": "npm:^4.17.5"

@@ -57,4 +57,5 @@ backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-serverlessops'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-google'));
+backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-datadog'));
 backend.start();
