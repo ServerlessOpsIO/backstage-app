@@ -1,1 +1,1 @@
-export * from './createMetricMonitor'
+export * from './create'

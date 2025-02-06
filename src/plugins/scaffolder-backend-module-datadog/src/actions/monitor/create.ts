@@ -11,19 +11,21 @@ export function createMetricMonitorAction(props: ConfigurationParameters) {
     // For more information on how to define custom actions, see
     //   https://backstage.io/docs/features/software-templates/writing-custom-actions
     return createTemplateAction<{
+        type: Extract<v1.MonitorType, string>;  // Extract only the string literals on type
         name: string;
         query: string;
         message: string;
         priority: number;
         tags: string[];
     }>({
-        id: 'datadog:monitor:metric:create',
-        description: 'Create a Datadog metric monitor',
+        id: 'datadog:monitor:create',
+        description: 'Create a Datadog monitor',
         supportsDryRun: true,
         schema: {
             input: {
                 type: 'object',
                 required: [
+                    'type',
                     'name',
                     'query',
                     'message',
@@ -31,6 +33,11 @@ export function createMetricMonitorAction(props: ConfigurationParameters) {
                     'tags',
                 ],
                 properties: {
+                    type: {
+                        title: 'Type',
+                        description: 'Type of monitor',
+                        type: 'string',
+                    },
                     name: {
                         title: 'Name',
                         description: 'Name of the monitor',
@@ -79,7 +86,7 @@ export function createMetricMonitorAction(props: ConfigurationParameters) {
             const monitorsApi = new v1.MonitorsApi(config);
             const monitor = await monitorsApi.createMonitor({
                 body: {
-                    type: 'query alert',
+                    type: ctx.input.type,
                     query: ctx.input.query,
                     name: ctx.input.name,
                     message: ctx.input.message,
