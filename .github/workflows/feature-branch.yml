@@ -68,7 +68,7 @@ jobs:
         env:
           CONTENTS: ${{ secrets.X_GITHUB_APP_CREDS }}
         run: |
-          echo -e "$CONTENTS" > src/app-config.d/github-app-credentials.yaml
+          echo -e "$CONTENTS" > src/app-config.d/credentials/github-app-credentials.yaml
 
       # Couldn't store JSON creds while retaining proper formatting so going to do this in two steps
       - name: Write Google Admin API creds
