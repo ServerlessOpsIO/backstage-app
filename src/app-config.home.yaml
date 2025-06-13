@@ -1,4 +1,9 @@
+app:
+  title: Backstage Portal
+  baseUrl: http://${DNS_NAME}:7007
+
 backend:
+  baseUrl: http://${DNS_NAME}:7007
   database:
     connection:
       ssl: null
