@@ -39,7 +39,7 @@ import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/
 import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
 
 // Added imports
-import { googleAuthApiRef } from '@backstage/core-plugin-api';
+import { configApiRef, githubAuthApiRef, googleAuthApiRef, useApi } from '@backstage/core-plugin-api';
 
 // ServerlessOps Catalog
 import {
@@ -68,23 +68,37 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: props => (
-      <SignInPage
-        {...props}
-        auto
-        providers={
-          [
+    SignInPage: props => {
+      const configApi = useApi(configApiRef);
+      if (configApi.getString('auth.environment') === 'home') {
+        return (
+          <SignInPage
+            {...props}
+            provider={
+              {
+                id: 'github',
+                title: 'GitHub',
+                message: 'Sign in using GitHub',
+                apiRef: githubAuthApiRef,
+              }
+            }
+          />
+        );
+      }
+      return (
+        <SignInPage
+          {...props}
+          provider={
             {
               id: 'google',
               title: 'Google',
               message: 'Log in with Google',
               apiRef: googleAuthApiRef,
             }
-
-          ]
-        }
-      />
-    ),
+          }
+        />
+      );
+    },
   },
 });
 
