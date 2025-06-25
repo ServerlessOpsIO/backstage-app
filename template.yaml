@@ -114,9 +114,13 @@ Parameters:
     Description: Google OAuth client secret
     NoEcho: true
 
-  DnsName:
+  BackstageAppUrl:
     Type: String
-    Description: DNS name for the application
+    Description: URL of application frontend
+
+  BackstageBackendUrl:
+    Type: String
+    Description: URL of application backend
 
   ServerlessOpsCatalogApiUrl:
     Type: String
@@ -169,8 +173,12 @@ Resources:
               Value: !Ref AuthGoogleClientId
             - Name: AUTH_GOOGLE_CLIENT_SECRET
               Value: !Ref AuthGoogleClientSecret
-            - Name: DNS_NAME
-              Value: !Ref DnsName
+            - Name: BACKSTAGE_APP_URL
+              Value: !Ref BackstageAppUrl
+            - Name: BACKSTAGE_BACKEND_URL
+              Value: !Ref BackstageBackendUrl
+            - Name: BACKSTAGE_BACKEND_PORT
+              Value: !Ref ContainerPort
             - Name: SERVERLESSOPS_CATALOG_API_URL
               Value: !Ref ServerlessOpsCatalogApiUrl
             - Name: SERVERLESSOPS_AUTH_ENDPOINT
