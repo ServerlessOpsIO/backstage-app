@@ -1,0 +1,21 @@
+app:
+  title: Backstage Portal
+  baseUrl: ${BACKSTAGE_APP_URL}
+
+backend:
+  baseUrl: ${BACKSTAGE_BACKEND_URL}
+  database:
+    connection:
+      ssl: null
+
+auth:
+  environment: home
+  providers:
+    guest: null
+    github:
+      home:
+        clientId: ${GITHUB_AUTH_CLIENT_ID}
+        clientSecret: ${GITHUB_AUTH_CLIENT_SECRET}
+        signIn:
+          resolvers:
+            - resolver: emailMatchingUserEntityProfileEmail
