@@ -141,6 +141,10 @@ const routes = (
             title: "Containerization",
             filter: entity => entity?.metadata?.tags?.includes('containerization') ?? false
           },
+          {
+            title: "Infrastructure",
+            filter: entity => entity?.metadata?.tags?.includes('infrastructure') ?? false
+          },
         ]
       }/>
     }>
