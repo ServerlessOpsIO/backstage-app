@@ -145,6 +145,10 @@ const routes = (
             title: "Infrastructure",
             filter: entity => entity?.metadata?.tags?.includes('infrastructure') ?? false
           },
+          {
+            title: "Empty Starter",
+            filter: entity => entity?.metadata?.tags?.includes('empty') ?? false
+          },
         ]
       }/>
     }>
