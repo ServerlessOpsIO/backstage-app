@@ -3444,6 +3444,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@backstage/plugin-scaffolder-node-test-utils@npm:0.3.3":
+  version: 0.3.3
+  resolution: "@backstage/plugin-scaffolder-node-test-utils@npm:0.3.3"
+  dependencies:
+    "@backstage/backend-plugin-api": "npm:^1.4.3"
+    "@backstage/backend-test-utils": "npm:^1.9.0"
+    "@backstage/plugin-scaffolder-node": "npm:^0.11.1"
+    "@backstage/types": "npm:^1.2.2"
+    winston: "npm:^3.2.1"
+    winston-transport: "npm:^4.7.0"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.3.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/509cf18c77418e18b1ecbbb619a02e9549f123ab0e06b231aa84d76becad521f47ca1ae1caa1c221f6624637222349dc9109e5b5329ddf6c8930fedfbbfadf52
+  languageName: node
+  linkType: hard
+
 "@backstage/plugin-scaffolder-node@npm:^0.11.1":
   version: 0.11.1
   resolution: "@backstage/plugin-scaffolder-node@npm:0.11.1"
@@ -5545,6 +5567,7 @@ __metadata:
     "@backstage/catalog-model": "npm:^1.7.5"
     "@backstage/cli": "npm:^0.34.3"
     "@backstage/plugin-scaffolder-node": "npm:^0.11.1"
+    "@backstage/plugin-scaffolder-node-test-utils": "npm:0.3.3"
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
   languageName: unknown

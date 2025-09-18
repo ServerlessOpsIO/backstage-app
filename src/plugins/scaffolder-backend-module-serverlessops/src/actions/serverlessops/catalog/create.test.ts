@@ -1,4 +1,5 @@
-import { PassThrough } from 'stream';
+import { createMockDirectory } from '@backstage/backend-test-utils'
+import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 import {
     getJwt,
     ProviderConfig
@@ -40,31 +41,32 @@ describe('serverlessops:catalog:create', () => {
         const logger = { info: jest.fn() };
 
         mockFetch.mockResponse(JSON.stringify({}), {status: 201})
+        const workspacePath = createMockDirectory().resolve('workspace');
 
-        await action.handler({
-            input: {
-                kind: 'Domain',
-                namespace: 'default',
-                name: 'Test',
-                description: 'Test thing',
-                owner: 'test',
-            },
-            workspacePath: '/tmp',
-            logger: logger as any,
-            logStream: new PassThrough(),
-            output: jest.fn(),
-            createTemporaryDirectory() {
-                // Usage of createMockDirectory is recommended for testing of filesystem operations
-                throw new Error('Not implemented');
-            },
-            checkpoint() {
-                throw new Error('Not implemented');
-            },
-            getInitiatorCredentials() {
-                throw new Error('Not implemented');
-            }
-        });
-
+        await action.handler(
+            createMockActionContext({
+                input: {
+                    kind: 'Domain',
+                    namespace: 'default',
+                    name: 'Test',
+                    description: 'Test thing',
+                    owner: 'test',
+                },
+                workspacePath,
+                logger: logger as any,
+                output: jest.fn(),
+                createTemporaryDirectory() {
+                    // Usage of createMockDirectory is recommended for testing of filesystem operations
+                    throw new Error('Not implemented');
+                },
+                checkpoint() {
+                    throw new Error('Not implemented');
+                },
+                getInitiatorCredentials() {
+                    throw new Error('Not implemented');
+                }
+            })
+        )
         expect(getJwt).toHaveBeenCalled();
     });
 });

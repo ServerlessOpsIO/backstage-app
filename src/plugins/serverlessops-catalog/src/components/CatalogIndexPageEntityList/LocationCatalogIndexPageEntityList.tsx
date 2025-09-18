@@ -6,7 +6,6 @@ import {
   EntityProcessingStatusPicker,
   UserListPicker,
 } from '@backstage/plugin-catalog-react';
-import React from 'react';
 
 export function LocationCatalogIndexPageEntityList() {
   return (

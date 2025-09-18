@@ -15,7 +15,7 @@ import {
   EntityOwnerPickerProps,
   UserListFilterKind,
 } from '@backstage/plugin-catalog-react';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 /** @internal */
 export type DefaultCatalogIndexPageEntityListProps = {

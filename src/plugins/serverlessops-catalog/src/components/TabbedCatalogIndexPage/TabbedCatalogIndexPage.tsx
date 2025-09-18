@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageWithHeader, TabbedLayout } from '@backstage/core-components';
 import { configApiRef, useApi } from '@backstage/core-plugin-api';
 import {

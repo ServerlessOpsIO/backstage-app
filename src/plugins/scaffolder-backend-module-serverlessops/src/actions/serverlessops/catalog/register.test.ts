@@ -1,4 +1,5 @@
-import { PassThrough } from 'stream'
+import { createMockDirectory } from '@backstage/backend-test-utils'
+import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 import { CatalogApi } from '@backstage/catalog-client'
 import { AuthService } from '@backstage/backend-plugin-api'
 import { registerServerlessOpsCatalogAction } from './register'
@@ -24,28 +25,30 @@ describe('serverlessops:catalog:register', () => {
     test('should register location without auth', async () => {
         const action = registerServerlessOpsCatalogAction(catalogClient)
         const logger = { info: jest.fn() }
+        const workspacePath = createMockDirectory().resolve('workspace');
 
-        await action.handler({
-            input: {
-                catalogInfoUrl: 'https://example.com/catalog-info.yaml'
-            },
-            workspacePath: '/tmp',
-            logger: logger as any,
-            logStream: new PassThrough(),
-            output: jest.fn(),
-            secrets: {
-                backstageToken: 'test-token'
-            },
-            createTemporaryDirectory() {
-                throw new Error('Not implemented')
-            },
-            checkpoint() {
-                throw new Error('Not implemented')
-            },
-            getInitiatorCredentials() {
-                throw new Error('Not implemented')
-            }
-        })
+        await action.handler(
+            createMockActionContext({
+                input: {
+                    catalogInfoUrl: 'https://example.com/catalog-info.yaml'
+                },
+                workspacePath,
+                logger: logger as any,
+                output: jest.fn(),
+                secrets: {
+                    backstageToken: 'test-token'
+                },
+                createTemporaryDirectory() {
+                    throw new Error('Not implemented')
+                },
+                checkpoint() {
+                    throw new Error('Not implemented')
+                },
+                getInitiatorCredentials() {
+                    throw new Error('Not implemented')
+                }
+            })
+        )
 
         expect(catalogClient.addLocation).toHaveBeenCalledWith(
             {
@@ -63,29 +66,31 @@ describe('serverlessops:catalog:register', () => {
         const logger = { info: jest.fn() }
 
         auth.getPluginRequestToken.mockResolvedValue({ token: 'auth-token' })
+        const workspacePath = createMockDirectory().resolve('workspace');
 
-        await action.handler({
-            input: {
-                catalogInfoUrl: 'https://example.com/catalog-info.yaml'
-            },
-            workspacePath: '/tmp',
-            logger: logger as any,
-            logStream: new PassThrough(),
-            output: jest.fn(),
-            createTemporaryDirectory() {
-                throw new Error('Not implemented')
-            },
-            checkpoint() {
-                throw new Error('Not implemented')
-            },
-            async getInitiatorCredentials() {
-                return {
-                    token: 'auth-token',
-                    $$type: '@backstage/BackstageCredentials',
-                    principal: 'user'
+        await action.handler(
+            createMockActionContext({
+                input: {
+                    catalogInfoUrl: 'https://example.com/catalog-info.yaml'
+                },
+                workspacePath,
+                logger: logger as any,
+                output: jest.fn(),
+                createTemporaryDirectory() {
+                    throw new Error('Not implemented')
+                },
+                checkpoint() {
+                    throw new Error('Not implemented')
+                },
+                async getInitiatorCredentials() {
+                    return {
+                        token: 'auth-token',
+                        $$type: '@backstage/BackstageCredentials',
+                        principal: 'user'
+                    }
                 }
-            }
-        })
+            })
+        )
 
         expect(auth.getPluginRequestToken).toHaveBeenCalledWith({
             onBehalfOf: {
