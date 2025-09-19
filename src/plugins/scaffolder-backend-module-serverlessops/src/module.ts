@@ -16,7 +16,7 @@ import {
  * A backend module that registers the action into the scaffolder
  */
 export const scaffolderModule = createBackendModule({
-    moduleId: 'serverlessops:catalog',
+    moduleId: 'serverlessops-catalog',
     pluginId: 'scaffolder',
     register({ registerInit }) {
         registerInit({

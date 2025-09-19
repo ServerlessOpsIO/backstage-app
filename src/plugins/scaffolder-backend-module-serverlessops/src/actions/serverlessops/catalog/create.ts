@@ -17,51 +17,27 @@ export function createServerlessOpsCatalogAction(
         description: 'Creates item in ServerlessOps catalog',
         schema: {
             input: {
-                type: 'object',
-                required: [
-                    'kind',
-                    'namespace',
-                    'name',
-                    'description',
-                    'owner'
-                ],
-                properties: {
-                    kind: {
-                        title: 'Entity kind',
-                        description: 'Kind of entity to create',
-                        type: 'string',
-                    },
-                    namespace: {
-                        title: 'Entity namespace',
-                        description: 'Namespace of entity to create',
-                        type: 'string',
-                    },
-                    name: {
-                        title: 'Entity name',
-                        description: 'Name of entity to create',
-                        type: 'string',
-                    },
-                    description: {
-                        title: 'Entity description',
-                        description: 'Description of entity to create',
-                        type: 'string',
-                    },
-                    type: {
-                        title: 'Entity type',
-                        description: 'Type of entity to create',
-                        type: 'string',
-                    },
-                    owner: {
-                        title: 'Entity owner',
-                        description: 'Owner of entity to create',
-                        type: 'string',
-                    },
-                    domain: {
-                        title: 'Entity domain',
-                        description: 'Domain of entity to create',
-                        type: 'string',
-                    },
-                },
+                kind: z => z.string({
+                    description: 'Kind of entity to create'
+                }),
+                namespace: z => z.string({
+                    description: 'Namespace of entity to create'
+                }),
+                name: z => z.string({
+                    description: 'Name of entity to create'
+                }),
+                description: z => z.string({
+                    description: 'Description of entity to create'
+                }),
+                owner: z => z.string({
+                    description: 'Owner of entity to create'
+                }),
+                type: z => z.string({
+                    description: 'Type of entity to create'
+                }).optional(),
+                domain: z => z.string({
+                    description: 'Domain of entity to create'
+                }).optional()
             }
         },
         async handler(ctx) {

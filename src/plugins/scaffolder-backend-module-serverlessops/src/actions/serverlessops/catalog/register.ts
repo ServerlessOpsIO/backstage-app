@@ -1,6 +1,6 @@
 import { AuthService } from '@backstage/backend-plugin-api';
 import { CatalogApi } from '@backstage/catalog-client';
-import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
+import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 
 export function registerServerlessOpsCatalogAction(
     catalogClient: CatalogApi,
@@ -11,25 +11,16 @@ export function registerServerlessOpsCatalogAction(
         description: 'Creates item in ServerlessOps catalog',
         schema: {
             input: {
-                type: 'object',
-                required: [
-                    'catalogInfoUrl',
-                ],
-                properties: {
-                    catalogInfoUrl: {
-                        title: 'Catalog Info URL',
-                        description:
-                            'An absolute URL pointing to the catalog info file location',
-                        type: 'string',
-                    }
-                }
-            }
+                catalogInfoUrl: z => z.string({
+                    description: 'An absolute URL pointing to the catalog info file location',
+                }).url('Must be a valid URL')
+            },
         },
 
         async handler(ctx) {
             ctx.logger.info(
                 `Registering new entity in Backstage at location: ${ctx.input.catalogInfoUrl}`,
-            )
+            );
 
             const { token } = (await auth?.getPluginRequestToken({
                 onBehalfOf: await ctx.getInitiatorCredentials(),
@@ -39,12 +30,12 @@ export function registerServerlessOpsCatalogAction(
             await catalogClient.addLocation(
                 {
                     type: 'url',
-                    target: ctx.input.catalogInfoUrl as string
+                    target: ctx.input.catalogInfoUrl as string,
                 },
                 {
-                    token: token
-                }
-            )
-        }
-    })
+                    token: token,
+                },
+            );
+        },
+    });
 }

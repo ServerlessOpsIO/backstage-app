@@ -17,17 +17,9 @@ export function deleteServerlessOpsCatalogAction(
         description: 'Creates item in ServerlessOps catalog',
         schema: {
             input: {
-                type: 'object',
-                required: [
-                    'entity',
-                ],
-                properties: {
-                    entity: {
-                        title: 'Entity name',
-                        description: 'Name of entity to delete',
-                        type: 'string',
-                    },
-                },
+                entity: z => z.string({
+                    description: 'Name of entity to delete'
+                })
             }
         },
         async handler(ctx) {
