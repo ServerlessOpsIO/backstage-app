@@ -48,7 +48,7 @@
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^",
     "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^",
     "app": "link:../app",
-    "better-sqlite3": "^9.0.0",
+    "better-sqlite3": "^12.0.0",
     "node-gyp": "^10.0.0",
     "pg": "^8.13.0"
   },
