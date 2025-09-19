@@ -94,9 +94,11 @@ describe('serverlessops:catalog:register', () => {
 
         expect(auth.getPluginRequestToken).toHaveBeenCalledWith({
             onBehalfOf: {
-                token: 'auth-token',
                 $$type: '@backstage/BackstageCredentials',
-                principal: 'user'
+                principal: {
+                    type: 'user',
+                    userEntityRef: 'user:default/mock'
+                }
             },
             targetPluginId: 'catalog'
         })
