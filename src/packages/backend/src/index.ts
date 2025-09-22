@@ -34,6 +34,7 @@ backend.add(import('@backstage/plugin-auth-backend-module-github-provider'));
 
 // catalog plugin
 backend.add(import('@backstage/plugin-catalog-backend'));
+backend.add(import('@backstage/plugin-catalog-backend-module-github'));
 backend.add(
   import('@backstage/plugin-catalog-backend-module-scaffolder-entity-model'),
 );
@@ -63,6 +64,7 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 backend.add(import('@backstage/plugin-notifications-backend'));
 backend.add(import('@backstage/plugin-signals-backend'));
 
+// local
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-serverlessops'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-google'));
