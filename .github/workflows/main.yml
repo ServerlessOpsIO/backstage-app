@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Setup job workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v1
+        uses: ServerlessOpsIO/gha-setup-workspace@v2
 
       - name: Assume AWS Credentials
         uses: ServerlessOpsIO/gha-assume-aws-credentials@v1
@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Setup job workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v1
+        uses: ServerlessOpsIO/gha-setup-workspace@v2
 
       - name: check working directory
         shell: bash
@@ -144,7 +144,7 @@ jobs:
 
     steps:
       - name: Setup job workspace
-        uses: ServerlessOpsIO/gha-setup-workspace@v1
+        uses: ServerlessOpsIO/gha-setup-workspace@v2
         with:
           checkout_artifact: true
 
