@@ -33,7 +33,7 @@ jobs:
         run: sam build --parallel --template template.yaml
 
       - name: Store Artifacts
-        uses: ServerlessOpsIO/gha-store-artifacts@v1
+        uses: ServerlessOpsIO/gha-store-artifacts@v2
         with:
           use_aws_sam: true
 
