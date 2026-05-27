@@ -64,6 +64,9 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs'));
 backend.add(import('@backstage/plugin-notifications-backend'));
 backend.add(import('@backstage/plugin-signals-backend'));
 
+// mcp actions plugin
+backend.add(import('@backstage/plugin-mcp-actions-backend'));
+
 // local
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-serverlessops'));
