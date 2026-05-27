@@ -3,7 +3,7 @@ import {
     coreServices,
     createBackendModule
 } from '@backstage/backend-plugin-api'
-import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node/alpha'
+import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node'
 import { ProviderConfig } from '@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'
 
 import {
