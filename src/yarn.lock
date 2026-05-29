@@ -3570,6 +3570,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@backstage/plugin-catalog-backend-module-unprocessed@npm:^0.6.12":
+  version: 0.6.12
+  resolution: "@backstage/plugin-catalog-backend-module-unprocessed@npm:0.6.12"
+  dependencies:
+    "@backstage/backend-plugin-api": "npm:^1.9.1"
+    "@backstage/catalog-model": "npm:^1.9.0"
+    "@backstage/errors": "npm:^1.3.1"
+    "@backstage/plugin-auth-node": "npm:^0.7.1"
+    "@backstage/plugin-catalog-node": "npm:^2.2.1"
+    "@backstage/plugin-catalog-unprocessed-entities-common": "npm:^0.0.16"
+    "@backstage/plugin-permission-common": "npm:^0.9.9"
+    express-promise-router: "npm:^4.1.1"
+    knex: "npm:^3.0.0"
+  checksum: 10c0/6f2f78f0ff31825fe4e7e1f5dd89b3706a9bb51fc409ff9e8856a990d7c4aa174e7bbd42c9c01f0f332bbcfb082600a345884f32d58c1e3cdef317960afb4bda
+  languageName: node
+  linkType: hard
+
 "@backstage/plugin-catalog-backend@npm:^3.7.0":
   version: 3.7.0
   resolution: "@backstage/plugin-catalog-backend@npm:3.7.0"
@@ -3762,6 +3779,45 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/9b28ae2e66a95fa9a76c95327b51777b6d2c65e7b3f369fd0d7ad19871c519df2314bc6aaf414919da25611845db0ee93945d50d774a3df16bfac86bf3eb3413
+  languageName: node
+  linkType: hard
+
+"@backstage/plugin-catalog-unprocessed-entities-common@npm:^0.0.16":
+  version: 0.0.16
+  resolution: "@backstage/plugin-catalog-unprocessed-entities-common@npm:0.0.16"
+  dependencies:
+    "@backstage/catalog-model": "npm:^1.9.0"
+    "@backstage/errors": "npm:^1.3.1"
+    "@backstage/plugin-permission-common": "npm:^0.9.9"
+  checksum: 10c0/681bcc34de934201d3a6aaf1ea6ba160a741401aa6134cc71b542eacbd80c77041495b34dc4b6bc57ccaef0838c6cef525f4b9ae5fa7edd2bc3265e397c8631d
+  languageName: node
+  linkType: hard
+
+"@backstage/plugin-catalog-unprocessed-entities@npm:^0.2.31":
+  version: 0.2.31
+  resolution: "@backstage/plugin-catalog-unprocessed-entities@npm:0.2.31"
+  dependencies:
+    "@backstage/core-compat-api": "npm:^0.5.11"
+    "@backstage/core-components": "npm:^0.18.10"
+    "@backstage/core-plugin-api": "npm:^1.12.6"
+    "@backstage/errors": "npm:^1.3.1"
+    "@backstage/frontend-plugin-api": "npm:^0.17.0"
+    "@backstage/plugin-catalog-unprocessed-entities-common": "npm:^0.0.16"
+    "@backstage/ui": "npm:^0.15.0"
+    "@material-ui/core": "npm:^4.9.13"
+    "@material-ui/icons": "npm:^4.9.1"
+    "@material-ui/lab": "npm:^4.0.0-alpha.60"
+    luxon: "npm:^3.5.0"
+    react-use: "npm:^17.2.4"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.30.2
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/d3b20b9a4b09a5ff94de632be05efb61ca92d850e3d5cb196d976d49002deebc7fd5eadb91b6f41057315e74547bf1615becfc7b3c3ea0b7ac8fee70dfbdff81
   languageName: node
   linkType: hard
 
@@ -7196,7 +7252,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@material-ui/lab@npm:4.0.0-alpha.61, @material-ui/lab@npm:^4.0.0-alpha.61":
+"@material-ui/lab@npm:4.0.0-alpha.61, @material-ui/lab@npm:^4.0.0-alpha.60, @material-ui/lab@npm:^4.0.0-alpha.61":
   version: 4.0.0-alpha.61
   resolution: "@material-ui/lab@npm:4.0.0-alpha.61"
   dependencies:
@@ -14316,6 +14372,7 @@ __metadata:
     "@backstage/plugin-catalog": "npm:^2.0.5"
     "@backstage/plugin-catalog-graph": "npm:^0.6.4"
     "@backstage/plugin-catalog-import": "npm:^0.13.13"
+    "@backstage/plugin-catalog-unprocessed-entities": "npm:^0.2.31"
     "@backstage/plugin-kubernetes": "npm:^0.12.19"
     "@backstage/plugin-notifications": "npm:^0.5.17"
     "@backstage/plugin-org": "npm:^0.7.4"
@@ -15023,6 +15080,7 @@ __metadata:
     "@backstage/plugin-catalog-backend-module-github": "npm:0.13.2"
     "@backstage/plugin-catalog-backend-module-logs": "npm:^0.1.22"
     "@backstage/plugin-catalog-backend-module-scaffolder-entity-model": "npm:^0.2.20"
+    "@backstage/plugin-catalog-backend-module-unprocessed": "npm:^0.6.12"
     "@backstage/plugin-kubernetes-backend": "npm:^0.21.4"
     "@backstage/plugin-mcp-actions-backend": "npm:^0.1.13"
     "@backstage/plugin-notifications-backend": "npm:^0.6.5"
@@ -19404,7 +19462,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express-promise-router@npm:^4.1.0":
+"express-promise-router@npm:^4.1.0, express-promise-router@npm:^4.1.1":
   version: 4.1.1
   resolution: "express-promise-router@npm:4.1.1"
   dependencies:
@@ -24888,6 +24946,13 @@ __metadata:
   version: 3.5.0
   resolution: "luxon@npm:3.5.0"
   checksum: 10c0/335789bba95077db831ef99894edadeb23023b3eb2137a1b56acd0d290082b691cf793143d69e30bc069ec95f0b49f36419f48e951c68014f19ffe12045e3494
+  languageName: node
+  linkType: hard
+
+"luxon@npm:^3.5.0":
+  version: 3.7.2
+  resolution: "luxon@npm:3.7.2"
+  checksum: 10c0/ed8f0f637826c08c343a29dd478b00628be93bba6f068417b1d8896b61cb61c6deacbe1df1e057dbd9298334044afa150f9aaabbeb3181418ac8520acfdc2ae2
   languageName: node
   linkType: hard
 
