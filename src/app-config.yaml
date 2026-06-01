@@ -10,6 +10,12 @@ app:
     - page:catalog:
         config:
           path: /
+    - catalog-filter:catalog/kind:
+        config:
+          initialFilter: domain
+    - catalog-filter:catalog/list:
+        config:
+          initialFilter: all
     - page:catalog-unprocessed-entities
 
 organization:
