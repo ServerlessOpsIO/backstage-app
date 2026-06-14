@@ -31,7 +31,7 @@ backend:
           $file: rds-combined-ca-bundle.pem
   reading:
     allow:
-      - host: api.catalog.backstage.serverlessops.io
+      - host: api.catalog.platform.serverlessops.io
 
 auth:
   environment: production
