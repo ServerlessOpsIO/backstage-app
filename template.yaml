@@ -154,7 +154,7 @@ Resources:
       RequiresCompatibilities:
         - FARGATE
       ExecutionRoleArn: !Ref ClusterTaskIamRoleArn
-      TaskRoleArn: !Ref TaskIamRole
+      TaskRoleArn: !GetAtt TaskIamRole.Arn
       ContainerDefinitions:
         - Name: !Ref Component
           Image: !Sub '${ContainerRepo}/${ContainerOrg}/${ContainerImage}:${ContainerTag}'
