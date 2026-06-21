@@ -16,6 +16,18 @@ app:
     - catalog-filter:catalog/list:
         config:
           initialFilter: all
+    - sub-page:scaffolder/templates:
+        config:
+          groups:
+            - title: Catalog Entities
+              filter:
+                spec.type: { "$in": ["domain", "system"] }
+            - title: Serverless
+              filter:
+                metadata.tags: { "$contains": "serverless" }
+            - title: Containers
+              filter:
+                metadata.tags: { "$contains": "containerization" }
     - page:catalog-unprocessed-entities
 
 organization:
