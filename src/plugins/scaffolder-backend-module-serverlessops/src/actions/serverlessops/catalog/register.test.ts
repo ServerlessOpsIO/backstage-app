@@ -98,7 +98,8 @@ describe('serverlessops:catalog:register', () => {
                 principal: {
                     type: 'user',
                     userEntityRef: 'user:default/mock'
-                }
+                },
+                version: 'v1'
             },
             targetPluginId: 'catalog'
         })

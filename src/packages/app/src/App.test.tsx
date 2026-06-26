@@ -13,16 +13,13 @@ describe('App', () => {
             techdocs: {
               storageUrl: 'http://localhost:7007/api/techdocs/static/docs',
             },
-            auth: {
-              environment: 'production'
-            }
           },
           context: 'test',
         },
       ] as any,
     };
 
-    const rendered = render(<App />);
+    const rendered = render(App.createRoot());
 
     await waitFor(() => {
       expect(rendered.baseElement).toBeInTheDocument();
