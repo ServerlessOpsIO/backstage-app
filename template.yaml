@@ -200,7 +200,6 @@ Resources:
     Properties:
       ServiceName: !Ref Component
       Cluster: !Ref ClusterName
-      LaunchType: FARGATE
       CapacityProviderStrategy:
         - CapacityProvider: FARGATE_SPOT
           Weight: 1
