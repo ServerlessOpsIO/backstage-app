@@ -64,6 +64,14 @@ Parameters:
     Type: Number
     Description: How many copies of the service task to run
 
+  ServiceScaleOutCron:
+    Type: String
+    Description: UTC cron expression for scaling up service capacity
+
+  ServiceScaleInCron:
+    Type: String
+    Description: UTC cron expression for scaling down service capacity
+
   ContainerPort:
     Type: Number
     Description: Port container will listen on
@@ -212,7 +220,6 @@ Resources:
         DeploymentCircuitBreaker:
           Enable: true
           Rollback: true
-      DesiredCount: !Ref ContainerDesiredCount
       NetworkConfiguration:
         AwsvpcConfiguration:
           SecurityGroups:
@@ -225,6 +232,27 @@ Resources:
           ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref AlbTargetGroup
       HealthCheckGracePeriodSeconds: 30
+
+  ServiceScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      ServiceNamespace: ecs
+      ScalableDimension: ecs:service:DesiredCount
+      ResourceId: !Sub service/${ClusterName}/${Service.Name}
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService
+      MinCapacity: 0
+      MaxCapacity: !Ref ContainerDesiredCount
+      ScheduledActions:
+        - ScheduledActionName: ScaleOut
+          Schedule: !Ref ServiceScaleOutCron
+          ScalableTargetAction:
+            MinCapacity: !Ref ContainerDesiredCount
+            MaxCapacity: !Ref ContainerDesiredCount
+        - ScheduledActionName: ScaleIn
+          Schedule: !Ref ServiceScaleInCron
+          ScalableTargetAction:
+            MinCapacity: 0
+            MaxCapacity: 0
 
   AlbTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
