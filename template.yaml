@@ -64,6 +64,13 @@ Parameters:
     Type: Number
     Description: How many copies of the service task to run
 
+  ServiceScalingTimezone:
+    Type: String
+    Description: Timezone for service scaling cron expressions
+    AllowedValues:
+      - UTC
+      - America/New_York
+
   ServiceScaleOutCron:
     Type: String
     Description: UTC cron expression for scaling up service capacity
@@ -245,10 +252,12 @@ Resources:
       ScheduledActions:
         - ScheduledActionName: ScaleOut
           Schedule: !Ref ServiceScaleOutCron
+          Timezone: !Ref ServiceScalingTimezone
           ScalableTargetAction:
             MinCapacity: !Ref ContainerDesiredCount
             MaxCapacity: !Ref ContainerDesiredCount
         - ScheduledActionName: ScaleIn
+          Timezone: !Ref ServiceScalingTimezone
           Schedule: !Ref ServiceScaleInCron
           ScalableTargetAction:
             MinCapacity: 0
