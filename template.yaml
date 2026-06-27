@@ -207,7 +207,7 @@ Resources:
       PropagateTags: TASK_DEFINITION
       EnableExecuteCommand: true
       DeploymentConfiguration:
-        MaximumPercent: 200
+        MaximumPercent: 400
         MinimumHealthyPercent: 75
         DeploymentCircuitBreaker:
           Enable: true
@@ -224,7 +224,7 @@ Resources:
         - ContainerName: !Ref Component
           ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref AlbTargetGroup
-      HealthCheckGracePeriodSeconds: 60
+      HealthCheckGracePeriodSeconds: 30
 
   AlbTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -237,7 +237,7 @@ Resources:
       TargetType: ip
       Port: !Ref ContainerPort
       Protocol: HTTP
-      UnhealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
       VpcId: !Ref VpcId
 
   AlbListenerRule:
