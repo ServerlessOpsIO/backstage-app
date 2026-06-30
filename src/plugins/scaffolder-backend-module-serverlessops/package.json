@@ -24,15 +24,15 @@
     "postpack": "backstage-cli package postpack"
   },
   "dependencies": {
-    "@backstage/backend-plugin-api": "^1.9.1",
-    "@backstage/catalog-client": "^1.15.1",
-    "@backstage/catalog-model": "^1.9.0",
-    "@backstage/plugin-scaffolder-node": "^0.13.3",
-    "@backstage/plugin-scaffolder-node-test-utils": "^0.3.11",
+    "@backstage/backend-plugin-api": "backstage:^",
+    "@backstage/catalog-client": "backstage:^",
+    "@backstage/catalog-model": "backstage:^",
+    "@backstage/plugin-scaffolder-node": "backstage:^",
+    "@backstage/plugin-scaffolder-node-test-utils": "backstage:^",
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.36.2",
+    "@backstage/cli": "backstage:^",
     "jest-fetch-mock": "^3.0.3"
   },
   "files": [
