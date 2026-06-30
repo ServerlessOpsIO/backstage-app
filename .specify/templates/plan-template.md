@@ -18,29 +18,35 @@
   the iteration process.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript with the Backstage Yarn workspace under `src/`; root infrastructure defined in AWS SAM templates and container build assets
 
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
+**Primary Dependencies**: Backstage plugins/modules, Yarn workspaces, AWS SAM, container image build pipeline, PostgreSQL-backed production runtime
 
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+**Storage**: PostgreSQL in production; catalog, provider, and integration state as defined by Backstage services and configured dependencies
 
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]
+**Testing**: `sam validate --lint` and `sam build --parallel --template template.yaml` at repo root; `yarn tsc:full`, `yarn build:all`, `yarn test:all`, and `yarn lint:all` from `src/`; feature-specific automated tests for changed behavior
 
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Target Platform**: Local Backstage development plus Amazon-deployed ECS/Fargate runtime managed by the repository root
 
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]
+**Project Type**: Backstage application monorepo under `src/` with root-owned infrastructure and deployment assets
 
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]
+**Performance Goals**: Preserve stable catalog, scaffolder, sign-in, routing, and production deployment behavior for the affected surface
 
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]
+**Constraints**: Respect plugin/package boundaries, environment-driven configuration, secret handling rules, ECS runtime assumptions, and reproducible build outputs
 
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Scale/Scope**: Feature scope MUST identify whether it changes repo-root deployment assets, `src/` application code, or both, and define the runtime contract between them
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Changes MUST keep application source of truth in `src/` and deployment source of truth at the repository root.
+- Frontend work MUST land in `src/packages/app` or a dedicated frontend plugin; backend work MUST land in backend modules/plugins wired through composition; reusable ServerlessOps behavior MUST live under `src/plugins/*`.
+- The plan MUST identify configuration changes across `app-config.yaml`, `app-config.local.yaml`, `app-config.production.yaml`, and `app-config.home.yaml`, plus any required environment variables or git-ignored credential files.
+- The plan MUST state how secrets are avoided in tracked files and how least-privilege external access is preserved.
+- The plan MUST list the required validation commands by scope: root `sam validate --lint` and `sam build --parallel --template template.yaml`; `src/` `yarn tsc:full`, `yarn build:all`, `yarn test:all`, and `yarn lint:all`.
+- If catalog ingestion, entity providers, scaffolder actions, auth providers, integrations, routes, Docker behavior, ports, health checks, or ECS assumptions change, the plan MUST capture deployment and operational impact.
+- User-visible workflow changes MUST include same-change documentation updates.
 
 ## Project Structure
 
@@ -65,39 +71,20 @@ specs/[###-feature]/
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+template.yaml
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── app-config.yaml
+├── app-config.local.yaml
+├── app-config.production.yaml
+├── app-config.home.yaml
+├── packages/
+│   ├── app/
+│   └── backend/
+└── plugins/
 
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+# Add feature-specific test and package paths based on the selected plugin/module
+# structure above. Root-level infrastructure artifacts and `src/` application
+# assets must both be listed when a feature spans both surfaces.
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real

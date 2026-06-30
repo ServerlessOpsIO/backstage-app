@@ -9,7 +9,7 @@ description: "Task list template for feature implementation"
 
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Tests**: Include the narrowest useful automated test tasks for every change in behavior. If a feature changes existing behavior, include tasks to update affected tests.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -21,10 +21,10 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- **Repository root**: AWS SAM template, container, and deployment assets such as `template.yaml`
+- **Application monorepo**: `src/packages/app`, `src/packages/backend`, and reusable workspace code in `src/plugins/*`
+- **Configuration**: `src/app-config.yaml`, `src/app-config.local.yaml`, `src/app-config.production.yaml`, `src/app-config.home.yaml`
+- **Tests**: Use the real package or plugin test paths defined by the implementation plan; include root validation tasks when infrastructure changes
 
 <!--
   ============================================================================
@@ -49,9 +49,9 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
+- [ ] T001 Identify whether the change affects repository root deployment assets, `src/` application code, or both
+- [ ] T002 Map the target package, plugin, or backend module paths from the implementation plan
+- [ ] T003 [P] Identify required config files, environment variables, and documentation surfaces touched by the feature
 
 ---
 
@@ -63,12 +63,12 @@ description: "Task list template for feature implementation"
 
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T004 Setup database schema and migrations framework
-- [ ] T005 [P] Implement authentication/authorization framework
-- [ ] T006 [P] Setup API routing and middleware structure
-- [ ] T007 Create base models/entities that all stories depend on
-- [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T004 Establish configuration wiring across the required `app-config*.yaml` files and environment variables
+- [ ] T005 [P] Add or update plugin/module registration and composition boundaries
+- [ ] T006 [P] Define catalog, scaffolder, auth, or integration contracts affected by the change
+- [ ] T007 Remove any need for tracked secrets and document secret injection or ignored-file handling
+- [ ] T008 Define required documentation and template metadata updates
+- [ ] T009 Define the exact validation commands and working directories required before merge
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -80,12 +80,13 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1 ⚠️
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+> **NOTE: Add the narrowest useful automated tests first and ensure they fail before implementation when feasible**
 
 - [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T011a [US1] Update existing tests covering changed behavior in the affected package or plugin
 
 ### Implementation for User Story 1
 
@@ -106,10 +107,11 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 2 ⚠️
 
 - [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T019a [US2] Update existing tests covering changed behavior in the affected package or plugin
 
 ### Implementation for User Story 2
 
@@ -128,10 +130,11 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 3 ⚠️
 
 - [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
 - [ ] T025 [P] [US3] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T025a [US3] Update existing tests covering changed behavior in the affected package or plugin
 
 ### Implementation for User Story 3
 
@@ -151,12 +154,13 @@ Examples of foundational tasks (adjust based on your project):
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] TXXX [P] Documentation updates in docs/
+- [ ] TXXX [P] Documentation, template metadata, or config guidance updates required by the feature
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
-- [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
+- [ ] TXXX [P] Additional automated coverage for user-critical UI, sign-in, routing, scaffolder, or catalog flows when materially affected
 - [ ] TXXX Security hardening
-- [ ] TXXX Run quickstart.md validation
+- [ ] TXXX Run required root validation commands (`sam validate --lint`, `sam build --parallel --template template.yaml`) when infrastructure changes
+- [ ] TXXX Run required `src/` validation commands (`yarn tsc:full`, `yarn build:all`, `yarn test:all`, `yarn lint:all`) when application changes
 
 ---
 
@@ -180,6 +184,7 @@ Examples of foundational tasks (adjust based on your project):
 ### Within Each User Story
 
 - Tests (if included) MUST be written and FAIL before implementation
+- Changed behavior MUST update existing tests even when no brand-new test file is required
 - Models before services
 - Services before endpoints
 - Core implementation before integration
@@ -250,3 +255,4 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+- Include explicit tasks for config wiring, documentation updates, secret-safe handling, and root/`src/` validation whenever those surfaces are affected

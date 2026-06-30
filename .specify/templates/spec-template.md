@@ -77,6 +77,8 @@
 
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
+- What happens when required runtime configuration is missing or invalid in local, home, or production environments?
+- How does repeat execution behave for catalog ingestion, entity providers, scaffolder actions, or template registration?
 
 ## Requirements *(mandatory)*
 
@@ -92,6 +94,19 @@
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
+
+### Configuration, Secrets, and Deployment Requirements *(mandatory)*
+
+- **CR-001**: The feature MUST identify whether the source of truth change lives at the repository root, under `src/`, or both.
+- **CR-002**: New configuration MUST define its source in `app-config*.yaml`, environment variables, or git-ignored credential includes, and MUST specify default or failure behavior.
+- **CR-003**: The feature MUST NOT require tracked secrets in config, fixtures, examples, templates, or documentation.
+- **CR-004**: If the feature affects production routing, auth, integrations, container behavior, health behavior, network access, or ECS assumptions, the deployment impact MUST be described.
+- **CR-005**: The feature MUST identify the narrowest automated test coverage needed for changed behavior and any required root or `src/` validation commands.
+
+### Documentation and Operational Impact *(mandatory)*
+
+- **DO-001**: Describe any README, template metadata, or configuration guidance changes required by user-visible workflow changes.
+- **DO-002**: Describe any required environment variables, external dependencies, schedules, ownership metadata, or failure expectations introduced by the feature.
 
 *Example of marking unclear requirements:*
 
@@ -129,3 +144,11 @@
 - [Assumption about scope boundaries, e.g., "Mobile support is out of scope for v1"]
 - [Assumption about data/environment, e.g., "Existing authentication system will be reused"]
 - [Dependency on existing system/service, e.g., "Requires access to the existing user profile API"]
+
+## Constitution Alignment *(mandatory)*
+
+- **Architecture Boundaries**: [Describe the package/plugin/module boundaries this feature follows.]
+- **Configuration Contract**: [List config files, environment variables, and runtime contract changes across root and `src/`.]
+- **Secrets Posture**: [Explain how secrets stay out of tracked files and how least privilege is preserved.]
+- **Validation Plan**: [List the exact root and `src/` commands that will be used to validate the feature.]
+- **Documentation Impact**: [List documentation or template updates that must ship with the feature.]
