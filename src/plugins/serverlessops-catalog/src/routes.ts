@@ -1,5 +1,7 @@
-import { createRouteRef } from '@backstage/core-plugin-api';
+import { createRouteRef } from '@backstage/frontend-plugin-api'
 
-export const rootRouteRef = createRouteRef({
-  id: 'serverlessops-catalog',
-});
+export const catalogIndexRouteRef = createRouteRef()
+
+export const tabbedCatalogRouteRef = createRouteRef()
+
+export const tabbedDirectoryRouteRef = createRouteRef()

@@ -1,11 +1,11 @@
-import { createDevApp } from '@backstage/dev-utils';
-import { soCatalogPlugin, SoTabbedCatalogIndexPage } from '../src/plugin';
+import ReactDOM from 'react-dom/client'
+import { createApp } from '@backstage/frontend-defaults'
+import serverlessOpsCatalogPlugin from '../src/plugin'
 
-createDevApp()
-  .registerPlugin(soCatalogPlugin)
-  .addPage({
-    element: <SoTabbedCatalogIndexPage />,
-    title: 'Root Page',
-    path: '/catalog',
-  })
-  .render();
+ReactDOM
+    .createRoot(document.getElementById('root')!)
+    .render(
+        createApp({
+            features: [serverlessOpsCatalogPlugin],
+        }).createRoot()
+    )

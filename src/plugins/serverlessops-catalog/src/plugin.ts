@@ -1,40 +1,59 @@
+import { createElement } from 'react'
+import { createFrontendPlugin, PageBlueprint } from '@backstage/frontend-plugin-api'
 import {
-  createPlugin,
-  createRoutableExtension,
-} from '@backstage/core-plugin-api';
+    catalogIndexRouteRef,
+    tabbedCatalogRouteRef,
+    tabbedDirectoryRouteRef,
+} from './routes'
 
-import { rootRouteRef } from './routes';
+export const SoCatalogIndexPageEntityList = PageBlueprint.make({
+    name: 'catalog-index',
+    params: {
+        path: '/catalog-list',
+        routeRef: catalogIndexRouteRef,
+        loader: () =>
+            import('./components/CatalogIndexPageEntityList').then(m =>
+                createElement(m.CatalogIndexPageEntityList)
+            ),
+    },
+})
 
-export const soCatalogPlugin = createPlugin({
-  id: 'serverlessops-catalog',
-  routes: {
-    root: rootRouteRef,
-  },
-});
+export const SoTabbedCatalogIndexPage = PageBlueprint.make({
+    name: 'tabbed-catalog',
+    params: {
+        path: '/catalog',
+        routeRef: tabbedCatalogRouteRef,
+        loader: () =>
+            import('./components/TabbedCatalogIndexPage').then(m =>
+                createElement(m.TabbedCatalogIndexPage)
+            ),
+    },
+})
 
-export const SoCatalogIndexPageEntityList = soCatalogPlugin.provide(
-  createRoutableExtension({
-    name: 'SoCatalogIndexPageEntityList',
-    component: () =>
-      import('./components/CatalogIndexPageEntityList').then(m => m.CatalogIndexPageEntityList),
-    mountPoint: rootRouteRef,
-  }),
-);
+export const SoTabbedDirectoryIndexPage = PageBlueprint.make({
+    name: 'tabbed-directory',
+    params: {
+        path: '/directory',
+        routeRef: tabbedDirectoryRouteRef,
+        loader: () =>
+            import('./components/TabbedDirectoryIndexPage').then(m =>
+                createElement(m.TabbedDirectoryIndexPage)
+            ),
+    },
+})
 
-export const SoTabbedCatalogIndexPage = soCatalogPlugin.provide(
-  createRoutableExtension({
-    name: 'SoTabbedCatalogIndexPage',
-    component: () =>
-      import('./components/TabbedCatalogIndexPage').then(m => m.TabbedCatalogIndexPage),
-    mountPoint: rootRouteRef,
-  }),
-);
+const soCatalogPlugin = createFrontendPlugin({
+    pluginId: 'serverlessops-catalog',
+    routes: {
+        catalogIndex: catalogIndexRouteRef,
+        tabbedCatalog: tabbedCatalogRouteRef,
+        tabbedDirectory: tabbedDirectoryRouteRef,
+    },
+    extensions: [
+        SoCatalogIndexPageEntityList,
+        SoTabbedCatalogIndexPage,
+        SoTabbedDirectoryIndexPage,
+    ],
+})
 
-export const SoTabbedDirectoryIndexPage = soCatalogPlugin.provide(
-  createRoutableExtension({
-    name: 'SoTabbedDirectoryIndexPage',
-    component: () =>
-      import('./components/TabbedDirectoryIndexPage').then(m => m.TabbedDirectoryIndexPage),
-    mountPoint: rootRouteRef,
-  }),
-);
+export default soCatalogPlugin
