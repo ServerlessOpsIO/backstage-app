@@ -24,14 +24,14 @@
     "postpack": "backstage-cli package postpack"
   },
   "dependencies": {
-    "@backstage/backend-plugin-api": "^1.9.1",
-    "@backstage/catalog-client": "^1.15.1",
-    "@backstage/catalog-model": "^1.9.0",
-    "@backstage/core-plugin-api": "^1.12.6",
-    "@backstage/plugin-catalog-react": "^3.0.0",
-    "@backstage/plugin-scaffolder": "^1.37.0",
-    "@backstage/plugin-scaffolder-node": "^0.13.3",
-    "@backstage/plugin-scaffolder-react": "^2.0.0",
+    "@backstage/backend-plugin-api": "backstage:^",
+    "@backstage/catalog-client": "backstage:^",
+    "@backstage/catalog-model": "backstage:^",
+    "@backstage/core-plugin-api": "backstage:^",
+    "@backstage/plugin-catalog-react": "backstage:^",
+    "@backstage/plugin-scaffolder": "backstage:^",
+    "@backstage/plugin-scaffolder-node": "backstage:^",
+    "@backstage/plugin-scaffolder-react": "backstage:^",
     "@material-ui/core": "^4.12.4",
     "@material-ui/lab": "^4.0.0-alpha.61",
     "json-schema": "^0.4.0",
@@ -42,7 +42,7 @@
     "zod-to-json-schema": "^3.23.5"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.36.2",
+    "@backstage/cli": "backstage:^",
     "@types/nunjucks": "^3.2.6",
     "@types/react-window": "^1.8.8"
   },
