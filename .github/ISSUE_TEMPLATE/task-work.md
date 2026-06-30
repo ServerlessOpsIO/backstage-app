@@ -1,9 +1,8 @@
 ---
 name: Task work
 about: Describe this issue templateWork needed to be done
-title: ''
+title: 'Title'
 labels: task
-assignees: ''
 type: task
 
 ---

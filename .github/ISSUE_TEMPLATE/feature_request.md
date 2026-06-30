@@ -1,9 +1,8 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
+title: 'Title'
 labels: feature
-assignees: ''
 type: feature
 
 ---
