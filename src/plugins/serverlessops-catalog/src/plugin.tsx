@@ -14,7 +14,7 @@ const tabbedDirectoryRouteRef = createRouteRef()
 export const SoTabbedCatalogIndexPage = PageBlueprint.make({
     name: 'tabbed-catalog',
     params: {
-        path: '/catalog-tabbed',
+      path: '/serverlessops-catalog/catalog',
         routeRef: tabbedCatalogRouteRef,
         loader: () =>
             import('./components/TabbedCatalogIndexPage').then(m =>
@@ -26,7 +26,7 @@ export const SoTabbedCatalogIndexPage = PageBlueprint.make({
 export const SoTabbedDirectoryIndexPage = PageBlueprint.make({
     name: 'tabbed-directory',
     params: {
-        path: '/directory',
+        path: '/serverlessops-catalog/directory',
         routeRef: tabbedDirectoryRouteRef,
         loader: () =>
             import('./components/TabbedDirectoryIndexPage').then(m =>
