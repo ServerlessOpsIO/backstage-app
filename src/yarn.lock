@@ -2156,6 +2156,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@backstage/frontend-dev-utils@backstage:^::backstage=1.52.1&npm=0.1.3, @backstage/frontend-dev-utils@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@backstage/frontend-dev-utils@npm:0.1.3"
+  dependencies:
+    "@backstage/frontend-defaults": "npm:^0.5.3"
+    "@backstage/frontend-plugin-api": "npm:^0.17.2"
+    "@backstage/plugin-app": "npm:^0.5.0"
+    "@backstage/ui": "npm:^0.16.0"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+    react-router-dom: ^6.30.2
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/4be42176af6655f5d1daeaa6a3f5d6d8d4d43805c0f227814036b05876c68c294d2ea4d468b97679b0e221ea49f5cc0e2ab2101b9894f44524c853d6a0516ade
+  languageName: node
+  linkType: hard
+
 "@backstage/frontend-plugin-api@backstage:^::backstage=1.52.1&npm=0.17.2, @backstage/frontend-plugin-api@npm:^0.17.2":
   version: 0.17.2
   resolution: "@backstage/frontend-plugin-api@npm:0.17.2"
@@ -5153,7 +5173,7 @@ __metadata:
     "@backstage/core-app-api": "backstage:^"
     "@backstage/core-components": "backstage:^"
     "@backstage/core-plugin-api": "backstage:^"
-    "@backstage/frontend-defaults": "backstage:^"
+    "@backstage/frontend-dev-utils": "backstage:^"
     "@backstage/frontend-plugin-api": "backstage:^"
     "@backstage/plugin-api-docs": "backstage:^"
     "@backstage/plugin-catalog": "backstage:^"
