@@ -1,6 +1,5 @@
 export {
-    SoCatalogIndexPageEntityList,
-    SoTabbedCatalogIndexPage,
-    SoTabbedDirectoryIndexPage,
+    SoCatalogTabbedIndexPage,
+    SoCatalogTabbedDirectoryIndexPage,
     serverlessOpsCatalogPlugin as default,
 } from './plugin';

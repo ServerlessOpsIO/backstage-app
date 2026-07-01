@@ -11,8 +11,8 @@ const catalogIndexRouteRef = createRouteRef()
 const tabbedCatalogRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
 
-export const SoTabbedCatalogIndexPage = PageBlueprint.make({
-    name: 'tabbed-catalog',
+export const SoCatalogTabbedIndexPage = PageBlueprint.make({
+    name: 'serverlessops-catalog-tabbed-index',
     params: {
       path: '/serverlessops-catalog/catalog',
         routeRef: tabbedCatalogRouteRef,
@@ -23,8 +23,8 @@ export const SoTabbedCatalogIndexPage = PageBlueprint.make({
     },
 })
 
-export const SoTabbedDirectoryIndexPage = PageBlueprint.make({
-    name: 'tabbed-directory',
+export const SoCatalogTabbedDirectoryIndexPage = PageBlueprint.make({
+  name: 'serverlessops-catalog-tabbed-directory-index',
     params: {
         path: '/serverlessops-catalog/directory',
         routeRef: tabbedDirectoryRouteRef,
@@ -43,8 +43,8 @@ const serverlessOpsCatalogPlugin = createFrontendPlugin({
         tabbedDirectory: tabbedDirectoryRouteRef,
     },
     extensions: [
-        SoTabbedCatalogIndexPage,
-        SoTabbedDirectoryIndexPage,
+        SoCatalogTabbedIndexPage,
+        SoCatalogTabbedDirectoryIndexPage,
     ],
 })
 
