@@ -11,18 +11,6 @@ const catalogIndexRouteRef = createRouteRef()
 const tabbedCatalogRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
 
-export const SoCatalogIndexPageEntityList = PageBlueprint.make({
-    name: 'catalog-index',
-    params: {
-        path: '/catalog-list',
-        routeRef: catalogIndexRouteRef,
-        loader: () =>
-            import('./components/CatalogIndexPageEntityList').then(m =>
-                createElement(m.CatalogIndexPageEntityList)
-            ),
-    },
-})
-
 export const SoTabbedCatalogIndexPage = PageBlueprint.make({
     name: 'tabbed-catalog',
     params: {
@@ -55,7 +43,6 @@ const serverlessOpsCatalogPlugin = createFrontendPlugin({
         tabbedDirectory: tabbedDirectoryRouteRef,
     },
     extensions: [
-        SoCatalogIndexPageEntityList,
         SoTabbedCatalogIndexPage,
         SoTabbedDirectoryIndexPage,
     ],
