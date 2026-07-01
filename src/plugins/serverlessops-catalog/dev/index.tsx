@@ -1,11 +1,6 @@
-import ReactDOM from 'react-dom/client'
-import { createApp } from '@backstage/frontend-defaults'
-import serverlessOpsCatalogPlugin from '../src/plugin'
+import { createDevApp } from '@backstage/frontend-dev-utils'
+import serverlessOpsCatalogPlugin from '../src/alpha'
 
-ReactDOM
-    .createRoot(document.getElementById('root')!)
-    .render(
-        createApp({
-            features: [serverlessOpsCatalogPlugin],
-        }).createRoot()
-    )
+createDevApp({
+    features: [serverlessOpsCatalogPlugin],
+})
