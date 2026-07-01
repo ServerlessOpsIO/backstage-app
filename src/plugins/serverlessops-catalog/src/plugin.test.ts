@@ -2,6 +2,7 @@ import {
   SoCatalogIndexPageEntityList,
   SoTabbedCatalogIndexPage,
   SoTabbedDirectoryIndexPage,
+  serverlessOpsCatalogPlugin,
 } from './plugin';
 
 describe('catalog', () => {
@@ -13,5 +14,8 @@ describe('catalog', () => {
   });
   it('should export plugin SoTabbedDirectoryIndexPage', () => {
     expect(SoTabbedDirectoryIndexPage).toBeDefined();
+  });
+  it('should export default plugin surface', () => {
+    expect(serverlessOpsCatalogPlugin).toBeDefined();
   });
 });

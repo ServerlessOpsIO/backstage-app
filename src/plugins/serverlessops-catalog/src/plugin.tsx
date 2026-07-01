@@ -5,6 +5,8 @@ import {
     PageBlueprint,
 } from '@backstage/frontend-plugin-api'
 
+export { TabbedCatalogIndexPage } from './components/TabbedCatalogIndexPage'
+
 const catalogIndexRouteRef = createRouteRef()
 const tabbedCatalogRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
@@ -59,4 +61,4 @@ const serverlessOpsCatalogPlugin = createFrontendPlugin({
     ],
 })
 
-export default serverlessOpsCatalogPlugin
+export { serverlessOpsCatalogPlugin }

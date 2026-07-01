@@ -1,6 +1,6 @@
 import { createApp } from '@backstage/frontend-defaults';
 import catalogPlugin from '@backstage/plugin-catalog/alpha';
-import serverlessOpsCatalogPlugin from '@internal/backstage-plugin-serverlessops-catalog/alpha';
+import serverlessOpsCatalogPlugin from '@internal/backstage-plugin-serverlessops-catalog';
 import { navModule } from './modules/nav';
 import { configApiRef, googleAuthApiRef, useApi } from '@backstage/core-plugin-api';
 import { SignInPageBlueprint } from '@backstage/plugin-app-react';
