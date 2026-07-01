@@ -24,7 +24,7 @@ export const SoCatalogIndexPageEntityList = PageBlueprint.make({
 export const SoTabbedCatalogIndexPage = PageBlueprint.make({
     name: 'tabbed-catalog',
     params: {
-        path: '/catalog',
+        path: '/catalog-tabbed',
         routeRef: tabbedCatalogRouteRef,
         loader: () =>
             import('./components/TabbedCatalogIndexPage').then(m =>
