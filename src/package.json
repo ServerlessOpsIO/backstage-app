@@ -50,7 +50,9 @@
   },
   "resolutions": {
     "@types/react": "^18",
-    "@types/react-dom": "^18"
+    "@types/react-dom": "^18",
+    "knex": "3.2.10",
+    "tarn": "3.0.2"
   },
   "prettier": "@backstage/cli/config/prettier-config",
   "lint-staged": {

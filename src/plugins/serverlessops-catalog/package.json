@@ -11,7 +11,8 @@
     "types": "dist/index.d.ts"
   },
   "backstage": {
-    "role": "frontend-plugin"
+    "role": "frontend-plugin",
+    "pluginId": "serverlessops-catalog"
   },
   "sideEffects": false,
   "scripts": {
@@ -27,6 +28,7 @@
     "@backstage/catalog-model": "backstage:^",
     "@backstage/core-components": "backstage:^",
     "@backstage/core-plugin-api": "backstage:^",
+    "@backstage/frontend-plugin-api": "backstage:^",
     "@backstage/plugin-api-docs": "backstage:^",
     "@backstage/plugin-catalog": "backstage:^",
     "@backstage/plugin-catalog-graph": "backstage:^",
@@ -43,12 +45,13 @@
     "react-use": "^17.2.4"
   },
   "peerDependencies": {
-    "react": "^16.13.1 || ^17.0.0 || ^18.0.0"
+    "react": "^16.13.1 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.13.1 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
     "@backstage/cli": "backstage:^",
     "@backstage/core-app-api": "backstage:^",
-    "@backstage/dev-utils": "backstage:^",
+    "@backstage/frontend-dev-utils": "backstage:^",
     "@backstage/test-utils": "backstage:^",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^14.0.0",

@@ -1,17 +1,17 @@
 import {
-  SoCatalogIndexPageEntityList,
-  SoTabbedCatalogIndexPage,
-  SoTabbedDirectoryIndexPage,
+  SoCatalogTabbedDirectoryIndexPage,
+  SoCatalogTabbedIndexPage,
+  serverlessOpsCatalogPlugin,
 } from './plugin';
 
 describe('catalog', () => {
-  it('should export plugin SoCatalogIndexPageEntityList', () => {
-    expect(SoCatalogIndexPageEntityList).toBeDefined();
+  it('should export plugin SoCatalogTabbedDirectoryIndexPage', () => {
+    expect(SoCatalogTabbedDirectoryIndexPage).toBeDefined();
   });
-  it('should export plugin SoTabbedCatalogIndexPage', () => {
-    expect(SoTabbedCatalogIndexPage).toBeDefined();
+  it('should export plugin SoCatalogTabbedIndexPage', () => {
+    expect(SoCatalogTabbedIndexPage).toBeDefined();
   });
-  it('should export plugin SoTabbedDirectoryIndexPage', () => {
-    expect(SoTabbedDirectoryIndexPage).toBeDefined();
+  it('should export default plugin surface', () => {
+    expect(serverlessOpsCatalogPlugin).toBeDefined();
   });
 });

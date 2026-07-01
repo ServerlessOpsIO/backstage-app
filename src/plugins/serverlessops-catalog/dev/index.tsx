@@ -1,11 +1,6 @@
-import { createDevApp } from '@backstage/dev-utils';
-import { soCatalogPlugin, SoTabbedCatalogIndexPage } from '../src/plugin';
+import { createDevApp } from '@backstage/frontend-dev-utils'
+import serverlessOpsCatalogPlugin from '../src'
 
-createDevApp()
-  .registerPlugin(soCatalogPlugin)
-  .addPage({
-    element: <SoTabbedCatalogIndexPage />,
-    title: 'Root Page',
-    path: '/catalog',
-  })
-  .render();
+createDevApp({
+    features: [serverlessOpsCatalogPlugin],
+})
