@@ -37,6 +37,9 @@ export const SoCatalogTabbedDirectoryIndexPage = PageBlueprint.make({
 
 const serverlessOpsCatalogPlugin = createFrontendPlugin({
     pluginId: 'serverlessops-catalog',
+    info: {
+        packageJson: () => require('../../../package.json'),
+    },
     routes: {
         catalogIndex: catalogIndexRouteRef,
         tabbedCatalog: tabbedCatalogRouteRef,
