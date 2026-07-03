@@ -1,4 +1,5 @@
 import { UserIcon } from '@backstage/core-components'
+import { z } from 'zod'
 import {
     createFrontendModule,
     createRouteRef,
@@ -7,15 +8,25 @@ import {
 
 const tabbedDirectoryRouteRef = createRouteRef()
 
-export const SoCatalogTabbedIndexPage = PageBlueprint.make({
-    params: {
-        path: '/catalog',
-        routeRef: createRouteRef({ aliasFor: 'catalog.catalogIndex' }),
-        loader: async () => {
-            const { TabbedCatalogIndexPage } = await import('./components/TabbedCatalogIndexPage')
-            return < TabbedCatalogIndexPage />
-        }
-    }
+export const SoCatalogTabbedIndexPage = PageBlueprint.makeWithOverrides({
+    configSchema: {
+        pagination: z
+            .object({
+                mode: z.enum(['offset', 'cursor']).optional(),
+                limit: z.number().optional(),
+            })
+            .optional(),
+    },
+    factory(originalFactory, { config }) {
+        return originalFactory({
+            path: '/catalog',
+            routeRef: createRouteRef({ aliasFor: 'catalog.catalogIndex' }),
+            loader: async () => {
+                const { TabbedCatalogIndexPage } = await import('./components/TabbedCatalogIndexPage')
+                return <TabbedCatalogIndexPage pagination={config.pagination} />
+            },
+        })
+    },
 })
 
 export const SoCatalogTabbedDirectoryIndexPage = PageBlueprint.make({

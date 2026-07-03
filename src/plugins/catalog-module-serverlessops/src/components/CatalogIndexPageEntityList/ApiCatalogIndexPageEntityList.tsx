@@ -18,7 +18,7 @@ const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createSpecTypeColumn({ width: 'auto' }),
   columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
-export function ApiCatalogIndexPageEntityList() {
+export function ApiCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
@@ -38,6 +38,7 @@ export function ApiCatalogIndexPageEntityList() {
       initialKind="api"
       initiallySelectedFilter="all"
       columns={defaultColumns}
+      pagination={pagination}
     />
   )
 }

@@ -7,7 +7,7 @@ import {
   UserListPicker,
 } from '@backstage/plugin-catalog-react';
 
-export function LocationCatalogIndexPageEntityList() {
+export function LocationCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
@@ -26,6 +26,7 @@ export function LocationCatalogIndexPageEntityList() {
       }
       initialKind="location"
       initiallySelectedFilter="all"
+      pagination={pagination}
     />
   )
 }

@@ -18,7 +18,7 @@ const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
 
-export function ComponentCatalogIndexPageEntityList() {
+export function ComponentCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
@@ -38,6 +38,7 @@ export function ComponentCatalogIndexPageEntityList() {
       initialKind="component"
       initiallySelectedFilter="all"
       columns={defaultColumns}
+      pagination={pagination}
     />
   )
 }

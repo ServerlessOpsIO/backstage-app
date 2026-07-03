@@ -9,7 +9,10 @@ app:
     # Configure the catalog index page to be the root page, this is normally mounted on /catalog
     - page:catalog:
         config:
-          path: /
+          pagination:
+            mode: offset
+            limit: 20
+          #path: /
     - catalog-filter:catalog/kind:
         config:
           initialFilter: domain

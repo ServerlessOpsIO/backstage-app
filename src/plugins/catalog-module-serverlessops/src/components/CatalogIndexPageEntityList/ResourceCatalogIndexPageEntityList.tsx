@@ -19,7 +19,7 @@ const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
 
-export function ResourceCatalogIndexPageEntityList() {
+export function ResourceCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
@@ -39,6 +39,7 @@ export function ResourceCatalogIndexPageEntityList() {
       initialKind="resource"
       initiallySelectedFilter="all"
       columns={defaultColumns}
+      pagination={pagination}
     />
   )
 }
