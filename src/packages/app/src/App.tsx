@@ -1,11 +1,16 @@
 import { createApp } from '@backstage/frontend-defaults';
 import catalogPlugin from '@backstage/plugin-catalog/alpha';
-import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-module-serverlessops';
 import { navModule } from './modules/nav';
 import { configApiRef, googleAuthApiRef, useApi } from '@backstage/core-plugin-api';
 import { SignInPageBlueprint } from '@backstage/plugin-app-react';
 import { SignInPage } from '@backstage/core-components';
 import { createFrontendModule } from '@backstage/frontend-plugin-api';
+
+// external plugins
+import githubActionsPlugin from '@backstage-community/plugin-github-actions/alpha';
+
+// local plugins
+import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-module-serverlessops';
 
 const signInPage = SignInPageBlueprint.make({
   params: {
@@ -48,6 +53,7 @@ export default createApp({
   features: [
     catalogPlugin,
     navModule,
+    githubActionsPlugin,
     serverlessOpsCatalogModule,
     createFrontendModule({
       pluginId: 'app',
