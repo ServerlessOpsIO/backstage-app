@@ -129,6 +129,16 @@ Parameters:
     Description: Google OAuth client secret
     NoEcho: true
 
+  AuthGithubClientId:
+    Type: String
+    Description: GitHub OAuth client ID
+    NoEcho: true
+
+  AuthGithubClientSecret:
+    Type: String
+    Description: GitHub OAuth client secret
+    NoEcho: true
+
   BackstageAppUrl:
     Type: String
     Description: URL of application frontend
@@ -188,6 +198,10 @@ Resources:
               Value: !Ref AuthGoogleClientId
             - Name: AUTH_GOOGLE_CLIENT_SECRET
               Value: !Ref AuthGoogleClientSecret
+            - Name: AUTH_GITHUB_CLIENT_ID
+              Value: !Ref AuthGithubClientId
+            - Name: AUTH_GITHUB_CLIENT_SECRET
+              Value: !Ref AuthGithubClientSecret
             - Name: BACKSTAGE_APP_URL
               Value: !Ref BackstageAppUrl
             - Name: BACKSTAGE_BACKEND_URL

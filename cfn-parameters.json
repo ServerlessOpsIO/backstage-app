@@ -28,6 +28,8 @@
 	"PgPassword": $secrets.POSTGRES_PASSWORD,
 	"AuthGoogleClientId": $secrets.AUTH_GOOGLE_CLIENT_ID,
 	"AuthGoogleClientSecret": $secrets.AUTH_GOOGLE_CLIENT_SECRET,
+	"AuthGithubClientId": $secrets.AUTH_GITHUB_CLIENT_ID,
+	"AuthGithubClientSecret": $secrets.AUTH_GITHUB_CLIENT_SECRET,
 	"BackstageAppUrl": $vars.BACKSTAGE_APP_URL,
 	"BackstageBackendUrl": $vars.BACKSTAGE_BACKEND_URL,
 	"ServerlessOpsCatalogApiUrl": $vars.SERVERLESSOPS_CATALOG_API_URL,
