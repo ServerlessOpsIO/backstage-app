@@ -1,5 +1,5 @@
 {
-  "name": "@internal/backstage-plugin-serverlessops-catalog",
+  "name": "@internal/backstage-plugin-catalog-module-serverlessops",
   "version": "0.1.0",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -11,8 +11,9 @@
     "types": "dist/index.d.ts"
   },
   "backstage": {
-    "role": "frontend-plugin",
-    "pluginId": "serverlessops-catalog"
+    "role": "frontend-plugin-module",
+    "pluginId": "catalog",
+    "moduleId": "serverlessops"
   },
   "sideEffects": false,
   "scripts": {
