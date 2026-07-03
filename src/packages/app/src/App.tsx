@@ -8,6 +8,7 @@ import { createFrontendModule } from '@backstage/frontend-plugin-api';
 
 // external plugins
 import githubActionsPlugin from '@backstage-community/plugin-github-actions/alpha';
+import githubDeploymentsPlugin from '@backstage-community/plugin-github-deployments/alpha';
 
 // local plugins
 import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-module-serverlessops';
@@ -54,6 +55,7 @@ export default createApp({
     catalogPlugin,
     navModule,
     githubActionsPlugin,
+    githubDeploymentsPlugin,
     serverlessOpsCatalogModule,
     createFrontendModule({
       pluginId: 'app',

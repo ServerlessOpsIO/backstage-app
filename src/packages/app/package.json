@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@backstage-community/plugin-github-actions": "^1.2.0",
+    "@backstage-community/plugin-github-deployments": "^1.2.0",
     "@backstage/cli": "backstage:^",
     "@backstage/core-components": "backstage:^",
     "@backstage/core-plugin-api": "backstage:^",
