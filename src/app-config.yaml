@@ -40,6 +40,14 @@ app:
         config:
           icon: techdocs
           group: false
+    # NOTE: Setting `disabled: true` causes to hide the page causes crashes. I assume it's
+    # related to not being fully ported to the new frontend system at the current time. As a
+    # result we're using this filter that will always fails.
+    - entity-content:github-actions:
+        config:
+          filter:
+            kind: false
+
     - sub-page:scaffolder/templates:
         config:
           groups:

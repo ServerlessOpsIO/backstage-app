@@ -1,4 +1,5 @@
-import { UserIcon } from '@backstage/core-components'
+import { EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
+import { GitHubIcon, UserIcon } from '@backstage/core-components'
 import { z } from 'zod'
 import {
     createFrontendModule,
@@ -6,7 +7,23 @@ import {
     PageBlueprint,
 } from '@backstage/frontend-plugin-api'
 
+const cicdRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
+
+export const SoCicdCatalogEntityContent = EntityContentBlueprint.make({
+    name: 'cicd',
+    params: {
+        path: 'cicd',
+        title: 'CI/CD',
+        filter: 'kind:component',
+        icon: <GitHubIcon />,
+        routeRef: cicdRouteRef,
+        loader: async () => {
+            const { CicdCatalogEntityContent } = await import('./components/CatalogEntityContent/CicdCatalogEntityContent')
+            return <CicdCatalogEntityContent />
+        }
+    },
+})
 
 export const SoCatalogTabbedIndexPage = PageBlueprint.makeWithOverrides({
     configSchema: {
@@ -48,5 +65,6 @@ export const serverlessOpsCatalogModule = createFrontendModule({
     extensions: [
         SoCatalogTabbedIndexPage,
         SoCatalogTabbedDirectoryIndexPage,
+        SoCicdCatalogEntityContent,
     ]
 });
