@@ -47,6 +47,8 @@ app:
         config:
           filter:
             kind: false
+    - entity-content:github-issues/entity:
+        disabled: true
 
     - sub-page:scaffolder/templates:
         config:

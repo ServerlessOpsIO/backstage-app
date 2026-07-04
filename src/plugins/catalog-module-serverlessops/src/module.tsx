@@ -6,8 +6,10 @@ import {
     createRouteRef,
     PageBlueprint,
 } from '@backstage/frontend-plugin-api'
+import { RiGitPullRequestLine } from "@remixicon/react"
 
 const cicdRouteRef = createRouteRef()
+const activityRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
 
 export const SoCicdCatalogEntityContent = EntityContentBlueprint.make({
@@ -21,6 +23,21 @@ export const SoCicdCatalogEntityContent = EntityContentBlueprint.make({
         loader: async () => {
             const { CicdCatalogEntityContent } = await import('./components/CatalogEntityContent/CicdCatalogEntityContent')
             return <CicdCatalogEntityContent />
+        }
+    },
+})
+
+export const SoActivityCatalogEntityContent = EntityContentBlueprint.make({
+    name: 'activity',
+    params: {
+        path: 'activity',
+        title: 'Activity',
+        filter: 'kind:component',
+        icon: <RiGitPullRequestLine />,
+        routeRef: activityRouteRef,
+        loader: async () => {
+            const { ActivityCatalogEntityContent } = await import('./components/CatalogEntityContent/ActivityCatalogEntityContent')
+            return <ActivityCatalogEntityContent />
         }
     },
 })
@@ -65,6 +82,7 @@ export const serverlessOpsCatalogModule = createFrontendModule({
     extensions: [
         SoCatalogTabbedIndexPage,
         SoCatalogTabbedDirectoryIndexPage,
+        SoActivityCatalogEntityContent,
         SoCicdCatalogEntityContent,
     ]
 });

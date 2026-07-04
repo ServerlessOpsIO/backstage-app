@@ -10,7 +10,6 @@ import { createFrontendModule } from '@backstage/frontend-plugin-api';
 import githubActionsPlugin from '@backstage-community/plugin-github-actions/alpha';
 import githubDeploymentsPlugin from '@backstage-community/plugin-github-deployments/alpha';
 import githubIssuesPlugin from '@backstage-community/plugin-github-issues/alpha';
-
 // local plugins
 import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-module-serverlessops';
 
