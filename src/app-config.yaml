@@ -19,6 +19,27 @@ app:
     - catalog-filter:catalog/list:
         config:
           initialFilter: all
+
+    # Catalog page tabs
+    - page:catalog/entity:
+        config:
+          showNavItemIcons: true
+    - entity-content:catalog/overview:
+        config:
+          icon: catalog
+          group: false
+    - entity-content:api-docs/definition:
+        config:
+          icon: kind:api
+          group: false
+    - entity-content:api-docs/apis:
+        config:
+          icon: kind:api
+          group: false
+    - entity-content:techdocs:
+        config:
+          icon: techdocs
+          group: false
     - sub-page:scaffolder/templates:
         config:
           groups:
