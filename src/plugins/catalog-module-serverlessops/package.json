@@ -44,6 +44,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "4.0.0-alpha.61",
     "@remixicon/react": "^4.9.0",
+    "@roadiehq/backstage-plugin-github-insights": "^3.5.0",
     "react-use": "^17.2.4",
     "zod": "^4.4.3"
   },
