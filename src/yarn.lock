@@ -5427,6 +5427,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@internal/backstage-plugin-app-module-nav@workspace:^, @internal/backstage-plugin-app-module-nav@workspace:plugins/app-module-nav":
+  version: 0.0.0-use.local
+  resolution: "@internal/backstage-plugin-app-module-nav@workspace:plugins/app-module-nav"
+  dependencies:
+    "@backstage/cli": "backstage:^"
+    "@backstage/core-components": "backstage:^"
+    "@backstage/frontend-plugin-api": "backstage:^"
+    "@backstage/plugin-app-react": "backstage:^"
+    "@backstage/plugin-notifications": "backstage:^"
+    "@backstage/plugin-search": "backstage:^"
+    "@backstage/plugin-user-settings": "backstage:^"
+    "@material-ui/icons": "npm:^4.11.3"
+    "@testing-library/jest-dom": "npm:^6.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@internal/backstage-plugin-catalog-backend-module-google@workspace:^, @internal/backstage-plugin-catalog-backend-module-google@workspace:plugins/plugin-catalog-backend-module-google":
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-catalog-backend-module-google@workspace:plugins/plugin-catalog-backend-module-google"
@@ -6569,7 +6585,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@material-ui/icons@npm:^4.9.1":
+"@material-ui/icons@npm:^4.11.3, @material-ui/icons@npm:^4.9.1":
   version: 4.11.3
   resolution: "@material-ui/icons@npm:4.11.3"
   dependencies:
@@ -12842,6 +12858,7 @@ __metadata:
     "@backstage/plugin-techdocs-module-addons-contrib": "backstage:^"
     "@backstage/plugin-user-settings": "backstage:^"
     "@backstage/ui": "backstage:^"
+    "@internal/backstage-plugin-app-module-nav": "workspace:^"
     "@internal/backstage-plugin-catalog-module-serverlessops": "workspace:^"
     "@internal/backstage-plugin-scaffolder-entity-pickers": "workspace:^"
     "@material-ui/core": "npm:^4.12.2"
