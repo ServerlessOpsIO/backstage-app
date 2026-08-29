@@ -6,11 +6,12 @@ import {
     createRouteRef,
     PageBlueprint,
 } from '@backstage/frontend-plugin-api'
-import { RiGitPullRequestLine } from "@remixicon/react"
+import { RiGitPullRequestLine, RiMindMap } from "@remixicon/react"
 
 const cicdRouteRef = createRouteRef()
 const activityRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
+const relationsRouteRef = createRouteRef()
 
 export const SoCicdCatalogEntityContent = EntityContentBlueprint.make({
     name: 'cicd',
@@ -38,6 +39,20 @@ export const SoActivityCatalogEntityContent = EntityContentBlueprint.make({
         loader: async () => {
             const { ActivityCatalogEntityContent } = await import('./components/CatalogEntityContent/ActivityCatalogEntityContent')
             return <ActivityCatalogEntityContent />
+        }
+    },
+})
+
+export const SoRelationsCatalogEntityContent = EntityContentBlueprint.make({
+    name: 'relations',
+    params: {
+        path: 'relations',
+        title: 'Relations',
+        icon: <RiMindMap />,
+        routeRef: relationsRouteRef,
+        loader: async () => {
+            const { RelationsCatalogEntityContent } = await import('./components/CatalogEntityContent/RelationsCatalogEntityContent')
+            return <RelationsCatalogEntityContent />
         }
     },
 })
@@ -84,5 +99,6 @@ export const serverlessOpsCatalogModule = createFrontendModule({
         SoCatalogTabbedDirectoryIndexPage,
         SoActivityCatalogEntityContent,
         SoCicdCatalogEntityContent,
+        SoRelationsCatalogEntityContent
     ]
 });
