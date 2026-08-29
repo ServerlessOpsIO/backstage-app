@@ -705,7 +705,7 @@ export const RelationsCatalogEntityContent = () => {
               unidirectional={false}
               renderNode={({ node }) => <KindColoredGraphNode node={node} />}
               // Merges hasPart/partOf, etc.
-              //mergeRelations={false}
+              // mergeRelations={false}
             />
           </EntitySwitch.Case>
           <EntitySwitch.Case>
@@ -716,7 +716,7 @@ export const RelationsCatalogEntityContent = () => {
               showArrowHeads
               unidirectional={false}
               // Merges hasPart/partOf, etc.
-              //mergeRelations={false}
+              // mergeRelations={false}
               renderNode={({ node }) => <KindColoredGraphNode node={node} />}
             />
           </EntitySwitch.Case>
