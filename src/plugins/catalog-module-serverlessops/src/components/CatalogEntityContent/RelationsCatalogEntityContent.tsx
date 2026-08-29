@@ -9,15 +9,200 @@ import {
   EntitySwitch,
 } from '@backstage/plugin-catalog'
 import {
+  useEntityPresentation,
+} from '@backstage/plugin-catalog-react'
+import {
   entityDataTableColumns,
   EntityColumnConfig,
   EntityRelationCard
 } from '@backstage/plugin-catalog-react/alpha'
 import {
   EntityCatalogGraphCard,
-  Direction
+  Direction,
+  EntityNode,
 } from '@backstage/plugin-catalog-graph'
+import { DEFAULT_NAMESPACE } from '@backstage/catalog-model'
+import { useTheme, makeStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import { useLayoutEffect, useRef, useState } from 'react'
 
+const useKindColoredNodeStyles = makeStyles(
+  theme => ({
+    node: {
+      fill: theme.palette.grey[300],
+      stroke: theme.palette.grey[300],
+    },
+    text: {
+      fill: theme.palette.getContrastText(theme.palette.grey[300]),
+      '&.focused': {
+        fontWeight: 'bold',
+      },
+    },
+    clickable: {
+      cursor: 'pointer',
+    },
+  }),
+  { name: 'PluginServerlessOpsKindColoredGraphNode' },
+)
+
+const kindNodeColors: Record<string, string> = {
+  domain: '#8e44ad',
+  system: '#0078d4',
+  component: '#f4c542',
+  resource: '#f59e0b',
+  api: '#10b981',
+  group: '#22d3ee',
+  user: '#d946ef',
+}
+
+const getKindFill = (kind?: string, fallback = '#1976d2') => {
+  const normalizedKind = kind?.toLowerCase() ?? ''
+  return kindNodeColors[normalizedKind] ?? kindNodeColors[kind ?? ''] ?? fallback
+}
+
+const KindColoredGraphNode = ({ node, onClick }: { node: EntityNode; onClick?: (event: any) => void }) => {
+  const classes = useKindColoredNodeStyles()
+  const theme = useTheme()
+  const [width, setWidth] = useState(0)
+  const [height, setHeight] = useState(0)
+  const idRef = useRef<SVGTextElement | null>(null)
+  const entityPresentation = useEntityPresentation(node.entity, {
+    defaultNamespace: DEFAULT_NAMESPACE,
+  })
+
+  useLayoutEffect(() => {
+    if (idRef.current) {
+      let { height: renderedHeight, width: renderedWidth } = idRef.current.getBBox()
+      renderedHeight = Math.round(renderedHeight)
+      renderedWidth = Math.round(renderedWidth)
+
+      if (renderedHeight !== height || renderedWidth !== width) {
+        setWidth(renderedWidth)
+        setHeight(renderedHeight)
+      }
+    }
+  }, [width, height, node.entity])
+
+  const kindValue = String((node as any).kind ?? node.entity?.kind ?? '')
+  const fill = getKindFill(kindValue, theme.palette.primary.main)
+  const textFill = theme.palette.getContrastText(fill)
+  const hasKindIcon = !!entityPresentation.Icon
+  const padding = 10
+  const iconSize = height
+  const paddedIconWidth = hasKindIcon ? iconSize + padding : 0
+  const paddedWidth = paddedIconWidth + width + padding * 2
+  const paddedHeight = height + padding * 2
+  const displayTitle = entityPresentation.primaryTitle ?? node.entity.metadata.name
+  const Icon = entityPresentation.Icon
+
+  return (
+    <g onClick={onClick ?? node.onClick} className={classNames(onClick || node.onClick ? classes.clickable : undefined)}>
+      <rect
+        width={paddedWidth}
+        height={paddedHeight}
+        rx={10}
+        style={{ fill, stroke: fill }}
+      />
+      {hasKindIcon && Icon && (
+        <Icon
+          y={padding}
+          x={padding}
+          width={iconSize}
+          height={iconSize}
+          className={classNames(
+            classes.text,
+            node.focused && 'focused',
+          )}
+          style={{ color: textFill, fill: textFill }}
+        />
+      )}
+      <text
+        ref={idRef}
+        className={classNames(
+          classes.text,
+          node.focused && 'focused',
+        )}
+        y={paddedHeight / 2}
+        x={paddedIconWidth + (width + padding * 2) / 2}
+        textAnchor="middle"
+        alignmentBaseline="middle"
+        style={{ fill: textFill }}
+      >
+        {displayTitle}
+      </text>
+      <title>{entityPresentation.entityRef}</title>
+    </g>
+  )
+}
+
+export const entityColumnPresets = {
+  component: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'component' }),
+      entityDataTableColumns.createSpecTypeColumn(),
+      entityDataTableColumns.createMetadataDescriptionColumn(),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component',
+  },
+  resource: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'resource' }),
+      entityDataTableColumns.createSpecTypeColumn(),
+      entityDataTableColumns.createMetadataDescriptionColumn(),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-resource',
+  },
+  system: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'system' }),
+      entityDataTableColumns.createMetadataDescriptionColumn(),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system',
+  },
+  domain: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'domain' }),
+      entityDataTableColumns.createMetadataDescriptionColumn(),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-domain',
+  },
+  api: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'api' }),
+      entityDataTableColumns.createSpecTypeColumn(),
+      entityDataTableColumns.createMetadataDescriptionColumn(),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api',
+  },
+  group: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({}),
+      entityDataTableColumns.createMetadataDescriptionColumn(),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format',
+  },
+  user: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({}),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format',
+  },
+  generic: {
+    columns: [
+      entityDataTableColumns.createEntityRefColumn({}),
+      entityDataTableColumns.createMetadataDescriptionColumn(),
+    ] as EntityColumnConfig[],
+    helpLink:
+      'https://backstage.io/docs/features/software-catalog/descriptor-format',
+  }
+} as const;
 
 export const entityCardPresets = {
   domain: {
@@ -442,76 +627,6 @@ export const entityCardPresets = {
   },
 } as const
 
-export const entityColumnPresets = {
-  component: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'component' }),
-      entityDataTableColumns.createSpecTypeColumn(),
-      entityDataTableColumns.createMetadataDescriptionColumn(),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component',
-  },
-  resource: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'resource' }),
-      entityDataTableColumns.createSpecTypeColumn(),
-      entityDataTableColumns.createMetadataDescriptionColumn(),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-resource',
-  },
-  system: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'system' }),
-      entityDataTableColumns.createMetadataDescriptionColumn(),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system',
-  },
-  domain: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'domain' }),
-      entityDataTableColumns.createMetadataDescriptionColumn(),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-domain',
-  },
-  api: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({ defaultKind: 'api' }),
-      entityDataTableColumns.createSpecTypeColumn(),
-      entityDataTableColumns.createMetadataDescriptionColumn(),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api',
-  },
-  group: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({}),
-      entityDataTableColumns.createMetadataDescriptionColumn(),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format',
-  },
-  user: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({}),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format',
-  },
-  generic: {
-    columns: [
-      entityDataTableColumns.createEntityRefColumn({}),
-      entityDataTableColumns.createMetadataDescriptionColumn(),
-    ] as EntityColumnConfig[],
-    helpLink:
-      'https://backstage.io/docs/features/software-catalog/descriptor-format',
-  }
-} as const;
-
-
 export const RelationsCatalogEntityContent = () => {
   return(
     <Grid.Root columns="12" >
@@ -586,8 +701,9 @@ export const RelationsCatalogEntityContent = () => {
               kinds={['Domain', 'System', 'Component', 'Resource', 'API', 'User', 'Group']}
               direction={Direction.LEFT_RIGHT}
               maxDepth={1}
-              showArrowHeads={true}
+              showArrowHeads
               unidirectional={false}
+              renderNode={({ node }) => <KindColoredGraphNode node={node} />}
               // Merges hasPart/partOf, etc.
               //mergeRelations={false}
             />
@@ -597,10 +713,11 @@ export const RelationsCatalogEntityContent = () => {
               kinds={['Domain', 'System', 'Component', 'Resource', 'API']}
               direction={Direction.LEFT_RIGHT}
               maxDepth={1}
-              showArrowHeads={true}
+              showArrowHeads
               unidirectional={false}
               // Merges hasPart/partOf, etc.
               //mergeRelations={false}
+              renderNode={({ node }) => <KindColoredGraphNode node={node} />}
             />
           </EntitySwitch.Case>
         </EntitySwitch>
