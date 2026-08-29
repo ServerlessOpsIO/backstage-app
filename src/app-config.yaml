@@ -50,6 +50,10 @@ app:
     - entity-content:github-issues/entity:
         disabled: true
 
+    # Catalog overview cards.
+    - entity-card:catalog/about
+    - entity-card:catalog-graph/relations: false
+
     - sub-page:scaffolder/templates:
         config:
           groups:
