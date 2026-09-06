@@ -13,7 +13,7 @@ const activityRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
 const relationsRouteRef = createRouteRef()
 
-export const SoCicdCatalogEntityContent = EntityContentBlueprint.make({
+export const cicdCatalogEntityContent = EntityContentBlueprint.make({
   name: 'cicd',
   params: {
     path: 'cicd',
@@ -28,7 +28,7 @@ export const SoCicdCatalogEntityContent = EntityContentBlueprint.make({
   },
 })
 
-export const SoActivityCatalogEntityContent = EntityContentBlueprint.make({
+export const activityCatalogEntityContent = EntityContentBlueprint.make({
   name: 'activity',
   params: {
     path: 'activity',
@@ -43,7 +43,7 @@ export const SoActivityCatalogEntityContent = EntityContentBlueprint.make({
   },
 })
 
-export const SoRelationsCatalogEntityContent = EntityContentBlueprint.make({
+export const relationsCatalogEntityContent = EntityContentBlueprint.make({
   name: 'relations',
   params: {
     path: 'relations',
@@ -57,7 +57,7 @@ export const SoRelationsCatalogEntityContent = EntityContentBlueprint.make({
   },
 })
 
-export const SoCatalogTabbedIndexPage = PageBlueprint.makeWithOverrides({
+export const catalogTabbedIndexPage = PageBlueprint.makeWithOverrides({
   configSchema: {
     pagination: z
     .object({
@@ -78,7 +78,7 @@ export const SoCatalogTabbedIndexPage = PageBlueprint.makeWithOverrides({
   },
 })
 
-export const SoCatalogTabbedDirectoryIndexPage = PageBlueprint.make({
+export const catalogTabbedDirectoryIndexPage = PageBlueprint.make({
   name: 'directory',
   params: {
     path: '/directory',
@@ -95,10 +95,10 @@ export const SoCatalogTabbedDirectoryIndexPage = PageBlueprint.make({
 export const serverlessOpsCatalogModule = createFrontendModule({
   pluginId: 'catalog',
   extensions: [
-    SoCatalogTabbedIndexPage,
-    SoCatalogTabbedDirectoryIndexPage,
-    SoActivityCatalogEntityContent,
-    SoCicdCatalogEntityContent,
-    SoRelationsCatalogEntityContent
+    catalogTabbedIndexPage,
+    catalogTabbedDirectoryIndexPage,
+    activityCatalogEntityContent,
+    cicdCatalogEntityContent,
+    relationsCatalogEntityContent
   ]
 });
