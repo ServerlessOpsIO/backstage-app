@@ -43,16 +43,26 @@ app:
     # NOTE: Setting `disabled: true` causes to hide the page causes crashes. I assume it's
     # related to not being fully ported to the new frontend system at the current time. As a
     # result we're using this filter that will always fails.
-    - entity-content:github-actions:
-        config:
-          filter:
-            kind: false
-    - entity-content:github-issues/entity:
-        disabled: true
+    - entity-content:github-actions/entity: false
+    - entity-content:github-issues/entity: false
 
     # Catalog overview cards.
-    - entity-card:catalog/about
+    - entity-card:github-actions/recent-workflow-runs: false
+    - entity-card:github-deployments/overview: false
+    - entity-card:github-issues/overview: false
     - entity-card:catalog-graph/relations: false
+    - entity-card:catalog/depends-on-components: false
+    - entity-card:catalog/depends-on-resources: false
+    - entity-card:catalog/has-components
+    - entity-card:catalog/has-resources
+    - entity-card:catalog/has-subcomponents: false
+    - entity-card:catalog/has-subdomains: false
+    - entity-card:catalog/has-systems
+    - entity-card:api-docs/provided-apis: false
+    - entity-card:api-docs/consumed-apis: false
+    - entity-card:api-docs/consuming-components: false
+    - entity-card:api-docs/providing-components: false
+    - entity-card:api-docs/has-apis: false
 
     - sub-page:scaffolder/templates:
         config:
