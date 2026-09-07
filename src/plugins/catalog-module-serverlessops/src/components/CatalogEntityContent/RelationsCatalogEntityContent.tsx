@@ -93,7 +93,7 @@ const KindColoredGraphNode = ({ node, onClick }: { node: EntityNode; onClick?: (
   const paddedWidth = paddedIconWidth + width + padding * 2
   const paddedHeight = height + padding * 2
   const displayTitle = entityPresentation.primaryTitle ?? node.entity.metadata.name
-  const Icon = entityPresentation.Icon
+  const Icon = entityPresentation.Icon as React.ComponentType<any>
 
   return (
     <g onClick={onClick ?? node.onClick} className={classNames(onClick || node.onClick ? classes.clickable : undefined)}>
