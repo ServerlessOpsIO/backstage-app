@@ -6,10 +6,8 @@ app:
   packages: all
 
   extensions:
-    # Homepage
-    - page:home:
-        config:
-          path: /
+    # Home
+    #
     # Visit tracking records which pages users navigate to and is disabled by default.
     # Enable it to populate the Most Visited and Recently Visited widgets on the Home page.
     # Visit data is stored via UserSettings storage if available, otherwise browser localStorage.
@@ -40,12 +38,9 @@ app:
               timeZone: America/New_York
             - label: UTC
               timeZone: UTC
-            - label: STO
-              timeZone: Europe/Stockholm
-            - label: TYO
-              timeZone: Asia/Tokyo
     - page:home:
         config:
+          path: /
           defaultConfig:
             - component: HomePageSearchBar
               column: 0
@@ -60,11 +55,6 @@ app:
               height: 11
             - component: HomePageStarredEntities
               column: 4
-              row: 2
-              width: 4
-              height: 4
-            - component: HomePageRandomJoke
-              column: 8
               row: 2
               width: 4
               height: 4
