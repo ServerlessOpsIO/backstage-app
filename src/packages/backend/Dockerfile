@@ -36,10 +36,6 @@ WORKDIR /app
 RUN chown node:node /app
 USER node
 
-# FIXME
-RUN id node
-RUN getent passwd node
-
 # This switches many Node.js dependencies to production mode.
 ENV NODE_ENV=production
 
@@ -54,6 +50,8 @@ COPY --chown=node:node backstage.json ./
 COPY --chown=node:node yarn.lock package.json packages/backend/dist/skeleton.tar.gz ./
 RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
 
+# FIXME: Added this to get around a build failure.
+RUN mkdir -p /home/node/.yarn/berry/index
 RUN --mount=type=cache,target=/home/node/.yarn/berry/cache,sharing=locked,uid=1000,gid=1000 \
     yarn workspaces focus --all --production
 
