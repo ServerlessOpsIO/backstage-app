@@ -46,6 +46,7 @@
     "@backstage/plugin-search-backend-node": "backstage:^",
     "@backstage/plugin-signals-backend": "backstage:^",
     "@backstage/plugin-techdocs-backend": "backstage:^",
+    "@backstage/plugin-user-settings-backend": "backstage:^",
     "@internal/backstage-plugin-catalog-backend-module-google": "workspace:^",
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^",
     "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^",
