@@ -11,6 +11,7 @@ import githubDeploymentsPlugin from '@backstage-community/plugin-github-deployme
 import githubIssuesPlugin from '@backstage-community/plugin-github-issues/alpha';
 // local plugins
 import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-module-serverlessops';
+import serverlessOpsApiDocsModule from '@internal/backstage-plugin-api-docs-module-serverlessops';
 import appModuleNav from '@internal/backstage-plugin-app-module-nav';
 
 const signInPage = SignInPageBlueprint.make({
@@ -57,6 +58,7 @@ export default createApp({
     githubDeploymentsPlugin,
     githubIssuesPlugin,
     serverlessOpsCatalogModule,
+    serverlessOpsApiDocsModule,
     appModuleNav,
     createFrontendModule({
       pluginId: 'app',

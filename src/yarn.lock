@@ -5889,6 +5889,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@internal/backstage-plugin-api-docs-module-serverlessops@workspace:^, @internal/backstage-plugin-api-docs-module-serverlessops@workspace:plugins/api-docs-module-serverlessops":
+  version: 0.0.0-use.local
+  resolution: "@internal/backstage-plugin-api-docs-module-serverlessops@workspace:plugins/api-docs-module-serverlessops"
+  dependencies:
+    "@backstage/cli": "backstage:^"
+    "@backstage/frontend-plugin-api": "backstage:^"
+    "@backstage/plugin-api-docs": "backstage:^"
+    "@backstage/plugin-catalog-react": "backstage:^"
+    "@testing-library/jest-dom": "npm:^6.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@internal/backstage-plugin-app-module-nav@workspace:^, @internal/backstage-plugin-app-module-nav@workspace:plugins/app-module-nav":
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-app-module-nav@workspace:plugins/app-module-nav"
@@ -13325,6 +13337,7 @@ __metadata:
     "@backstage/plugin-techdocs-module-addons-contrib": "backstage:^"
     "@backstage/plugin-user-settings": "backstage:^"
     "@backstage/ui": "backstage:^"
+    "@internal/backstage-plugin-api-docs-module-serverlessops": "workspace:^"
     "@internal/backstage-plugin-app-module-nav": "workspace:^"
     "@internal/backstage-plugin-catalog-module-serverlessops": "workspace:^"
     "@internal/backstage-plugin-scaffolder-entity-pickers": "workspace:^"
