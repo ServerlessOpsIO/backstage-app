@@ -32,6 +32,8 @@
     "@backstage/plugin-catalog-graph": "backstage:^",
     "@backstage/plugin-catalog-import": "backstage:^",
     "@backstage/plugin-catalog-unprocessed-entities": "backstage:^",
+    "@backstage/plugin-home": "backstage:^",
+    "@backstage/plugin-home-react": "backstage:^",
     "@backstage/plugin-notifications": "backstage:^",
     "@backstage/plugin-org": "backstage:^",
     "@backstage/plugin-scaffolder": "backstage:^",

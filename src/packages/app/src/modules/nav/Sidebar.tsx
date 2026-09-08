@@ -34,6 +34,7 @@ export const SidebarContent: ExtensionDefinition<any> = NavContentBlueprint.make
           </SidebarGroup>
           <SidebarDivider />
           <SidebarGroup label="Menu" icon={<MenuIcon />}>
+            {nav.take('page:home')}
             {nav.take('page:catalog')}
             {nav.take('page:scaffolder')}
             <SidebarDivider />

@@ -14,6 +14,8 @@ import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-modul
 import serverlessOpsApiDocsModule from '@internal/backstage-plugin-api-docs-module-serverlessops';
 import appModuleNav from '@internal/backstage-plugin-app-module-nav';
 
+import { homeModule } from './modules/home';
+
 const signInPage = SignInPageBlueprint.make({
   params: {
     loader: async () => props => {
@@ -54,6 +56,7 @@ const signInPage = SignInPageBlueprint.make({
 export default createApp({
   features: [
     catalogPlugin,
+    homeModule,
     githubActionsPlugin,
     githubDeploymentsPlugin,
     githubIssuesPlugin,
