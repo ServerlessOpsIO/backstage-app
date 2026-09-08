@@ -9,8 +9,14 @@ import {
   SystemCatalogIndexPageEntityList
 } from '../CatalogIndexPageEntityList';
 
+type TabbedCatalogIndexPageProps = {
+  pagination?: {
+    mode?: 'offset' | 'cursor';
+    limit?: number;
+  };
+};
 
-export function TabbedCatalogIndexPage() {
+export function TabbedCatalogIndexPage({ pagination }: TabbedCatalogIndexPageProps) {
 
   const configApi = useApi(configApiRef);
   const organizationName =
@@ -24,22 +30,22 @@ export function TabbedCatalogIndexPage() {
     >
       <TabbedLayout>
         <TabbedLayout.Route path="/components" title="Components">
-          <ComponentCatalogIndexPageEntityList />
+          <ComponentCatalogIndexPageEntityList pagination={pagination} />
         </TabbedLayout.Route>
         <TabbedLayout.Route path="/resources" title="Resources">
-          <ResourceCatalogIndexPageEntityList />
+          <ResourceCatalogIndexPageEntityList pagination={pagination} />
         </TabbedLayout.Route>
         <TabbedLayout.Route path="/systems" title="Systems">
-          <SystemCatalogIndexPageEntityList />
+          <SystemCatalogIndexPageEntityList pagination={pagination} />
         </TabbedLayout.Route>
         <TabbedLayout.Route path="/domains" title="Domains">
-          <DomainCatalogIndexPageEntityList />
+          <DomainCatalogIndexPageEntityList pagination={pagination} />
         </TabbedLayout.Route>
         <TabbedLayout.Route path="/apis" title="APIs">
-          <ApiCatalogIndexPageEntityList />
+          <ApiCatalogIndexPageEntityList pagination={pagination} />
         </TabbedLayout.Route>
         <TabbedLayout.Route path="/locations" title="Locations">
-          <LocationCatalogIndexPageEntityList />
+          <LocationCatalogIndexPageEntityList pagination={pagination} />
         </TabbedLayout.Route>
       </TabbedLayout>
     </PageWithHeader>

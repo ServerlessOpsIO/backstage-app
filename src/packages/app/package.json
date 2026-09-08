@@ -14,6 +14,9 @@
     "lint": "backstage-cli package lint"
   },
   "dependencies": {
+    "@backstage-community/plugin-github-actions": "^1.2.0",
+    "@backstage-community/plugin-github-deployments": "^1.2.0",
+    "@backstage-community/plugin-github-issues": "^1.2.1",
     "@backstage/cli": "backstage:^",
     "@backstage/core-components": "backstage:^",
     "@backstage/core-plugin-api": "backstage:^",
@@ -37,8 +40,10 @@
     "@backstage/plugin-techdocs-module-addons-contrib": "backstage:^",
     "@backstage/plugin-user-settings": "backstage:^",
     "@backstage/ui": "backstage:^",
+    "@internal/backstage-plugin-api-docs-module-serverlessops": "workspace:^",
+    "@internal/backstage-plugin-app-module-nav": "workspace:^",
+    "@internal/backstage-plugin-catalog-module-serverlessops": "workspace:^",
     "@internal/backstage-plugin-scaffolder-entity-pickers": "workspace:^",
-    "@internal/backstage-plugin-serverlessops-catalog": "workspace:^",
     "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.9.1",
     "react": "^18.0.2",

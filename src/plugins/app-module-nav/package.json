@@ -1,0 +1,45 @@
+{
+  "name": "@internal/backstage-plugin-app-module-nav",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "description": "The nav frontend module for the app plugin.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts"
+  },
+  "backstage": {
+    "role": "frontend-plugin-module",
+    "pluginId": "app",
+    "pluginPackage": "@backstage/plugin-app"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "backstage-cli package build",
+    "lint": "backstage-cli package lint",
+    "test": "backstage-cli package test",
+    "clean": "backstage-cli package clean",
+    "prepack": "backstage-cli package prepack",
+    "postpack": "backstage-cli package postpack"
+  },
+  "dependencies": {
+    "@backstage/core-components": "backstage:^",
+    "@backstage/frontend-plugin-api": "backstage:^",
+    "@backstage/plugin-app-react": "backstage:^",
+    "@backstage/plugin-notifications": "backstage:^",
+    "@backstage/plugin-search": "backstage:^",
+    "@backstage/plugin-user-settings": "backstage:^",
+    "@material-ui/icons": "^4.11.3"
+  },
+  "devDependencies": {
+    "@backstage/cli": "backstage:^",
+    "@testing-library/jest-dom": "^6.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

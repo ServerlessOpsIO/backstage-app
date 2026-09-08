@@ -13,18 +13,19 @@ import { columnFactories } from '../CatalogIndexColumns/columns'
 
 const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createTitleColumn({ hidden: true }),
-  columnFactories.createNameColumn({ defaultKind: 'Api', width: '25%' }),
+  columnFactories.createNameColumn({ defaultKind: 'Resource', width: '25%' }),
   columnFactories.createSystemColumn({ width: 'auto' }),
   columnFactories.createSpecTypeColumn({ width: 'auto' }),
   columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
-export function ApiCatalogIndexPageEntityList() {
+
+export function ResourceCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
         <>
           <EntityKindPicker
-            initialFilter='api'
+            initialFilter='resource'
             hidden
           />
           <EntityTypePicker />
@@ -35,9 +36,10 @@ export function ApiCatalogIndexPageEntityList() {
           <EntityProcessingStatusPicker />
         </>
       }
-      initialKind="api"
+      initialKind="resource"
       initiallySelectedFilter="all"
       columns={defaultColumns}
+      pagination={pagination}
     />
   )
 }

@@ -1,4 +1,5 @@
 import { TableColumn } from '@backstage/core-components';
+import { CatalogTableRow } from '@backstage/plugin-catalog'
 import {
   EntityKindPicker,
   EntityTypePicker,
@@ -6,25 +7,24 @@ import {
   EntityProcessingStatusPicker,
   UserListPicker,
 } from '@backstage/plugin-catalog-react';
-import { CatalogTableRow } from '@backstage/plugin-catalog'
 import { CatalogIndexPageEntityList } from './CatalogIndexPageEntityList'
 import { columnFactories } from '../CatalogIndexColumns/columns'
 
-
 const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createTitleColumn({ hidden: true }),
-  columnFactories.createNameColumn({ defaultKind: 'System', width: '25%' }),
-  // FIXME: Does not currently exist
-  // columnFactories.createDomainColumn({ width: 'auto' }),
+  columnFactories.createNameColumn({ defaultKind: 'Component', width: '25%' }),
+  columnFactories.createSystemColumn({ width: 'auto' }),
+  columnFactories.createSpecTypeColumn({ width: 'auto' }),
   columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
-export function SystemCatalogIndexPageEntityList() {
+
+export function ComponentCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
         <>
           <EntityKindPicker
-            initialFilter='system'
+            initialFilter='component'
             hidden
           />
           <EntityTypePicker />
@@ -35,9 +35,10 @@ export function SystemCatalogIndexPageEntityList() {
           <EntityProcessingStatusPicker />
         </>
       }
-      initialKind="system"
+      initialKind="component"
       initiallySelectedFilter="all"
       columns={defaultColumns}
+      pagination={pagination}
     />
   )
 }

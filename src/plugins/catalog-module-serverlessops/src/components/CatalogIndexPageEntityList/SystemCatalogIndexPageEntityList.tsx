@@ -13,19 +13,18 @@ import { columnFactories } from '../CatalogIndexColumns/columns'
 
 const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createTitleColumn({ hidden: true }),
-  columnFactories.createNameColumn({ defaultKind: 'Resource', width: '25%' }),
-  columnFactories.createSystemColumn({ width: 'auto' }),
-  columnFactories.createSpecTypeColumn({ width: 'auto' }),
+  columnFactories.createNameColumn({ defaultKind: 'System', width: '25%' }),
+  // FIXME: Does not currently exist
+  // columnFactories.createDomainColumn({ width: 'auto' }),
   columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
-
-export function ResourceCatalogIndexPageEntityList() {
+export function SystemCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
         <>
           <EntityKindPicker
-            initialFilter='resource'
+            initialFilter='system'
             hidden
           />
           <EntityTypePicker />
@@ -36,9 +35,10 @@ export function ResourceCatalogIndexPageEntityList() {
           <EntityProcessingStatusPicker />
         </>
       }
-      initialKind="resource"
+      initialKind="system"
       initiallySelectedFilter="all"
       columns={defaultColumns}
+      pagination={pagination}
     />
   )
 }

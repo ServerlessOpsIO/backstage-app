@@ -10,19 +10,21 @@ import { CatalogTableRow } from '@backstage/plugin-catalog'
 import { CatalogIndexPageEntityList } from './CatalogIndexPageEntityList'
 import { columnFactories } from '../CatalogIndexColumns/columns'
 
+
 const defaultColumns: TableColumn<CatalogTableRow>[] = [
   columnFactories.createTitleColumn({ hidden: true }),
-  columnFactories.createNameColumn({ defaultKind: 'Domain', width: '20%' }),
-  columnFactories.createMetadataDescriptionColumn({width: 'auto'}),
+  columnFactories.createNameColumn({ defaultKind: 'Api', width: '25%' }),
+  columnFactories.createSystemColumn({ width: 'auto' }),
+  columnFactories.createSpecTypeColumn({ width: 'auto' }),
+  columnFactories.createMetadataDescriptionColumn({ width: 'auto' }),
 ]
-
-export function DomainCatalogIndexPageEntityList() {
+export function ApiCatalogIndexPageEntityList({ pagination }: { pagination?: any }) {
   return (
     <CatalogIndexPageEntityList
       filters={
         <>
           <EntityKindPicker
-            initialFilter='domain'
+            initialFilter='api'
             hidden
           />
           <EntityTypePicker />
@@ -33,9 +35,10 @@ export function DomainCatalogIndexPageEntityList() {
           <EntityProcessingStatusPicker />
         </>
       }
-      initialKind="domain"
+      initialKind="api"
       initiallySelectedFilter="all"
       columns={defaultColumns}
+      pagination={pagination}
     />
   )
 }

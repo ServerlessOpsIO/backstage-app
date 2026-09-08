@@ -9,13 +9,59 @@ app:
     # Configure the catalog index page to be the root page, this is normally mounted on /catalog
     - page:catalog:
         config:
-          path: /
+          pagination:
+            mode: offset
+            limit: 20
+          #path: /
     - catalog-filter:catalog/kind:
         config:
           initialFilter: domain
     - catalog-filter:catalog/list:
         config:
           initialFilter: all
+
+    # Catalog page tabs
+    - page:catalog/entity:
+        config:
+          showNavItemIcons: true
+    - entity-content:catalog/overview:
+        config:
+          icon: catalog
+          group: false
+    - entity-content:api-docs/definition:
+        config:
+          icon: kind:api
+          group: false
+    - entity-content:api-docs/apis: false
+        #config:
+        #  icon: kind:api
+        #  group: false
+    - entity-content:techdocs:
+        config:
+          icon: techdocs
+          group: false
+    # NOTE: Setting `disabled: true` causes to hide the page causes crashes. I assume it's
+    # related to not being fully ported to the new frontend system at the current time. As a
+    # result we're using this filter that will always fails.
+    - entity-content:github-actions: false
+    - entity-content:github-issues/entity: false
+
+    # Catalog overview cards.
+    - entity-card:github-actions/recent-workflow-runs: false
+    - entity-card:github-deployments/overview: false
+    - entity-card:github-issues/overview: false
+    - entity-card:catalog-graph/relations: false
+    - entity-card:catalog/depends-on-components: false
+    - entity-card:catalog/depends-on-resources: false
+    - entity-card:catalog/has-components
+    - entity-card:catalog/has-resources
+    - entity-card:catalog/has-subcomponents: false
+    - entity-card:catalog/has-subdomains: false
+    - entity-card:catalog/has-systems
+    - entity-card:api-docs/provided-apis
+    - entity-card:api-docs/consumed-apis
+    - entity-card:api-docs/has-apis
+
     - sub-page:scaffolder/templates:
         config:
           groups:

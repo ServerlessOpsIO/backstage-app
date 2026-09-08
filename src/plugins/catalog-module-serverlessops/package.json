@@ -1,5 +1,5 @@
 {
-  "name": "@internal/backstage-plugin-serverlessops-catalog",
+  "name": "@internal/backstage-plugin-catalog-module-serverlessops",
   "version": "0.1.0",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -11,8 +11,9 @@
     "types": "dist/index.d.ts"
   },
   "backstage": {
-    "role": "frontend-plugin",
-    "pluginId": "serverlessops-catalog"
+    "role": "frontend-plugin-module",
+    "pluginId": "catalog",
+    "moduleId": "serverlessops"
   },
   "sideEffects": false,
   "scripts": {
@@ -25,6 +26,9 @@
     "postpack": "backstage-cli package postpack"
   },
   "dependencies": {
+    "@backstage-community/plugin-github-actions": "^1.3.0",
+    "@backstage-community/plugin-github-deployments": "^1.3.1",
+    "@backstage-community/plugin-github-issues": "^1.3.2",
     "@backstage/catalog-model": "backstage:^",
     "@backstage/core-components": "backstage:^",
     "@backstage/core-plugin-api": "backstage:^",
@@ -39,10 +43,15 @@
     "@backstage/plugin-techdocs-react": "backstage:^",
     "@backstage/theme": "backstage:^",
     "@backstage/types": "backstage:^",
+    "@backstage/ui": "backstage:^",
     "@material-ui/core": "^4.9.13",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "4.0.0-alpha.61",
-    "react-use": "^17.2.4"
+    "@remixicon/react": "^4.9.0",
+    "@roadiehq/backstage-plugin-github-insights": "^3.5.0",
+    "classnames": "^2.5.1",
+    "react-use": "^17.2.4",
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
     "react": "^16.13.1 || ^17.0.0 || ^18.0.0",
