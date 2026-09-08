@@ -1,10 +1,10 @@
 import {
   EntityCardBlueprint,
 } from '@backstage/plugin-catalog-react/alpha';
-import { createFrontendModule } from '@backstage/frontend-plugin-api';
+import { createFrontendModule, ExtensionDefinition } from '@backstage/frontend-plugin-api';
 
 // Cards
-export const apiDocsProvidedApisEntityCard = EntityCardBlueprint.makeWithOverrides({
+export const apiDocsProvidedApisEntityCard: ExtensionDefinition<any> = EntityCardBlueprint.makeWithOverrides({
   name: 'provided-apis',
   factory(originalFactory) {
 

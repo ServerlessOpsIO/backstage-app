@@ -7,6 +7,7 @@ import { z } from 'zod'
 import {
   createFrontendModule,
   createRouteRef,
+  ExtensionDefinition,
   PageBlueprint,
 } from '@backstage/frontend-plugin-api'
 import { RiGitPullRequestLine, RiMindMap } from "@remixicon/react"
@@ -17,7 +18,7 @@ const tabbedDirectoryRouteRef = createRouteRef()
 const relationsRouteRef = createRouteRef()
 
 // Page Content
-export const cicdCatalogEntityContent = EntityContentBlueprint.make({
+export const cicdCatalogEntityContent: ExtensionDefinition<any> = EntityContentBlueprint.make({
   name: 'cicd',
   params: {
     path: 'cicd',
@@ -32,7 +33,7 @@ export const cicdCatalogEntityContent = EntityContentBlueprint.make({
   },
 })
 
-export const activityCatalogEntityContent = EntityContentBlueprint.make({
+export const activityCatalogEntityContent: ExtensionDefinition<any> = EntityContentBlueprint.make({
   name: 'activity',
   params: {
     path: 'activity',
@@ -47,7 +48,7 @@ export const activityCatalogEntityContent = EntityContentBlueprint.make({
   },
 })
 
-export const relationsCatalogEntityContent = EntityContentBlueprint.make({
+export const relationsCatalogEntityContent: ExtensionDefinition<any> = EntityContentBlueprint.make({
   name: 'relations',
   params: {
     path: 'relations',
@@ -62,7 +63,7 @@ export const relationsCatalogEntityContent = EntityContentBlueprint.make({
 })
 
 // Cards
-export const catalogHasComponentsEntityCard = EntityCardBlueprint.makeWithOverrides({
+export const catalogHasComponentsEntityCard: ExtensionDefinition<any> = EntityCardBlueprint.makeWithOverrides({
   name: 'has-components',
   factory(originalFactory) {
 
@@ -76,7 +77,7 @@ export const catalogHasComponentsEntityCard = EntityCardBlueprint.makeWithOverri
   },
 });
 
-export const catalogHasResourcesEntityCard = EntityCardBlueprint.makeWithOverrides({
+export const catalogHasResourcesEntityCard: ExtensionDefinition<any> = EntityCardBlueprint.makeWithOverrides({
   name: 'has-resources',
   factory(originalFactory) {
 
@@ -90,7 +91,7 @@ export const catalogHasResourcesEntityCard = EntityCardBlueprint.makeWithOverrid
   },
 });
 
-export const catalogHasSystemsEntityCard = EntityCardBlueprint.makeWithOverrides({
+export const catalogHasSystemsEntityCard: ExtensionDefinition<any> = EntityCardBlueprint.makeWithOverrides({
   name: 'has-systems',
   factory(originalFactory) {
 
