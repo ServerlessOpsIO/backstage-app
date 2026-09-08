@@ -36,6 +36,9 @@ WORKDIR /app
 RUN chown node:node /app
 USER node
 
+# FIXME
+RUN id node
+RUN getent passwd node
 
 # This switches many Node.js dependencies to production mode.
 ENV NODE_ENV=production
