@@ -1,4 +1,7 @@
-import { EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
+import {
+  EntityCardBlueprint,
+  EntityContentBlueprint
+} from '@backstage/plugin-catalog-react/alpha';
 import { GitHubIcon, UserIcon } from '@backstage/core-components'
 import { z } from 'zod'
 import {
@@ -13,6 +16,7 @@ const activityRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
 const relationsRouteRef = createRouteRef()
 
+// Page Content
 export const cicdCatalogEntityContent = EntityContentBlueprint.make({
   name: 'cicd',
   params: {
@@ -57,6 +61,50 @@ export const relationsCatalogEntityContent = EntityContentBlueprint.make({
   },
 })
 
+// Cards
+export const catalogHasComponentsEntityCard = EntityCardBlueprint.makeWithOverrides({
+  name: 'has-components',
+  factory(originalFactory) {
+
+    return originalFactory({
+      filter: { kind: 'system' },
+      loader: async () => {
+        const { EntityHasComponentsCard } = await import('@backstage/plugin-catalog');
+        return <EntityHasComponentsCard title="Components" />;
+      },
+    });
+  },
+});
+
+export const catalogHasResourcesEntityCard = EntityCardBlueprint.makeWithOverrides({
+  name: 'has-resources',
+  factory(originalFactory) {
+
+    return originalFactory({
+      filter: { kind: 'system' },
+      loader: async () => {
+        const { EntityHasResourcesCard } = await import('@backstage/plugin-catalog');
+        return <EntityHasResourcesCard title="Resources" />;
+      },
+    });
+  },
+});
+
+export const catalogHasSystemsEntityCard = EntityCardBlueprint.makeWithOverrides({
+  name: 'has-systems',
+  factory(originalFactory) {
+
+    return originalFactory({
+      filter: { kind: 'domain' },
+      loader: async () => {
+        const { EntityHasSystemsCard } = await import('@backstage/plugin-catalog');
+        return <EntityHasSystemsCard title="Systems" />;
+      },
+    });
+  },
+});
+
+// Pages
 export const catalogTabbedIndexPage = PageBlueprint.makeWithOverrides({
   configSchema: {
     pagination: z
@@ -95,6 +143,9 @@ export const catalogTabbedDirectoryIndexPage = PageBlueprint.make({
 export const serverlessOpsCatalogModule = createFrontendModule({
   pluginId: 'catalog',
   extensions: [
+    catalogHasComponentsEntityCard,
+    catalogHasResourcesEntityCard,
+    catalogHasSystemsEntityCard,
     catalogTabbedIndexPage,
     catalogTabbedDirectoryIndexPage,
     activityCatalogEntityContent,
