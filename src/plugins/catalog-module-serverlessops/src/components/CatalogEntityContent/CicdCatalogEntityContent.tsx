@@ -5,7 +5,7 @@ import {
 import { Grid, Typography } from '@material-ui/core';
 import {
   EntityLatestGithubActionRunCard,
-  EntityRecentGithubActionsRunsCard,
+  // EntityRecentGithubActionsRunsCard,
   isGithubActionsAvailable,
   GITHUB_ACTIONS_ANNOTATION
 } from '@backstage-community/plugin-github-actions';
@@ -29,6 +29,7 @@ export const CicdCatalogEntityContent = () => {
         <EntityLatestGithubActionRunCard />
       </Grid>
 
+      {/*
       <Grid item xs={12}>
         <Typography variant="h6">Main branch</Typography>
       </Grid>
@@ -42,6 +43,7 @@ export const CicdCatalogEntityContent = () => {
       <Grid item xs={12}>
         <EntityRecentGithubActionsRunsCard limit={10} />
       </Grid>
+      */}
 
       <Grid item xs={12}>
         <Typography variant="h2">Deploy</Typography>
