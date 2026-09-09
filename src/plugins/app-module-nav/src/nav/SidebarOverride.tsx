@@ -29,6 +29,8 @@ export const SidebarContentOverrideComponent = ({ navItems }: { navItems: any })
       </SidebarGroup>
       <SidebarDivider />
       <SidebarGroup label="Menu" icon={<MenuIcon />}>
+        {nav.take('page:home')}
+        <SidebarDivider />
         {nav.take('page:catalog')}
         {nav.take('page:catalog-graph')}
         {nav.take('page:scaffolder')}
