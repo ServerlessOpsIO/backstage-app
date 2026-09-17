@@ -59,7 +59,10 @@ integrations:
   github:
     - host: github.com
       apps:
-        - $include: /app/app-config.d/credentials/github-app-credentials.yaml
+        - $include: /app/app-config.d/credentials/serverlessops-github-app-credentials.yaml
+    - host: github.com
+      apps:
+        - $include: /app/app-config.d/credentials/pitcrew-github-app-credentials.yaml
 
 catalog:
   providers:
