@@ -4,6 +4,7 @@ import { configApiRef, googleAuthApiRef, useApi } from '@backstage/core-plugin-a
 import { SignInPageBlueprint } from '@backstage/plugin-app-react';
 import { SignInPage } from '@backstage/core-components';
 import { createFrontendModule } from '@backstage/frontend-plugin-api';
+import scaffolderPlugin from '@backstage/plugin-scaffolder/alpha';
 
 // external plugins
 import githubActionsPlugin from '@backstage-community/plugin-github-actions/alpha';
@@ -13,6 +14,7 @@ import githubIssuesPlugin from '@backstage-community/plugin-github-issues/alpha'
 import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-module-serverlessops';
 import serverlessOpsApiDocsModule from '@internal/backstage-plugin-api-docs-module-serverlessops';
 import appModuleNav from '@internal/backstage-plugin-app-module-nav';
+import soContextualEntityPickerModule from '@internal/backstage-plugin-scaffolder-entity-pickers'
 
 import { homeModule } from './modules/home';
 
@@ -57,12 +59,14 @@ export default createApp({
   features: [
     catalogPlugin,
     homeModule,
+    scaffolderPlugin,
     githubActionsPlugin,
     githubDeploymentsPlugin,
     githubIssuesPlugin,
     serverlessOpsCatalogModule,
     serverlessOpsApiDocsModule,
     appModuleNav,
+    soContextualEntityPickerModule,
     createFrontendModule({
       pluginId: 'app',
       extensions: [signInPage],
