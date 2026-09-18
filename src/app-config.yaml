@@ -238,13 +238,21 @@ scaffolder:
 catalog:
   providers:
     github:
-      # the provider ID can be any camelCase string
-      providerId:
+      serverlessOpsIO:
         organization: 'ServerlessOpsIO' # string
         catalogPath: '/catalog-info.yaml' # string
         filters:
           branch: 'main' # string
-          repository: '.*' # Regex
+        schedule: # same options as in SchedulerServiceTaskScheduleDefinition
+          # supports cron, ISO duration, "human duration" as used in code
+          frequency: { minutes: 30 }
+          # supports ISO duration, "human duration" as used in code
+          timeout: { minutes: 3 }
+      pitCrewIO:
+        organization: 'PitCrewIO' # string
+        catalogPath: '/catalog-info.yaml' # string
+        filters:
+          branch: 'main' # string
         schedule: # same options as in SchedulerServiceTaskScheduleDefinition
           # supports cron, ISO duration, "human duration" as used in code
           frequency: { minutes: 30 }

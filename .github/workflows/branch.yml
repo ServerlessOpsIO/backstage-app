@@ -66,11 +66,9 @@ jobs:
         id: github-app-creds
         shell: bash
         env:
-          SERVERLESSOPS_CREDS: ${{ secrets.X_GITHUB_APP_CREDS_SERVERLESSOPS }}
-          PITCREW_CREDS: ${{ secrets.X_GITHUB_APP_CREDS_PITCREW }}
+          CREDENTIALS: ${{ secrets.X_GITHUB_APP_CREDS }}
         run: |
-          echo -e "$SERVERLESSOPS_CREDS" > src/app-config.d/credentials/serverlessops-github-app-credentials.yaml
-          echo -e "$PITCREW_CREDS" > src/app-config.d/credentials/pitcrew-github-app-credentials.yaml
+          echo -e "$CREDENTIALS" > src/app-config.d/credentials/serverlessops-github-app-credentials.yaml
 
       # Couldn't store JSON creds while retaining proper formatting so going to do this in two steps
       - name: Write Google Admin API creds
