@@ -1,13 +1,42 @@
 # @internal/backstage-plugin-scaffolder-entity-pickers
 
-Welcome to the test plugin!
+This package provides the `SoContextualEntityPicker` field extension for Backstage Scaffolder forms.
 
-_This plugin was created through the Backstage CLI_
+It renders an entity picker that can be filtered from the current form context, allowing later fields to depend on earlier selections. The picker is registered as a frontend module for the `scaffolder` plugin and can be used in template parameters with:
 
-## Getting started
+```yaml
+ui:field: SoContextualEntityPicker
+```
 
-Your plugin has been added to the example app in this repository, meaning you'll be able to access it by running `yarn start` in the root directory, and then navigating to [/test](http://localhost:3000/test).
+## Features
 
-You can also serve the plugin in isolation by running `yarn start` in the plugin directory.
-This method of serving the plugin provides quicker iteration speed and a faster startup and hot reloads.
-It is only meant for local development, and the setup for it can be found inside the [/dev](./dev) directory.
+- Catalog-backed entity selection
+- Dynamic `catalogFilter` support based on the current form data
+- Optional `defaultKind` and `defaultNamespace` values for entity refs
+- Support for restricting values with `allowArbitraryValues: false`
+
+## Usage
+
+Import the module in the app and add it to the frontend features list:
+
+```ts
+import soContextualEntityPickerModule from '@internal/backstage-plugin-scaffolder-entity-pickers';
+
+export default createApp({
+  features: [
+    soContextualEntityPickerModule,
+  ],
+});
+```
+
+Then reference the field extension from a template parameter. For example:
+
+```yaml
+system:
+  ui:field: SoContextualEntityPicker
+  ui:options:
+    allowArbitraryValues: false
+    catalogFilter:
+      - kind: System
+        relations.partOf: "{{ parameters.domain }}"
+```

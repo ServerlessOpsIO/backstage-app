@@ -5,6 +5,4 @@
  * @packageDocumentation
  */
 
-export {
-  SoContextualEntityPickerFieldExtension,
-} from './plugin';
+export { soContextualEntityPickerModule as default } from './plugin';
