@@ -41,11 +41,9 @@ spec:
           title: Owner
           description: Owner of the system
           type: string
-          ui:field: OwnerPicker
+          ui:field: MyGroupsPicker
           ui:options:
             allowArbitraryValues: false
-            allowedKinds:
-              - Group
         kind:
           title: Kind
           description: Kind of entity
