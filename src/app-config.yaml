@@ -139,7 +139,7 @@ app:
           groups:
             - title: Catalog Entities
               filter:
-                spec.type: { "$in": ["domain", "system"] }
+                spec.type: { "$in": ["domain", "system", "environment"] }
             - title: Serverless
               filter:
                 metadata.tags: { "$contains": "serverless" }

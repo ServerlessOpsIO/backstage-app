@@ -1,0 +1,119 @@
+---
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: environment-add
+  title: Add Environment
+  description: Add a new environment to Backstage
+  tags:
+    - catalog
+spec:
+  type: environment
+  owner: group:admins
+
+  parameters:
+    - title: System information
+      required:
+        - domain
+        - system
+        - owner
+        - kind
+        - namespace
+        - type
+      properties:
+        kind:
+          title: Kind
+          description: Kind of entity
+          type: string
+          ui:widget: hidden
+          default: Resource
+        type:
+          title: Type
+          description: Type of entity
+          type: string
+          ui:widget: hidden
+          default: environment
+        namespace:
+          title: Namespace
+          description: Namespace of resource
+          type: string
+          ui:widget: hidden
+          default: default
+        domain:
+          title: Domain
+          type: string
+          description: Domain the component belongs to.
+          ui:field: EntityPicker
+          ui:options:
+            allowArbitraryValues: false
+            catalogFilter:
+              - kind: Domain
+            defaultKind: Domain
+        system:
+          title: System
+          type: string
+          description: System the component belongs to.
+          ui:field: SoContextualEntityPicker
+          ui:options:
+            allowArbitraryValues: false
+            catalogFilter:
+              - kind: System
+                relations.partOf: "{{ parameters.domain }}"
+            defaultKind: System
+        owner:
+          title: Owner
+          description: Owner of the system
+          type: string
+          ui:field: MyGroupsPicker
+          ui:options:
+            allowArbitraryValues: false
+            allowedKinds:
+              - Group
+          catalogFilter:
+            - kind: Group
+              relations.ownerOf: "{{ parameters.system }}"
+        environment:
+          title: Environment
+          description: Environment type
+          type: string
+          default: prod
+          enum:
+            - prod
+            - dev
+            - poc
+        account:
+          title: Account
+          description: Account associated with the environment
+          type: string
+          ui:field: EntityPicker
+          ui:options:
+            allowArbitraryValues: false
+            catalogFilter:
+              - kind: Resource
+                spec.type: cloud-account
+
+  steps:
+    - id: create-severlessops-entity
+      name: Creating entity in ServerlessOps Catalog
+      action: serverlessops:catalog:create
+      input:
+        name: env-${{ parameters.system | parseEntityRef | pick('name') }}-${{ parameters.environment }}
+        title: ${{ parameters.system | parseEntityRef | pick('name') }}-${{ parameters.environment }}
+        description: ${{ parameters.system | parseEntityRef | pick('name') }} ${{ parameters.environment }} environment
+        owner: ${{parameters.owner}}
+        kind: ${{parameters.kind}}
+        lifecycle: available
+        type: ${{ parameters.type }}
+        namespace: ${{parameters.namespace}}
+        system: ${{ parameters.system }}
+        dependsOn:
+          - ${{ parameters.account }}
+
+    # FIXME: using addLocation just adds a new location to the catalog which is then processed
+    # and that's not what we want because the URL location processor doesn't have creds for
+    # this service.
+    #- id: register-backstage-entity
+    #  name: Registering entity in Backstage
+    #  action: serverlessops:catalog:register
+    #  input:
+    #    catalogInfoUrl: https://api.catalog.backstage.serverlessops.io/catalog/${{parameters.namespace}}/${{parameters.kind | lower}}/${{parameters.name | lower}}

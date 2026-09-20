@@ -32,12 +32,26 @@ export function createServerlessOpsCatalogAction(
                 owner: z => z.string({
                     description: 'Owner of entity to create'
                 }),
+
+                domain: z => z.string({
+                    description: 'Domain of entity to create'
+                }).optional(),
+                system: z => z.string({
+                    description: 'System of entity to create'
+                }).optional(),
+                title: z => z.string({
+                    description: 'Title of entity to create'
+                }).optional(),
                 type: z => z.string({
                     description: 'Type of entity to create'
                 }).optional(),
-                domain: z => z.string({
-                    description: 'Domain of entity to create'
-                }).optional()
+                lifecycle: z => z.string({
+                    description: 'Lifecycle of entity to create'
+                }).optional(),
+                dependsOn: z => z.array(z.string({
+                    description: 'Dependencies of entity to create'
+                })).optional()
+
             }
         },
         async handler(ctx) {
@@ -61,13 +75,16 @@ export function createServerlessOpsCatalogAction(
                 metadata: {
                     namespace: ctx.input.namespace as string | undefined,
                     name: normalizedName as string,
-                    title: ctx.input.name as string,
+                    title: ctx.input.title as string  || ctx.input.name as string,
                     description: ctx.input.description as string,
                 },
                 spec: {
                     type: ctx.input.type,
                     owner: ctx.input.owner,
-                    domain: ctx.input.domain
+                    domain: ctx.input.domain,
+                    system: ctx.input.system,
+                    lifecycle: ctx.input.lifecycle,
+                    dependsOn: ctx.input.dependsOn
                 }
             }
 
