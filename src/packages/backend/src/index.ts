@@ -74,5 +74,6 @@ backend.add(import('@backstage/plugin-mcp-actions-backend'));
 // local
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-serverlessops'));
+backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-github-copilot'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-google'));
 backend.start();

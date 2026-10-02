@@ -11,7 +11,6 @@ import {
     deleteServerlessOpsCatalogAction,
     registerServerlessOpsCatalogAction
 } from "./actions/serverlessops/catalog"
-import { launchGithubCopilotAgentAction } from './actions/github'
 
 /**
  * A backend module that registers the action into the scaffolder
@@ -35,8 +34,6 @@ export const scaffolderModule = createBackendModule({
                 const catalogClient = new CatalogClient({
                     discoveryApi: discovery,
                 })
-
-                scaffolderActions.addActions(launchGithubCopilotAgentAction())
 
                 if (typeof config === 'undefined') {
                     logger.error(
