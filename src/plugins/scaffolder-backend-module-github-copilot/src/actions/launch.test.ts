@@ -21,7 +21,7 @@ describe('github:copilot:agent:launch', () => {
           'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/12345',
       },
     })
-    ;(Octokit as jest.Mock).mockImplementation(() => ({
+    ;(Octokit as unknown as jest.Mock).mockImplementation(() => ({
       request: requestMock,
     }))
     githubCredentialsProvider = {
