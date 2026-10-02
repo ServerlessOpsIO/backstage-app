@@ -8,6 +8,11 @@ type RepoDetails = {
   repo: string
 }
 
+function extractTaskIdFromUrl(taskUrl: string): string | undefined {
+  const match = taskUrl.match(/\/(\d+)(?:\/)?$/)
+  return match?.[1]
+}
+
 function parseRepoUrl(repoUrl: string): RepoDetails {
   const [host, queryString] = repoUrl.split('?')
   const searchParams = new URLSearchParams(queryString)
@@ -99,12 +104,31 @@ export function launchGithubCopilotAgentAction(
         throw new Error(`Failed to launch Copilot agent task: ${message}`)
       }
 
-      if (body.id) {
-        ctx.output('taskId', String(body.id))
+      const nestedTask =
+        typeof body.task === 'object' && body.task !== null
+          ? (body.task as Record<string, unknown>)
+          : undefined
+      const taskUrl =
+        typeof body.html_url === 'string'
+          ? body.html_url
+          : typeof body.task_url === 'string'
+            ? body.task_url
+            : typeof nestedTask?.html_url === 'string'
+              ? nestedTask.html_url
+            : undefined
+      const taskId =
+        body.id ??
+        body.task_id ??
+        nestedTask?.id ??
+        nestedTask?.task_id ??
+        (taskUrl ? extractTaskIdFromUrl(taskUrl) : undefined)
+
+      if (typeof taskId !== 'undefined') {
+        ctx.output('taskId', String(taskId))
       }
 
-      if (body.html_url) {
-        ctx.output('taskUrl', String(body.html_url))
+      if (taskUrl) {
+        ctx.output('taskUrl', String(taskUrl))
       }
 
       ctx.logger.info(`Launched Copilot agent task for ${owner}/${repo}`)

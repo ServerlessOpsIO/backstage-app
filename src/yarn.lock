@@ -6093,7 +6093,7 @@ __metadata:
     "@backstage/integration": "backstage:^"
     "@backstage/plugin-scaffolder-node": "backstage:^"
     "@backstage/plugin-scaffolder-node-test-utils": "backstage:^"
-    jest-fetch-mock: "npm:^3.0.3"
+    octokit: "npm:^3.2.1"
   languageName: unknown
   linkType: soft
 
@@ -24992,7 +24992,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"octokit@npm:^3.0.0":
+"octokit@npm:^3.0.0, octokit@npm:^3.2.1":
   version: 3.2.2
   resolution: "octokit@npm:3.2.2"
   dependencies:

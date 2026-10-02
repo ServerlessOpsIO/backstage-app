@@ -94,4 +94,61 @@ describe('github:copilot:agent:launch', () => {
         } as any),
     ).rejects.toThrow('Invalid repoUrl')
   })
+
+  test('extracts task id from task_url when id is omitted', async () => {
+    requestMock.mockResolvedValueOnce({
+      data: {
+        task_url:
+          'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/77777',
+      },
+    })
+
+    const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
+    const output = jest.fn()
+
+    await action.handler({
+      input: {
+        repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
+        prompt: 'Create starter implementation',
+      },
+      logger: { info: jest.fn() } as any,
+      output,
+    } as any)
+
+    expect(output).toHaveBeenCalledWith('taskId', '77777')
+    expect(output).toHaveBeenCalledWith(
+      'taskUrl',
+      'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/77777',
+    )
+  })
+
+  test('reads task output fields from nested task payload', async () => {
+    requestMock.mockResolvedValueOnce({
+      data: {
+        task: {
+          id: 88888,
+          html_url:
+            'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/88888',
+        },
+      },
+    })
+
+    const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
+    const output = jest.fn()
+
+    await action.handler({
+      input: {
+        repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
+        prompt: 'Create starter implementation',
+      },
+      logger: { info: jest.fn() } as any,
+      output,
+    } as any)
+
+    expect(output).toHaveBeenCalledWith('taskId', '88888')
+    expect(output).toHaveBeenCalledWith(
+      'taskUrl',
+      'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/88888',
+    )
+  })
 })
