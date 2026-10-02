@@ -1,5 +1,6 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 import { GithubCredentialsProvider } from '@backstage/integration'
+import { Octokit } from 'octokit'
 
 type RepoDetails = {
   host: string
@@ -71,41 +72,31 @@ export function launchGithubCopilotAgentAction(
         throw new Error('Failed to resolve GitHub credentials for Copilot agent launch')
       }
 
-      const response = await fetch(
-        `https://api.github.com/agents/repos/${owner}/${repo}/tasks`,
-        {
-          method: 'POST',
-          headers: {
-            Accept: 'application/vnd.github+json',
-            'Content-Type': 'application/json',
-            'X-GitHub-Api-Version': '2026-03-10',
-            ...credentials.headers,
-          },
-          body: JSON.stringify({
+      const octokit = new Octokit({ auth: credentials.token })
+      let body: Record<string, unknown> = {}
+
+      try {
+        const response = await octokit.request(
+          'POST /agents/repos/{owner}/{repo}/tasks',
+          {
+            owner,
+            repo,
             prompt,
             base_ref: (ctx.input.baseRef as string | undefined) ?? 'main',
             model: (ctx.input.model as string | undefined) ?? 'auto',
             create_pull_request:
               (ctx.input.createPullRequest as boolean | undefined) ?? true,
-          }),
-        },
-      )
-
-      const responseText = await response.text()
-      let body: Record<string, unknown> = {}
-
-      if (responseText) {
-        try {
-          body = JSON.parse(responseText)
-        } catch {
-          body = {}
-        }
-      }
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to launch Copilot agent task: ${response.status} ${response.statusText}`,
+            headers: {
+              'X-GitHub-Api-Version': '2026-03-10',
+            },
+          },
         )
+
+        body = response.data as Record<string, unknown>
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : 'Unknown GitHub API error'
+        throw new Error(`Failed to launch Copilot agent task: ${message}`)
       }
 
       if (body.id) {
@@ -120,4 +111,3 @@ export function launchGithubCopilotAgentAction(
     },
   })
 }
-

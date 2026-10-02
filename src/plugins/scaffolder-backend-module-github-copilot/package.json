@@ -26,13 +26,13 @@
   "dependencies": {
     "@backstage/backend-plugin-api": "backstage:^",
     "@backstage/integration": "backstage:^",
-    "@backstage/plugin-scaffolder-node": "backstage:^"
+    "@backstage/plugin-scaffolder-node": "backstage:^",
+    "octokit": "^3.2.1"
   },
   "devDependencies": {
     "@backstage/backend-test-utils": "backstage:^",
     "@backstage/cli": "backstage:^",
-    "@backstage/plugin-scaffolder-node-test-utils": "backstage:^",
-    "jest-fetch-mock": "^3.0.3"
+    "@backstage/plugin-scaffolder-node-test-utils": "backstage:^"
   },
   "files": [
     "dist"
