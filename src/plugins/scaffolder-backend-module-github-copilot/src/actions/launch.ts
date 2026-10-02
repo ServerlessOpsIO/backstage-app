@@ -108,14 +108,14 @@ export function launchGithubCopilotAgentAction(
         typeof body.task === 'object' && body.task !== null
           ? (body.task as Record<string, unknown>)
           : undefined
-      const taskUrl =
-        typeof body.html_url === 'string'
-          ? body.html_url
-          : typeof body.task_url === 'string'
-            ? body.task_url
-            : typeof nestedTask?.html_url === 'string'
-              ? nestedTask.html_url
-            : undefined
+      let taskUrl: string | undefined
+      if (typeof body.html_url === 'string') {
+        taskUrl = body.html_url
+      } else if (typeof body.task_url === 'string') {
+        taskUrl = body.task_url
+      } else if (typeof nestedTask?.html_url === 'string') {
+        taskUrl = nestedTask.html_url
+      }
       const taskId =
         body.id ??
         body.task_id ??
