@@ -1,6 +1,4 @@
-import { createMockDirectory } from '@backstage/backend-test-utils'
 import { GithubCredentialsProvider } from '@backstage/integration'
-import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 import { Octokit } from 'octokit'
 
 import { launchGithubCopilotAgentAction } from './launch'
@@ -43,30 +41,17 @@ describe('github:copilot:agent:launch', () => {
     const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
     const logger = { info: jest.fn() }
     const output = jest.fn()
-    const workspacePath = createMockDirectory().resolve('workspace')
 
-    await action.handler(
-      createMockActionContext({
+    await action.handler({
         input: {
           repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
           prompt: 'Create starter implementation',
           baseRef: 'main',
           createPullRequest: true,
         },
-        workspacePath,
         logger: logger as any,
         output,
-        createTemporaryDirectory() {
-          throw new Error('Not implemented')
-        },
-        checkpoint() {
-          throw new Error('Not implemented')
-        },
-        getInitiatorCredentials() {
-          throw new Error('Not implemented')
-        },
-      }),
-    )
+      } as any)
 
     expect(githubCredentialsProvider.getCredentials).toHaveBeenCalledWith({
       url: 'https://github.com/ServerlessOpsIO/example-repo',
@@ -97,29 +82,16 @@ describe('github:copilot:agent:launch', () => {
 
   test('throws for invalid repoUrl', async () => {
     const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
-    const workspacePath = createMockDirectory().resolve('workspace')
 
     await expect(
-      action.handler(
-        createMockActionContext({
+      action.handler({
           input: {
             repoUrl: 'github.com?owner=ServerlessOpsIO',
             prompt: 'Create starter implementation',
           },
-          workspacePath,
           logger: { info: jest.fn() } as any,
           output: jest.fn(),
-          createTemporaryDirectory() {
-            throw new Error('Not implemented')
-          },
-          checkpoint() {
-            throw new Error('Not implemented')
-          },
-          getInitiatorCredentials() {
-            throw new Error('Not implemented')
-          },
-        }),
-      ),
+        } as any),
     ).rejects.toThrow('Invalid repoUrl')
   })
 })
