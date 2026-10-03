@@ -76,9 +76,9 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
   const catalogFilter = useMemo(
     () =>
       buildCatalogFilter(uiSchema, {
-        parameters: formContext.formData,
+        parameters: formContext?.formData ?? {},
       }),
-    [formContext.formData, uiSchema],
+    [formContext?.formData, uiSchema],
   );
   const defaultKind = uiSchema['ui:options']?.defaultKind;
   const defaultNamespace =
@@ -202,7 +202,14 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
     ) {
       onChange(stringifyEntityRef(entities.catalogEntities[0]));
     }
-  }, [entities, onChange, selectedEntity, formData, required, allowArbitraryValues]);
+  }, [
+    entities,
+    onChange,
+    selectedEntity,
+    formData,
+    required,
+    allowArbitraryValues,
+  ]);
 
   return (
     <ScaffolderField
@@ -309,7 +316,7 @@ function convertSchemaFiltersToQuery(
  */
 function buildCatalogFilter(
   uiSchema: EntityPickerProps['uiSchema'],
-  context: object
+  context: object,
 ): EntityFilterQuery | undefined {
   const allowedKinds = uiSchema['ui:options']?.allowedKinds;
 
