@@ -86,8 +86,14 @@ export function launchGithubCopilotAgentAction(
         throw new Error('Failed to resolve GitHub credentials for Copilot agent launch')
       }
 
-      const octokit = new Octokit({ auth: credentials.token })
-      let body: Record<string, unknown> = {}
+      const octokit = new Octokit({
+        auth: credentials.token,
+        request: {
+          headers: {
+            'X-GitHub-Api-Version': GITHUB_API_VERSION,
+          },
+        },
+      })
 
       try {
         const requestBody: Record<string, unknown> = {
@@ -97,11 +103,6 @@ export function launchGithubCopilotAgentAction(
           model: (ctx.input.model as string | undefined) ?? 'auto',
           create_pull_request:
             (ctx.input.createPullRequest as boolean | undefined) ?? true,
-          request: {
-            headers: {
-              'X-GitHub-Api-Version': GITHUB_API_VERSION,
-            },
-          },
         }
         const baseRef = ctx.input.baseRef as string | undefined
         if (baseRef) {

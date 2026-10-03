@@ -58,6 +58,11 @@ describe('github:copilot:agent:launch', () => {
     })
     expect(Octokit).toHaveBeenCalledWith({
       auth: 'gh-test-token',
+      request: {
+        headers: {
+          'X-GitHub-Api-Version': '2026-03-10',
+        },
+      },
     })
     expect(requestMock).toHaveBeenCalledWith(
       'POST /agents/repos/{owner}/{repo}/tasks',
@@ -68,11 +73,6 @@ describe('github:copilot:agent:launch', () => {
         base_ref: 'main',
         model: 'auto',
         create_pull_request: true,
-        request: {
-          headers: {
-            'X-GitHub-Api-Version': '2026-03-10',
-          },
-        },
       }),
     )
     expect(output).toHaveBeenCalledWith('taskId', '12345')
