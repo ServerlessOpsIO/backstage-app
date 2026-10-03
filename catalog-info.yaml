@@ -11,7 +11,7 @@ spec:
   lifecycle: production
   owner: group:00gjdgxs1ur6lsu
   system: backstage
-  domain: infrastructure
+  domain: platform
   dependsOn:
     - resource:backstage-app-container
     - resource:backstage-cluster
