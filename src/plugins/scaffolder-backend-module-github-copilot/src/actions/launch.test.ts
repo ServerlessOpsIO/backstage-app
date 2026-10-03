@@ -115,6 +115,8 @@ describe('github:copilot:agent:launch', () => {
       output,
     } as any)
 
+    const requestInput = requestMock.mock.calls[0][1]
+    expect(requestInput).not.toHaveProperty('base_ref')
     expect(output).toHaveBeenCalledWith('taskId', '77777')
     expect(output).toHaveBeenCalledWith(
       'taskUrl',

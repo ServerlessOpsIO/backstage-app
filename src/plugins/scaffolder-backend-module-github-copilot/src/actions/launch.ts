@@ -81,20 +81,25 @@ export function launchGithubCopilotAgentAction(
       let body: Record<string, unknown> = {}
 
       try {
+        const requestBody: Record<string, unknown> = {
+          owner,
+          repo,
+          prompt,
+          model: (ctx.input.model as string | undefined) ?? 'auto',
+          create_pull_request:
+            (ctx.input.createPullRequest as boolean | undefined) ?? true,
+          headers: {
+            'X-GitHub-Api-Version': '2026-03-10',
+          },
+        }
+        const baseRef = ctx.input.baseRef as string | undefined
+        if (baseRef) {
+          requestBody.base_ref = baseRef
+        }
+
         const response = await octokit.request(
           'POST /agents/repos/{owner}/{repo}/tasks',
-          {
-            owner,
-            repo,
-            prompt,
-            base_ref: (ctx.input.baseRef as string | undefined) ?? 'main',
-            model: (ctx.input.model as string | undefined) ?? 'auto',
-            create_pull_request:
-              (ctx.input.createPullRequest as boolean | undefined) ?? true,
-            headers: {
-              'X-GitHub-Api-Version': '2026-03-10',
-            },
-          },
+          requestBody,
         )
 
         body = response.data as Record<string, unknown>
