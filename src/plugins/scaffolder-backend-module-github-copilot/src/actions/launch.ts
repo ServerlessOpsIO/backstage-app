@@ -15,6 +15,13 @@ function extractTaskIdFromUrl(taskUrl: string): string | undefined {
   return match?.[1]
 }
 
+function normalizeTaskId(value: unknown): string | undefined {
+  if (typeof value === 'string' || typeof value === 'number') {
+    return String(value)
+  }
+  return undefined
+}
+
 function parseRepoUrl(repoUrl: string): RepoDetails {
   const [host, queryString] = repoUrl.split('?')
   const searchParams = new URLSearchParams(queryString)
@@ -90,8 +97,10 @@ export function launchGithubCopilotAgentAction(
           model: (ctx.input.model as string | undefined) ?? 'auto',
           create_pull_request:
             (ctx.input.createPullRequest as boolean | undefined) ?? true,
-          headers: {
-            'X-GitHub-Api-Version': GITHUB_API_VERSION,
+          request: {
+            headers: {
+              'X-GitHub-Api-Version': GITHUB_API_VERSION,
+            },
           },
         }
         const baseRef = ctx.input.baseRef as string | undefined
@@ -118,14 +127,14 @@ export function launchGithubCopilotAgentAction(
           taskUrl = nestedTask.html_url
         }
         const taskId =
-          body.id ??
-          body.task_id ??
-          nestedTask?.id ??
-          nestedTask?.task_id ??
+          normalizeTaskId(body.id) ??
+          normalizeTaskId(body.task_id) ??
+          normalizeTaskId(nestedTask?.id) ??
+          normalizeTaskId(nestedTask?.task_id) ??
           (taskUrl ? extractTaskIdFromUrl(taskUrl) : undefined)
 
-        if (typeof taskId !== 'undefined') {
-          ctx.output('taskId', String(taskId))
+        if (taskId) {
+          ctx.output('taskId', taskId)
         }
 
         if (taskUrl) {

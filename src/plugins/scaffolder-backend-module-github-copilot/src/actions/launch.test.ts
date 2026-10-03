@@ -68,8 +68,10 @@ describe('github:copilot:agent:launch', () => {
         base_ref: 'main',
         model: 'auto',
         create_pull_request: true,
-        headers: {
-          'X-GitHub-Api-Version': '2026-03-10',
+        request: {
+          headers: {
+            'X-GitHub-Api-Version': '2026-03-10',
+          },
         },
       }),
     )
