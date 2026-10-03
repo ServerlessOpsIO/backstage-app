@@ -15,6 +15,7 @@ ui:field: SoContextualEntityPicker
 - Optional `defaultKind` and `defaultNamespace` values for entity refs
 - Support for restricting values with `allowArbitraryValues: false`
 - Supports `autoSelect` and `ui:disabled` options like Backstage `EntityPicker`
+- Supports Backstage new UI mode (`templates.config.enableBackstageUi`)
 
 ## Usage
 
