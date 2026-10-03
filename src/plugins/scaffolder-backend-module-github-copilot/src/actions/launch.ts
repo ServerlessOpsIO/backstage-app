@@ -8,6 +8,8 @@ type RepoDetails = {
   repo: string
 }
 
+const GITHUB_API_VERSION = '2026-03-10'
+
 function extractTaskIdFromUrl(taskUrl: string): string | undefined {
   const match = taskUrl.match(/\/(\d+)(?:\/)?$/)
   return match?.[1]
@@ -89,7 +91,7 @@ export function launchGithubCopilotAgentAction(
           create_pull_request:
             (ctx.input.createPullRequest as boolean | undefined) ?? true,
           headers: {
-            'X-GitHub-Api-Version': '2026-03-10',
+            'X-GitHub-Api-Version': GITHUB_API_VERSION,
           },
         }
         const baseRef = ctx.input.baseRef as string | undefined
@@ -129,13 +131,15 @@ export function launchGithubCopilotAgentAction(
         if (taskUrl) {
           ctx.output('taskUrl', String(taskUrl))
         }
+
+        ctx.logger.info(
+          `Launched Copilot agent task for ${owner}/${repo}${taskId ? ` (taskId=${String(taskId)})` : ''}`,
+        )
       } catch (error: unknown) {
         const message =
           error instanceof Error ? error.message : 'Unknown GitHub API error'
         throw new Error(`Failed to launch Copilot agent task: ${message}`)
       }
-
-      ctx.logger.info(`Launched Copilot agent task for ${owner}/${repo}`)
     },
   })
 }
