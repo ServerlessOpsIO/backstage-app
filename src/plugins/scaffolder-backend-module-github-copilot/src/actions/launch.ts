@@ -101,39 +101,38 @@ export function launchGithubCopilotAgentAction(
           'POST /agents/repos/{owner}/{repo}/tasks',
           requestBody,
         )
+        const body = response.data as Record<string, unknown>
 
-        body = response.data as Record<string, unknown>
+        const nestedTask =
+          typeof body.task === 'object' && body.task !== null
+            ? (body.task as Record<string, unknown>)
+            : undefined
+        let taskUrl: string | undefined
+        if (typeof body.html_url === 'string') {
+          taskUrl = body.html_url
+        } else if (typeof body.task_url === 'string') {
+          taskUrl = body.task_url
+        } else if (typeof nestedTask?.html_url === 'string') {
+          taskUrl = nestedTask.html_url
+        }
+        const taskId =
+          body.id ??
+          body.task_id ??
+          nestedTask?.id ??
+          nestedTask?.task_id ??
+          (taskUrl ? extractTaskIdFromUrl(taskUrl) : undefined)
+
+        if (typeof taskId !== 'undefined') {
+          ctx.output('taskId', String(taskId))
+        }
+
+        if (taskUrl) {
+          ctx.output('taskUrl', String(taskUrl))
+        }
       } catch (error: unknown) {
         const message =
           error instanceof Error ? error.message : 'Unknown GitHub API error'
         throw new Error(`Failed to launch Copilot agent task: ${message}`)
-      }
-
-      const nestedTask =
-        typeof body.task === 'object' && body.task !== null
-          ? (body.task as Record<string, unknown>)
-          : undefined
-      let taskUrl: string | undefined
-      if (typeof body.html_url === 'string') {
-        taskUrl = body.html_url
-      } else if (typeof body.task_url === 'string') {
-        taskUrl = body.task_url
-      } else if (typeof nestedTask?.html_url === 'string') {
-        taskUrl = nestedTask.html_url
-      }
-      const taskId =
-        body.id ??
-        body.task_id ??
-        nestedTask?.id ??
-        nestedTask?.task_id ??
-        (taskUrl ? extractTaskIdFromUrl(taskUrl) : undefined)
-
-      if (typeof taskId !== 'undefined') {
-        ctx.output('taskId', String(taskId))
-      }
-
-      if (taskUrl) {
-        ctx.output('taskUrl', String(taskUrl))
       }
 
       ctx.logger.info(`Launched Copilot agent task for ${owner}/${repo}`)
