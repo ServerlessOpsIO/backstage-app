@@ -136,6 +136,7 @@ app:
 
     - sub-page:scaffolder/templates:
         config:
+          enableBackstageUi: true
           groups:
             - title: Catalog Entities
               filter:
