@@ -1,8 +1,4 @@
-import { coreServices, createBackendModule } from '@backstage/backend-plugin-api'
-import {
-  DefaultGithubCredentialsProvider,
-  ScmIntegrations,
-} from '@backstage/integration'
+import { createBackendModule } from '@backstage/backend-plugin-api'
 import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node'
 
 import { launchGithubCopilotAgentAction } from './actions'
@@ -14,18 +10,12 @@ export const scaffolderModuleGithubCopilot = createBackendModule({
     registerInit({
       deps: {
         scaffolderActions: scaffolderActionsExtensionPoint,
-        rootConfig: coreServices.rootConfig,
       },
-      async init({ scaffolderActions, rootConfig }) {
-        const integrations = ScmIntegrations.fromConfig(rootConfig)
-        const githubCredentialsProvider =
-          DefaultGithubCredentialsProvider.fromIntegrations(integrations)
-
+      async init({ scaffolderActions }) {
         scaffolderActions.addActions(
-          launchGithubCopilotAgentAction(githubCredentialsProvider),
+          launchGithubCopilotAgentAction(),
         )
       },
     })
   },
 })
-

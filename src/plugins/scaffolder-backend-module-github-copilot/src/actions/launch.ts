@@ -1,5 +1,4 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
-import { GithubCredentialsProvider } from '@backstage/integration'
 import { Octokit } from 'octokit'
 
 type RepoDetails = {
@@ -36,7 +35,6 @@ function parseRepoUrl(repoUrl: string): RepoDetails {
 }
 
 export function launchGithubCopilotAgentAction(
-  githubCredentialsProvider: GithubCredentialsProvider,
 ) {
   return createTemplateAction({
     id: 'github:copilot:agent:launch',
@@ -57,6 +55,10 @@ export function launchGithubCopilotAgentAction(
         }).optional(),
         createPullRequest: z => z.boolean({
           description: 'If true, request the task to create a pull request',
+        }).optional(),
+        userCredentialsSecretKey: z => z.string({
+          description:
+            'Secret key containing the GitHub user token from requestUserCredentials',
         }).optional(),
       },
       output: {
@@ -79,15 +81,19 @@ export function launchGithubCopilotAgentAction(
         throw new Error(`Unsupported repo host for Copilot agent launch: ${host}`)
       }
 
-      const credentials = await githubCredentialsProvider.getCredentials({
-        url: `https://${host}/${owner}/${repo}`,
-      })
-      if (!credentials.token) {
-        throw new Error('Failed to resolve GitHub credentials for Copilot agent launch')
+      const userCredentialsSecretKey =
+        (ctx.input.userCredentialsSecretKey as string | undefined) ??
+        'USER_GITHUB_TOKEN'
+      const userGithubToken = ctx.secrets?.[userCredentialsSecretKey]
+
+      if (!userGithubToken || typeof userGithubToken !== 'string') {
+        throw new Error(
+          `Missing GitHub user token secret "${userCredentialsSecretKey}". Configure requestUserCredentials in the template step to provide this secret.`,
+        )
       }
 
       const octokit = new Octokit({
-        auth: credentials.token,
+        auth: userGithubToken,
         request: {
           headers: {
             'X-GitHub-Api-Version': GITHUB_API_VERSION,

@@ -1,4 +1,3 @@
-import { GithubCredentialsProvider } from '@backstage/integration'
 import { Octokit } from 'octokit'
 
 import { launchGithubCopilotAgentAction } from './launch'
@@ -8,7 +7,6 @@ jest.mock('octokit', () => ({
 }))
 
 describe('github:copilot:agent:launch', () => {
-  let githubCredentialsProvider: jest.Mocked<GithubCredentialsProvider>
   let requestMock: jest.Mock
 
   beforeEach(() => {
@@ -22,15 +20,6 @@ describe('github:copilot:agent:launch', () => {
     ;(Octokit as unknown as jest.Mock).mockImplementation(() => ({
       request: requestMock,
     }))
-    githubCredentialsProvider = {
-      getCredentials: jest.fn().mockResolvedValue({
-        token: 'gh-test-token',
-        headers: {
-          Authorization: 'token gh-test-token',
-        },
-        type: 'app',
-      }),
-    }
   })
 
   afterEach(() => {
@@ -38,7 +27,7 @@ describe('github:copilot:agent:launch', () => {
   })
 
   test('launches a Copilot agent task', async () => {
-    const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
+    const action = launchGithubCopilotAgentAction()
     const logger = { info: jest.fn() }
     const output = jest.fn()
 
@@ -51,13 +40,13 @@ describe('github:copilot:agent:launch', () => {
         },
         logger: logger as any,
         output,
+        secrets: {
+          USER_GITHUB_TOKEN: 'gh-user-token',
+        },
       } as any)
 
-    expect(githubCredentialsProvider.getCredentials).toHaveBeenCalledWith({
-      url: 'https://github.com/ServerlessOpsIO/example-repo',
-    })
     expect(Octokit).toHaveBeenCalledWith({
-      auth: 'gh-test-token',
+      auth: 'gh-user-token',
       request: {
         headers: {
           'X-GitHub-Api-Version': '2026-03-10',
@@ -83,7 +72,7 @@ describe('github:copilot:agent:launch', () => {
   })
 
   test('throws for invalid repoUrl', async () => {
-    const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
+    const action = launchGithubCopilotAgentAction()
 
     await expect(
       action.handler({
@@ -93,6 +82,9 @@ describe('github:copilot:agent:launch', () => {
           },
           logger: { info: jest.fn() } as any,
           output: jest.fn(),
+          secrets: {
+            USER_GITHUB_TOKEN: 'gh-user-token',
+          },
         } as any),
     ).rejects.toThrow('Invalid repoUrl')
   })
@@ -105,7 +97,7 @@ describe('github:copilot:agent:launch', () => {
       },
     })
 
-    const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
+    const action = launchGithubCopilotAgentAction()
     const output = jest.fn()
 
     await action.handler({
@@ -115,6 +107,9 @@ describe('github:copilot:agent:launch', () => {
       },
       logger: { info: jest.fn() } as any,
       output,
+      secrets: {
+        USER_GITHUB_TOKEN: 'gh-user-token',
+      },
     } as any)
 
     const requestInput = requestMock.mock.calls[0][1]
@@ -137,7 +132,7 @@ describe('github:copilot:agent:launch', () => {
       },
     })
 
-    const action = launchGithubCopilotAgentAction(githubCredentialsProvider)
+    const action = launchGithubCopilotAgentAction()
     const output = jest.fn()
 
     await action.handler({
@@ -147,6 +142,9 @@ describe('github:copilot:agent:launch', () => {
       },
       logger: { info: jest.fn() } as any,
       output,
+      secrets: {
+        USER_GITHUB_TOKEN: 'gh-user-token',
+      },
     } as any)
 
     expect(output).toHaveBeenCalledWith('taskId', '88888')
@@ -154,5 +152,21 @@ describe('github:copilot:agent:launch', () => {
       'taskUrl',
       'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/88888',
     )
+  })
+
+  test('throws when user github token secret is missing', async () => {
+    const action = launchGithubCopilotAgentAction()
+
+    await expect(
+      action.handler({
+        input: {
+          repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
+          prompt: 'Create starter implementation',
+        },
+        logger: { info: jest.fn() } as any,
+        output: jest.fn(),
+        secrets: {},
+      } as any),
+    ).rejects.toThrow('Missing GitHub user token secret')
   })
 })
