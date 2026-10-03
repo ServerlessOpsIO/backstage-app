@@ -62,6 +62,12 @@ export const EntityPickerFieldSchema = makeFieldSchemaFromZod(
       .or(entityQueryFilterExpressionSchema)
       .optional()
       .describe('List of key-value filter expression for entities'),
+    autoSelect: z
+      .boolean()
+      .optional()
+      .describe(
+        'Whether to automatically select an option on blur. Defaults to true.',
+      ),
   }),
 );
 

@@ -32,12 +32,11 @@ import {
   entityPresentationApiRef,
 } from '@backstage/plugin-catalog-react';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
 import Autocomplete, {
   AutocompleteChangeReason,
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import useAsync from 'react-use/esm/useAsync';
 import {
   EntityPickerFilterQueryValue,
@@ -48,6 +47,7 @@ import {
 import { VirtualizedListbox } from '../VirtualizedListbox';
 import { useTranslationRef } from '@backstage/core-plugin-api/alpha';
 import { scaffolderTranslationRef } from '../../../translation';
+import { ScaffolderField } from '@backstage/plugin-scaffolder-react/alpha';
 
 export { EntityPickerSchema } from './schema';
 
@@ -70,28 +70,42 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
     rawErrors,
     formData,
     idSchema,
-    formContext
+    formContext,
+    errors,
   } = props;
-  const [catalogFilter, setCatalogFilter] = useState<EntityFilterQuery>();
+  const catalogFilter = useMemo(
+    () =>
+      buildCatalogFilter(uiSchema, {
+        parameters: formContext.formData,
+      }),
+    [formContext.formData, uiSchema],
+  );
   const defaultKind = uiSchema['ui:options']?.defaultKind;
   const defaultNamespace =
     uiSchema['ui:options']?.defaultNamespace || undefined;
+  const autoSelect = uiSchema?.['ui:options']?.autoSelect ?? true;
+  const isDisabled = uiSchema?.['ui:disabled'] ?? false;
 
   const catalogApi = useApi(catalogApiRef);
   const entityPresentationApi = useApi(entityPresentationApiRef);
 
   const { value: entities, loading } = useAsync(async () => {
     const fields = [
+      'kind',
       'metadata.name',
       'metadata.namespace',
       'metadata.title',
-      'kind',
+      'metadata.description',
+      'spec.profile.displayName',
+      'spec.type',
     ];
-    const { items } = await catalogApi.getEntities(
-      catalogFilter
-        ? { filter: catalogFilter, fields }
-        : { filter: undefined, fields },
-    );
+    const streamRequest = catalogFilter
+      ? { query: {}, filter: catalogFilter, fields }
+      : { fields };
+    const items: Entity[] = [];
+    for await (const batch of catalogApi.streamEntities(streamRequest)) {
+      items.push(...batch);
+    }
 
     const entityRefToPresentation = new Map<
       string,
@@ -170,36 +184,41 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
     (allowArbitraryValues && formData ? getLabel(formData) : '');
 
   useEffect(() => {
-    setCatalogFilter(
-      buildCatalogFilter(uiSchema, {
-        parameters: formContext.formData,
-      }),
-    );
-  }, [formContext.formData, uiSchema]);
-
-  useEffect(() => {
     if (
       formData &&
       entities &&
+      !allowArbitraryValues &&
       !entities.catalogEntities.find(e => stringifyEntityRef(e) === formData)
     ) {
       onChange(undefined);
       return;
     }
 
-    if (entities?.catalogEntities.length === 1 && selectedEntity === '') {
+    if (
+      required &&
+      !allowArbitraryValues &&
+      entities?.catalogEntities.length === 1 &&
+      selectedEntity === ''
+    ) {
       onChange(stringifyEntityRef(entities.catalogEntities[0]));
     }
-  }, [entities, onChange, selectedEntity, formData]);
+  }, [entities, onChange, selectedEntity, formData, required, allowArbitraryValues]);
 
   return (
-    <FormControl
-      margin="normal"
+    <ScaffolderField
+      rawErrors={rawErrors}
+      rawDescription={uiSchema['ui:description'] ?? description}
       required={required}
-      error={rawErrors?.length > 0 && !formData}
+      disabled={isDisabled}
+      errors={errors}
     >
       <Autocomplete
-        disabled={entities?.catalogEntities.length === 1}
+        disabled={
+          isDisabled ||
+          (required &&
+            !allowArbitraryValues &&
+            entities?.catalogEntities.length === 1)
+        }
         id={idSchema?.$id}
         value={selectedEntity}
         loading={loading}
@@ -212,17 +231,16 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
             : entities?.entityRefToPresentation.get(stringifyEntityRef(option))
               ?.entityRef!
         }
-        autoSelect
+        autoSelect={autoSelect}
         freeSolo={allowArbitraryValues}
         renderInput={params => (
           <TextField
             {...params}
             label={title}
             margin="dense"
-            helperText={description}
-            FormHelperTextProps={{ margin: 'dense', style: { marginLeft: 0 } }}
             variant="outlined"
             required={required}
+            disabled={isDisabled}
             InputProps={params.InputProps}
           />
         )}
@@ -234,7 +252,7 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
         })}
         ListboxComponent={VirtualizedListbox}
       />
-    </FormControl>
+    </ScaffolderField>
   );
 };
 
@@ -264,7 +282,7 @@ function convertOpsValues(
  */
 function convertSchemaFiltersToQuery(
   schemaFilters: EntityPickerFilterQuery,
-  context: object
+  context: object,
 ): Exclude<EntityFilterQuery, Array<any>> {
   const query: EntityFilterQuery = {};
 
@@ -272,7 +290,7 @@ function convertSchemaFiltersToQuery(
     if (typeof value === 'string') {
       query[key] = renderString(value, context);
     } else if (Array.isArray(value)) {
-      query[key] = value;
+      query[key] = value.map(v => renderString(v, context));
     } else {
       query[key] = convertOpsValues(value);
     }

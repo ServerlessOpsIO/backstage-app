@@ -14,6 +14,7 @@ ui:field: SoContextualEntityPicker
 - Dynamic `catalogFilter` support based on the current form data
 - Optional `defaultKind` and `defaultNamespace` values for entity refs
 - Support for restricting values with `allowArbitraryValues: false`
+- Supports `autoSelect` and `ui:disabled` options like Backstage `EntityPicker`
 
 ## Usage
 
