@@ -32,12 +32,18 @@ import {
   entityPresentationApiRef,
 } from '@backstage/plugin-catalog-react';
 import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
 import Autocomplete, {
   AutocompleteChangeReason,
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  type Key,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import useAsync from 'react-use/esm/useAsync';
 import {
   EntityPickerFilterQueryValue,
@@ -48,6 +54,11 @@ import {
 import { VirtualizedListbox } from '../VirtualizedListbox';
 import { useTranslationRef } from '@backstage/core-plugin-api/alpha';
 import { scaffolderTranslationRef } from '../../../translation';
+import {
+  ScaffolderField,
+  useScaffolderTheme,
+} from '@backstage/plugin-scaffolder-react/alpha';
+import { Autocomplete as BuiAutocomplete } from '../Autocomplete';
 
 export { EntityPickerSchema } from './schema';
 
@@ -58,6 +69,7 @@ export { EntityPickerSchema } from './schema';
  * @public
  */
 export const ContextualEntityPicker = (props: EntityPickerProps) => {
+  const theme = useScaffolderTheme();
   const { t } = useTranslationRef(scaffolderTranslationRef);
   const {
     onChange,
@@ -70,28 +82,42 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
     rawErrors,
     formData,
     idSchema,
-    formContext
+    formContext,
+    errors,
   } = props;
-  const [catalogFilter, setCatalogFilter] = useState<EntityFilterQuery>();
+  const catalogFilter = useMemo(
+    () =>
+      buildCatalogFilter(uiSchema, {
+        parameters: formContext?.formData ?? {},
+      }),
+    [formContext?.formData, uiSchema],
+  );
   const defaultKind = uiSchema['ui:options']?.defaultKind;
   const defaultNamespace =
     uiSchema['ui:options']?.defaultNamespace || undefined;
+  const autoSelect = uiSchema?.['ui:options']?.autoSelect ?? true;
+  const isDisabled = uiSchema?.['ui:disabled'] ?? false;
 
   const catalogApi = useApi(catalogApiRef);
   const entityPresentationApi = useApi(entityPresentationApiRef);
 
   const { value: entities, loading } = useAsync(async () => {
     const fields = [
+      'kind',
       'metadata.name',
       'metadata.namespace',
       'metadata.title',
-      'kind',
+      'metadata.description',
+      'spec.profile.displayName',
+      'spec.type',
     ];
-    const { items } = await catalogApi.getEntities(
-      catalogFilter
-        ? { filter: catalogFilter, fields }
-        : { filter: undefined, fields },
-    );
+    const streamRequest = catalogFilter
+      ? { query: {}, filter: catalogFilter, fields }
+      : { fields };
+    const items: Entity[] = [];
+    for await (const batch of catalogApi.streamEntities(streamRequest)) {
+      items.push(...batch);
+    }
 
     const entityRefToPresentation = new Map<
       string,
@@ -169,37 +195,175 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
     entities?.catalogEntities.find(e => stringifyEntityRef(e) === formData) ??
     (allowArbitraryValues && formData ? getLabel(formData) : '');
 
-  useEffect(() => {
-    setCatalogFilter(
-      buildCatalogFilter(uiSchema, {
-        parameters: formContext.formData,
+  const buiOptions = useMemo(
+    () =>
+      (entities?.catalogEntities || []).map(entity => {
+        const entityRef = stringifyEntityRef(entity);
+        const presentation = entities?.entityRefToPresentation.get(entityRef);
+        return {
+          value: entityRef,
+          label: presentation?.primaryTitle || entityRef,
+        };
       }),
-    );
-  }, [formContext.formData, uiSchema]);
+    [entities],
+  );
+
+  const [inputValue, setInputValue] = useState(formData || '');
 
   useEffect(() => {
-    if (
-      formData &&
-      entities &&
-      !entities.catalogEntities.find(e => stringifyEntityRef(e) === formData)
-    ) {
-      onChange(undefined);
-      return;
+    if (formData) {
+      const opt = buiOptions.find(o => o.value === formData);
+      setInputValue(opt?.label || formData);
+    } else {
+      setInputValue('');
     }
+  }, [formData, buiOptions]);
 
-    if (entities?.catalogEntities.length === 1 && selectedEntity === '') {
-      onChange(stringifyEntityRef(entities.catalogEntities[0]));
+  const selectedKey =
+    formData && buiOptions.some(o => o.value === formData) ? formData : null;
+
+  const lastCommittedRef = useRef(formData);
+
+  useEffect(() => {
+    lastCommittedRef.current = formData;
+  }, [formData]);
+
+  const handleSelectionChange = useCallback(
+    (key: Key | null) => {
+      if (key !== null) {
+        const value = String(key);
+        lastCommittedRef.current = value;
+        onChange(value);
+      } else if (allowArbitraryValues && inputValue) {
+        let entityRef = inputValue;
+        try {
+          entityRef = stringifyEntityRef(
+            parseEntityRef(inputValue, { defaultKind, defaultNamespace }),
+          );
+        } catch {
+          // If the input isn't a valid entity ref, use it as-is
+        }
+        lastCommittedRef.current = entityRef;
+        onChange(entityRef);
+      } else {
+        lastCommittedRef.current = undefined;
+        onChange(undefined);
+      }
+    },
+    [onChange, allowArbitraryValues, inputValue, defaultKind, defaultNamespace],
+  );
+
+  const handleBlur = useCallback(() => {
+    if (allowArbitraryValues && inputValue) {
+      let entityRef = inputValue;
+      try {
+        entityRef = stringifyEntityRef(
+          parseEntityRef(inputValue, { defaultKind, defaultNamespace }),
+        );
+      } catch {
+        // If the input isn't a valid entity ref, use it as-is
+      }
+      if (lastCommittedRef.current !== entityRef) {
+        lastCommittedRef.current = entityRef;
+        onChange(entityRef);
+      }
     }
-  }, [entities, onChange, selectedEntity, formData]);
+  }, [
+    allowArbitraryValues,
+    inputValue,
+    defaultKind,
+    defaultNamespace,
+    onChange,
+  ]);
+
+  useEffect(() => {
+    if (theme === 'bui') {
+      if (
+        required &&
+        !allowArbitraryValues &&
+        entities?.catalogEntities.length === 1 &&
+        !formData
+      ) {
+        onChange(stringifyEntityRef(entities.catalogEntities[0]));
+      }
+    } else {
+      if (
+        formData &&
+        entities &&
+        !allowArbitraryValues &&
+        !entities.catalogEntities.find(e => stringifyEntityRef(e) === formData)
+      ) {
+        onChange(undefined);
+        return;
+      }
+
+      if (
+        required &&
+        !allowArbitraryValues &&
+        entities?.catalogEntities.length === 1 &&
+        selectedEntity === ''
+      ) {
+        onChange(stringifyEntityRef(entities.catalogEntities[0]));
+      }
+    }
+  }, [
+    entities,
+    onChange,
+    selectedEntity,
+    formData,
+    required,
+    allowArbitraryValues,
+    theme,
+  ]);
+
+  if (theme === 'bui') {
+    const isAutoSelected =
+      required &&
+      !allowArbitraryValues &&
+      entities?.catalogEntities.length === 1;
+
+    return (
+      <ScaffolderField
+        rawErrors={rawErrors}
+        rawDescription={uiSchema['ui:description'] ?? description}
+        required={required}
+        disabled={isDisabled}
+        errors={errors}
+      >
+        <BuiAutocomplete
+          id={idSchema?.$id}
+          label={title}
+          isRequired={required}
+          isDisabled={isDisabled || isAutoSelected}
+          selectedKey={selectedKey}
+          inputValue={inputValue}
+          onInputChange={setInputValue}
+          onSelectionChange={handleSelectionChange}
+          onBlur={handleBlur}
+          isLoading={loading}
+          options={buiOptions}
+          allowsCustomValue={allowArbitraryValues}
+          isInvalid={rawErrors && rawErrors.length > 0}
+        />
+      </ScaffolderField>
+    );
+  }
 
   return (
-    <FormControl
-      margin="normal"
+    <ScaffolderField
+      rawErrors={rawErrors}
+      rawDescription={uiSchema['ui:description'] ?? description}
       required={required}
-      error={rawErrors?.length > 0 && !formData}
+      disabled={isDisabled}
+      errors={errors}
     >
       <Autocomplete
-        disabled={entities?.catalogEntities.length === 1}
+        disabled={
+          isDisabled ||
+          (required &&
+            !allowArbitraryValues &&
+            entities?.catalogEntities.length === 1)
+        }
         id={idSchema?.$id}
         value={selectedEntity}
         loading={loading}
@@ -212,17 +376,16 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
             : entities?.entityRefToPresentation.get(stringifyEntityRef(option))
               ?.entityRef!
         }
-        autoSelect
+        autoSelect={autoSelect}
         freeSolo={allowArbitraryValues}
         renderInput={params => (
           <TextField
             {...params}
             label={title}
             margin="dense"
-            helperText={description}
-            FormHelperTextProps={{ margin: 'dense', style: { marginLeft: 0 } }}
             variant="outlined"
             required={required}
+            disabled={isDisabled}
             InputProps={params.InputProps}
           />
         )}
@@ -234,7 +397,7 @@ export const ContextualEntityPicker = (props: EntityPickerProps) => {
         })}
         ListboxComponent={VirtualizedListbox}
       />
-    </FormControl>
+    </ScaffolderField>
   );
 };
 
@@ -264,7 +427,7 @@ function convertOpsValues(
  */
 function convertSchemaFiltersToQuery(
   schemaFilters: EntityPickerFilterQuery,
-  context: object
+  context: object,
 ): Exclude<EntityFilterQuery, Array<any>> {
   const query: EntityFilterQuery = {};
 
@@ -272,7 +435,7 @@ function convertSchemaFiltersToQuery(
     if (typeof value === 'string') {
       query[key] = renderString(value, context);
     } else if (Array.isArray(value)) {
-      query[key] = value;
+      query[key] = value.map(v => renderString(v, context));
     } else {
       query[key] = convertOpsValues(value);
     }
@@ -291,7 +454,7 @@ function convertSchemaFiltersToQuery(
  */
 function buildCatalogFilter(
   uiSchema: EntityPickerProps['uiSchema'],
-  context: object
+  context: object,
 ): EntityFilterQuery | undefined {
   const allowedKinds = uiSchema['ui:options']?.allowedKinds;
 
