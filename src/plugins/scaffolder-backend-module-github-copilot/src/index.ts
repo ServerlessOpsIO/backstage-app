@@ -1,4 +1,3 @@
-/***/
 /**
  * The github-copilot module for @backstage/plugin-scaffolder-backend.
  *
@@ -6,4 +5,3 @@
  */
 
 export { scaffolderModuleGithubCopilot as default } from './module'
-
