@@ -6069,6 +6069,7 @@ __metadata:
     "@backstage/plugin-scaffolder": "backstage:^"
     "@backstage/plugin-scaffolder-node": "backstage:^"
     "@backstage/plugin-scaffolder-react": "backstage:^"
+    "@backstage/ui": "backstage:^"
     "@material-ui/core": "npm:^4.12.4"
     "@material-ui/lab": "npm:^4.0.0-alpha.61"
     "@types/nunjucks": "npm:^3.2.6"
