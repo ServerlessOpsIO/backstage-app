@@ -1,13 +1,45 @@
-# catalog
+# @internal/backstage-plugin-catalog-module-serverlessops
 
-Welcome to the catalog plugin!
+This frontend module customizes the Backstage catalog experience for ServerlessOps.
 
-_This plugin was created through the Backstage CLI_
+It adds a set of entity pages and cards that surface operational context for catalog entities: CI/CD status, recent activity, relationship graphs, and a ServerlessOps-specific tabbed catalog experience.
 
-## Getting started
+## Features
 
-Your plugin has been added to the example app in this repository, meaning you'll be able to access it by running `yarn start` in the root directory, and then navigating to [/catalog](http://localhost:3000/catalog).
+- Custom entity content tabs for `CI/CD`, `Activity`, and `Relations`
+- Catalog cards for `has-components`, `has-resources`, and `has-systems`
+- A tabbed catalog index page and a dedicated directory landing page
+- A ServerlessOps-oriented storefront for the catalog UI without replacing the base catalog plugin
 
-You can also serve the plugin in isolation by running `yarn start` in the plugin directory.
-This method of serving the plugin provides quicker iteration speed and a faster startup and hot reloads.
-It is only meant for local development, and the setup for it can be found inside the [/dev](./dev) directory.
+## Included extensions
+
+- `cicd` entity content tab
+- `activity` entity content tab
+- `relations` entity content tab
+- `has-components` entity card
+- `has-resources` entity card
+- `has-systems` entity card
+- `catalogTabbedIndexPage`
+- `catalogTabbedDirectoryIndexPage`
+
+## Registration
+
+The module is registered as a frontend module for the `catalog` plugin:
+
+```ts
+export const serverlessOpsCatalogModule = createFrontendModule({
+  pluginId: 'catalog',
+  extensions: [
+    catalogHasComponentsEntityCard,
+    catalogHasResourcesEntityCard,
+    catalogHasSystemsEntityCard,
+    catalogTabbedIndexPage,
+    catalogTabbedDirectoryIndexPage,
+    activityCatalogEntityContent,
+    cicdCatalogEntityContent,
+    relationsCatalogEntityContent,
+  ],
+});
+```
+
+This is the main UI layer for presenting ServerlessOps metadata and relationships in the catalog.
