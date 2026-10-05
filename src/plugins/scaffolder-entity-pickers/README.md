@@ -1,8 +1,13 @@
 # @internal/backstage-plugin-scaffolder-entity-pickers
 
-This package provides the `SoContextualEntityPicker` field extension for Backstage Scaffolder forms.
+This package provides the following field extensions for Backstage Scaffolder forms:
+
+- `SoContextualEntityPicker`
+- `SoRequestUserCredentials`
 
 The picker allows templates to fetch and select catalog entities based on values selected earlier in the same form. It supports dynamic filtering using the current form context and can be used in template parameters as a drop-in replacement for the standard entity picker when later fields depend on upstream selections.
+
+`SoRequestUserCredentials` is a side-effect-only hidden field that triggers the same `requestUserCredentials` flow used by Scaffolder SCM pickers and stores the resulting token in template secrets.
 
 ## Features
 
@@ -15,16 +20,20 @@ The picker allows templates to fetch and select catalog entities based on values
 
 ## Example usage
 
-```yaml
-system:
-  ui:field: SoContextualEntityPicker
-  ui:options:
-    allowArbitraryValues: false
-    catalogFilter:
-      - kind: System
-        relations.partOf: "{{ parameters.domain }}"
-```
+To request GitHub credentials without showing an interactive picker:
 
+```yaml
+githubAuth:
+  type: string
+  ui:field: SoRequestUserCredentials
+  ui:options:
+    host: github.com
+    requestUserCredentials:
+      secretsKey: USER_GITHUB_TOKEN
+      additionalScopes:
+        github:
+          - read:user
+```
 The field is registered as a frontend module for the `scaffolder` plugin and exposed through the package default export:
 
 ```ts

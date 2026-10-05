@@ -4,6 +4,7 @@ import {
 } from '@backstage/plugin-scaffolder-react/alpha';
 import { createFrontendModule } from '@backstage/frontend-plugin-api';
 import { ContextualEntityPicker } from './components/fields/ContextualEntityPicker/ContextualEntityPicker';
+import { RequestUserCredentials } from './components/fields/RequestUserCredentials/RequestUserCredentials';
 
 
 const SoContextualEntityPickerFieldExtension = FormFieldBlueprint.make({
@@ -17,7 +18,21 @@ const SoContextualEntityPickerFieldExtension = FormFieldBlueprint.make({
   },
 });
 
+const SoRequestUserCredentialsFieldExtension = FormFieldBlueprint.make({
+  name: 'so-request-user-credentials',
+  params: {
+    field: async () =>
+      createFormField({
+        name: 'SoRequestUserCredentials',
+        component: RequestUserCredentials,
+      }),
+  },
+});
+
 export const soContextualEntityPickerModule = createFrontendModule({
   pluginId: 'scaffolder',
-  extensions: [SoContextualEntityPickerFieldExtension],
+  extensions: [
+    SoContextualEntityPickerFieldExtension,
+    SoRequestUserCredentialsFieldExtension,
+  ],
 });
