@@ -34,54 +34,89 @@ function parseRepoUrl(repoUrl: string): RepoDetails {
   return { host, owner, repo }
 }
 
-export function launchGithubCopilotAgentAction(
-) {
-  return createTemplateAction({
+export function launchGithubCopilotAgentAction() {
+  return createGithubCopilotAgentAction({
     id: 'github:copilot:agent:launch',
     description: 'Launches a GitHub Copilot agent task for a repository',
+  })
+}
+
+export function createGithubCopilotAgentAction(options: {
+  id: string
+  description: string
+  customAgent?: string
+}) {
+  return createTemplateAction({
+    id: options.id,
+    description: options.description,
     schema: {
-      input: {
-        repoUrl: z => z.string({
-          description: 'GitHub repository URL in Backstage repoUrl format',
-        }),
-        prompt: z => z.string({
-          description: 'Initial prompt for the Copilot coding agent',
-        }),
-        baseRef: z => z.string({
-          description: 'Branch that the Copilot task should start from',
-        }).optional(),
-        model: z => z.string({
-          description: 'Optional model override for the Copilot task',
-        }).optional(),
-        customAgent: z => z.string({
-          description: 'Optional name of a custom Copilot agent to use',
-        }).optional(),
-        createPullRequest: z => z.boolean({
-          description: 'If true, request the task to create a pull request',
-        }).optional(),
-        userCredentialsSecretKey: z => z.string({
-          description:
-            'Secret key containing the GitHub user token from requestUserCredentials',
-        }).optional(),
+      input: z => {
+        const inputSchema = z.object({
+          repoUrl: z.string({
+            description: 'GitHub repository URL in Backstage repoUrl format',
+          }),
+          prompt: z.string({
+            description: 'Initial prompt for the Copilot coding agent',
+          }),
+          baseRef: z
+            .string({
+              description: 'Branch that the Copilot task should start from',
+            })
+            .optional(),
+          model: z
+            .string({
+              description: 'Optional model override for the Copilot task',
+            })
+            .optional(),
+          customAgent: z
+            .string({
+              description: 'Optional name of a custom Copilot agent to use',
+            })
+            .optional(),
+          createPullRequest: z
+            .boolean({
+              description: 'If true, request the task to create a pull request',
+            })
+            .optional(),
+          userCredentialsSecretKey: z
+            .string({
+              description:
+                'Secret key containing the GitHub user token from requestUserCredentials',
+            })
+            .optional(),
+        })
+        return options.customAgent
+          ? inputSchema.omit({ customAgent: true })
+          : inputSchema
       },
       output: {
-        taskId: z => z.string({
-          description: 'ID of the launched Copilot agent task',
-        }).optional(),
-        taskUrl: z => z.string({
-          description: 'URL of the launched Copilot agent task',
-        }).optional(),
+        taskId: z =>
+          z
+            .string({
+              description: 'ID of the launched Copilot agent task',
+            })
+            .optional(),
+        taskUrl: z =>
+          z
+            .string({
+              description: 'URL of the launched Copilot agent task',
+            })
+            .optional(),
       },
     },
     async handler(ctx) {
       const prompt = (ctx.input.prompt as string).trim()
       if (!prompt) {
-        throw new Error('A non-empty prompt is required to launch a Copilot agent')
+        throw new Error(
+          'A non-empty prompt is required to launch a Copilot agent',
+        )
       }
 
       const { host, owner, repo } = parseRepoUrl(ctx.input.repoUrl as string)
       if (host !== 'github.com') {
-        throw new Error(`Unsupported repo host for Copilot agent launch: ${host}`)
+        throw new Error(
+          `Unsupported repo host for Copilot agent launch: ${host}`,
+        )
       }
 
       const userCredentialsSecretKey =
@@ -117,7 +152,9 @@ export function launchGithubCopilotAgentAction(
         if (baseRef) {
           requestBody.base_ref = baseRef
         }
-        const customAgent = ctx.input.customAgent as string | undefined
+        const customAgent =
+          options.customAgent ??
+          ('customAgent' in ctx.input ? ctx.input.customAgent : undefined)
         if (customAgent) {
           requestBody.agent = customAgent
         }
@@ -156,7 +193,9 @@ export function launchGithubCopilotAgentAction(
         }
 
         ctx.logger.info(
-          `Launched Copilot agent task for ${owner}/${repo}${taskId ? ` (taskId=${String(taskId)})` : ''}`,
+          `Launched Copilot agent task for ${owner}/${repo}${
+            taskId ? ` (taskId=${String(taskId)})` : ''
+          }`,
         )
       } catch (error: unknown) {
         const message =

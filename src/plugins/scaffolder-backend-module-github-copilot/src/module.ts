@@ -2,6 +2,7 @@ import { createBackendModule } from '@backstage/backend-plugin-api'
 import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node'
 
 import {
+  createSpecKitConstitutionAction,
   initializeSpecKitAction,
   launchGithubCopilotAgentAction,
 } from './actions'
@@ -18,6 +19,7 @@ export const scaffolderModuleGithubCopilot = createBackendModule({
         scaffolderActions.addActions(
           launchGithubCopilotAgentAction(),
           initializeSpecKitAction(),
+          createSpecKitConstitutionAction(),
         )
       },
     })
