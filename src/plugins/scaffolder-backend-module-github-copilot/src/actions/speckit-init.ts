@@ -1,7 +1,15 @@
 import { execFile } from 'node:child_process'
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 
-const SPECIFY_ARGS = ['init', '--non-interactive', '--force', '.']
+const SPECIFY_ARGS = [
+  'init',
+  '--integration',
+  'copilot',
+  '--integration-options="--commands"',
+  '--non-interactive',
+  '--force',
+  '.'
+]
 
 export function initializeSpecKitAction() {
   return createTemplateAction({
