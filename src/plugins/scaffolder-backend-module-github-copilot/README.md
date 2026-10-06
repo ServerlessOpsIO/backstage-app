@@ -4,6 +4,22 @@ Scaffolder backend module that adds GitHub Copilot-related actions.
 
 ## Actions
 
+### `github:copilot:agent:launch`
+
+Launches a GitHub Copilot agent task for a repository. Use `customAgent` to
+select a custom Copilot agent profile configured for the repository:
+
+```yaml
+steps:
+  - id: launchCopilot
+    name: Launch Copilot agent
+    action: github:copilot:agent:launch
+    input:
+      repoUrl: ${{ parameters.repoUrl }}
+      prompt: Implement the requested change
+      customAgent: security-reviewer
+```
+
 ### `github:copilot:speckit:init`
 
 Initializes Spec Kit in the generated project workspace. Add it to a scaffolder

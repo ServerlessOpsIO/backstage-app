@@ -53,6 +53,9 @@ export function launchGithubCopilotAgentAction(
         model: z => z.string({
           description: 'Optional model override for the Copilot task',
         }).optional(),
+        customAgent: z => z.string({
+          description: 'Optional name of a custom Copilot agent to use',
+        }).optional(),
         createPullRequest: z => z.boolean({
           description: 'If true, request the task to create a pull request',
         }).optional(),
@@ -113,6 +116,10 @@ export function launchGithubCopilotAgentAction(
         const baseRef = ctx.input.baseRef as string | undefined
         if (baseRef) {
           requestBody.base_ref = baseRef
+        }
+        const customAgent = ctx.input.customAgent as string | undefined
+        if (customAgent) {
+          requestBody.agent = customAgent
         }
 
         const response = await octokit.request(

@@ -36,6 +36,7 @@ describe('github:copilot:agent:launch', () => {
           repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
           prompt: 'Create starter implementation',
           baseRef: 'main',
+          customAgent: 'security-reviewer',
           createPullRequest: true,
         },
         logger: logger as any,
@@ -62,6 +63,7 @@ describe('github:copilot:agent:launch', () => {
         base_ref: 'main',
         model: 'auto',
         create_pull_request: true,
+        agent: 'security-reviewer',
       }),
     )
     expect(output).toHaveBeenCalledWith('taskId', '12345')
@@ -114,6 +116,7 @@ describe('github:copilot:agent:launch', () => {
 
     const requestInput = requestMock.mock.calls[0][1]
     expect(requestInput).not.toHaveProperty('base_ref')
+    expect(requestInput).not.toHaveProperty('agent')
     expect(output).toHaveBeenCalledWith('taskId', '77777')
     expect(output).toHaveBeenCalledWith(
       'taskUrl',
