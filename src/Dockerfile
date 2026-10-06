@@ -1,4 +1,4 @@
-# Add any local image custimization here
+# Add any local image customization here
 FROM backstage:latest
 
 USER root
