@@ -9,6 +9,8 @@ ADD --chown=node:node https://truststore.pki.rds.amazonaws.com/us-west-2/us-west
 RUN cat us-east-1-bundle.pem us-east-2-bundle.pem us-west-1-bundle.pem us-west-2-bundle.pem > ./rds-combined-ca-bundle.pem
 RUN chown node:node ./rds-combined-ca-bundle.pem
 
+RUN pip install specify-cli
+
 # Add app-config.d directory
 RUN mkdir app-config.d
 RUN chown node:node app-config.d
