@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createGithubCopilotAgentAction } from './launch'
+import { createGithubCopilotAgentAction } from './common'
 
 export function createSpecKitConstitutionAction() {
   return createGithubCopilotAgentAction({
