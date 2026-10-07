@@ -176,7 +176,7 @@ export function createGithubCopilotAgentAction(options: {
           : options.customAgent ??
             ('customAgent' in ctx.input ? ctx.input.customAgent : undefined)
         if (customAgent) {
-          requestBody.agent = customAgent
+          requestBody.custom_agent = customAgent
         }
 
         const response = await octokit.request(

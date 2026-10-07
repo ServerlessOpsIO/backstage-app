@@ -70,7 +70,7 @@ describe('github:copilot:speckit:clarify', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        agent: 'speckit.clarify',
+        custom_agent: 'speckit.clarify',
       }),
     )
   })

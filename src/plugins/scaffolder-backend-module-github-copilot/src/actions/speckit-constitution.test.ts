@@ -86,7 +86,7 @@ describe('github:copilot:speckit:constitution', () => {
         base_ref: 'develop',
         model: 'custom-model',
         create_pull_request: false,
-        agent: 'speckit.constitution',
+        custom_agent: 'speckit.constitution',
       },
     )
   })

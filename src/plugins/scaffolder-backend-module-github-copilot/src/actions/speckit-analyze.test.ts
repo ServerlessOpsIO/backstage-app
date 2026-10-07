@@ -70,7 +70,7 @@ describe('github:copilot:speckit:analyze', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        agent: 'speckit.analyze',
+        custom_agent: 'speckit.analyze',
       }),
     )
   })

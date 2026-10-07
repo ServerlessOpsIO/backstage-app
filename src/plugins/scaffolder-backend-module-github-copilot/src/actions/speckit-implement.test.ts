@@ -70,7 +70,7 @@ describe('github:copilot:speckit:implement', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        agent: 'speckit.implement',
+        custom_agent: 'speckit.implement',
       }),
     )
   })

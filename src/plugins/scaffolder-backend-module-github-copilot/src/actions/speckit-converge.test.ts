@@ -70,7 +70,7 @@ describe('github:copilot:speckit:converge', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        agent: 'speckit.converge',
+        custom_agent: 'speckit.converge',
       }),
     )
   })

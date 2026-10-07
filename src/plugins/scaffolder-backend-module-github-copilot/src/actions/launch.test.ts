@@ -63,7 +63,7 @@ describe('github:copilot:agent:launch', () => {
         base_ref: 'main',
         model: 'auto',
         create_pull_request: true,
-        agent: 'security-reviewer',
+        custom_agent: 'security-reviewer',
       }),
     )
     expect(output).toHaveBeenCalledWith('taskId', '12345')
@@ -116,7 +116,7 @@ describe('github:copilot:agent:launch', () => {
 
     const requestInput = requestMock.mock.calls[0][1]
     expect(requestInput).not.toHaveProperty('base_ref')
-    expect(requestInput).not.toHaveProperty('agent')
+    expect(requestInput).not.toHaveProperty('custom_agent')
     expect(output).toHaveBeenCalledWith('taskId', '77777')
     expect(output).toHaveBeenCalledWith(
       'taskUrl',
