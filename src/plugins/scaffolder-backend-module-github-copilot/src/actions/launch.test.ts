@@ -61,7 +61,6 @@ describe('github:copilot:agent:launch', () => {
         repo: 'example-repo',
         prompt: 'Create starter implementation',
         base_ref: 'main',
-        model: 'auto',
         create_pull_request: true,
         custom_agent: 'security-reviewer',
       }),
@@ -115,6 +114,7 @@ describe('github:copilot:agent:launch', () => {
     } as any)
 
     const requestInput = requestMock.mock.calls[0][1]
+    expect(requestInput).not.toHaveProperty('model')
     expect(requestInput).not.toHaveProperty('base_ref')
     expect(requestInput).not.toHaveProperty('custom_agent')
     expect(output).toHaveBeenCalledWith('taskId', '77777')

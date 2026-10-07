@@ -46,7 +46,6 @@ describe('github:copilot:speckit:taskstoissues', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.taskstoissues ${input.prompt}`,
-        model: 'auto',
         create_pull_request: true,
       },
     )

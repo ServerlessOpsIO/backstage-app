@@ -163,9 +163,12 @@ export function createGithubCopilotAgentAction(options: {
           owner,
           repo,
           prompt,
-          model: (ctx.input.model as string | undefined) ?? 'auto',
           create_pull_request:
             (ctx.input.createPullRequest as boolean | undefined) ?? true,
+        }
+        const model = ctx.input.model as string | undefined
+        if (model) {
+          requestBody.model = model
         }
         const baseRef = ctx.input.baseRef as string | undefined
         if (baseRef) {

@@ -46,7 +46,6 @@ describe('github:copilot:speckit:implement', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.implement ${input.prompt}`,
-        model: 'auto',
         create_pull_request: true,
       },
     )

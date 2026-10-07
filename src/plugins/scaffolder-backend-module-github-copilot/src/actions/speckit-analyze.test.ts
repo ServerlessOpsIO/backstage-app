@@ -46,7 +46,6 @@ describe('github:copilot:speckit:analyze', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.analyze ${input.prompt}`,
-        model: 'auto',
         create_pull_request: true,
       },
     )

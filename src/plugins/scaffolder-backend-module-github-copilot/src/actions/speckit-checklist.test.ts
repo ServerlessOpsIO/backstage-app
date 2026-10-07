@@ -46,7 +46,6 @@ describe('github:copilot:speckit:checklist', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.checklist ${input.prompt}`,
-        model: 'auto',
         create_pull_request: true,
       },
     )

@@ -47,7 +47,6 @@ describe('github:copilot:speckit:constitution', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.constitution ${input.prompt}`,
-        model: 'auto',
         create_pull_request: true,
       },
     )

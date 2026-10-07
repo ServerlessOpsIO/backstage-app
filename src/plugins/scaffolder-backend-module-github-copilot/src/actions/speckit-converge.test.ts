@@ -46,7 +46,6 @@ describe('github:copilot:speckit:converge', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.converge ${input.prompt}`,
-        model: 'auto',
         create_pull_request: true,
       },
     )

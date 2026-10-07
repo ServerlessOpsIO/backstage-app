@@ -46,7 +46,6 @@ describe('github:copilot:speckit:clarify', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.clarify ${input.prompt}`,
-        model: 'auto',
         create_pull_request: true,
       },
     )
