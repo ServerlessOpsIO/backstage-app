@@ -20,10 +20,32 @@ steps:
       customAgent: security-reviewer
 ```
 
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format, for example `github.com?owner=my-org&repo=my-repo`. Only `github.com` is supported. |
+| `prompt` | Yes | | Prompt for the Copilot agent. Must not be empty. |
+| `customAgent` | No | | Name of a custom Copilot agent profile to use. |
+| `baseRef` | No | Repository default branch | Branch the Copilot task starts from. |
+| `model` | No | `auto` | Model to use for the Copilot task. |
+| `createPullRequest` | No | `true` | Whether the Copilot task opens a pull request. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+The action calls GitHub as the user running the template, so it needs a GitHub
+user token. Configure `requestUserCredentials` in the template to store the token
+in the `USER_GITHUB_TOKEN` secret, or set `userCredentialsSecretKey` to the secret
+key your template uses.
+
+The action returns optional `taskId` and `taskUrl` outputs. It launches the task
+asynchronously, so a successful scaffolder step does not mean that the Copilot
+task or its pull request has completed.
+
 ### `github:copilot:speckit:init`
 
-Initializes Spec Kit in the generated project workspace. Add it to a scaffolder
-template after the project files have been generated:
+Initializes [Spec Kit](https://github.com/github/spec-kit) with the Copilot
+integration in the generated project workspace. Add it to a scaffolder template
+after the project files have been generated:
 
 ```yaml
 steps:
@@ -32,16 +54,40 @@ steps:
     action: github:copilot:speckit:init
 ```
 
-The action runs `specify init --non-interactive --force .` from the project
-root. The scaffolder task runtime must have the `specify` executable on its
-`PATH`; a missing executable or unsuccessful command fails the step.
+The action runs
+`specify init --integration copilot --integration-options="--commands" --non-interactive --force .`
+from the project root. The scaffolder task runtime must have the `specify`
+executable on its `PATH`. A missing executable or unsuccessful command fails the
+step.
 
-### `github:copilot:speckit:constitution`
+### Spec Kit agent actions
 
-Launches a Copilot task to create a project constitution using the
-`speckit.constitution` agent. Run this action **after** initializing Spec Kit and
-publishing the generated project to GitHub. The repository must have the
-`speckit.constitution` custom agent profile available.
+These actions launch a Copilot task that runs one of the Spec Kit custom agents
+on a repository. Each action always uses its own agent, and the agent cannot be
+overridden.
+
+| Action | Agent | Purpose |
+| --- | --- | --- |
+| `github:copilot:speckit:constitution` | `speckit.constitution` | Create the project constitution: the principles that guide development. |
+| `github:copilot:speckit:specify` | `speckit.specify` | Create a feature specification from a description of the feature. |
+| `github:copilot:speckit:clarify` | `speckit.clarify` | Clarify underspecified areas of the feature specification. |
+| `github:copilot:speckit:checklist` | `speckit.checklist` | Generate a quality checklist for the feature specification. |
+| `github:copilot:speckit:plan` | `speckit.plan` | Create a technical implementation plan for the feature. |
+| `github:copilot:speckit:tasks` | `speckit.tasks` | Break the plan into tasks. |
+| `github:copilot:speckit:analyze` | `speckit.analyze` | Check consistency and coverage across the spec, plan, and tasks. |
+| `github:copilot:speckit:taskstoissues` | `speckit.taskstoissues` | Convert the tasks into GitHub issues. |
+| `github:copilot:speckit:implement` | `speckit.implement` | Implement the feature tasks. |
+| `github:copilot:speckit:converge` | `speckit.converge` | Converge the feature artifacts. |
+
+Run these actions **after** initializing Spec Kit and publishing the generated
+project to GitHub. The repository must have the matching custom agent profile
+available.
+
+The `prompt` input is passed to the agent. Use it to describe the project
+principles for `constitution`, the feature for `specify`, or extra guidance for
+the other agents. The actions accept the same inputs as
+`github:copilot:agent:launch`, except `customAgent`, and return the same `taskId`
+and `taskUrl` outputs. The same GitHub user token requirement applies.
 
 ```yaml
 steps:
@@ -63,38 +109,9 @@ steps:
       prompt: This is an AWS serverless REST API written in Python...
 ```
 
-The action requires `repoUrl` in Backstage format and a non-empty `prompt`
-describing the project's principles. It also accepts `baseRef`, `model`,
-`createPullRequest`, and `userCredentialsSecretKey`, with the same defaults as
-`github:copilot:agent:launch`. The agent is always `speckit.constitution` and cannot
-be overridden.
-
-Configure `requestUserCredentials` on the template's repository picker to store a
-GitHub user token in the `USER_GITHUB_TOKEN` secret, or set
-`userCredentialsSecretKey` to the secret key used by your template.
-
-The action returns optional `taskId` and `taskUrl` outputs. It launches the task
-asynchronously; a successful scaffolder step does not mean that constitution
-creation or the pull request has completed.
-
-### `github:copilot:speckit:specify`
-
-Launches a Copilot task to create a feature specification using the
-`speckit.specify` agent. Your `prompt` is passed to the agent as the description
-of the feature to specify. Run this action **after** initializing Spec Kit and
-publishing the generated project to GitHub. The repository must have the
-`speckit.specify` custom agent profile available.
-
-```yaml
-steps:
-  - id: createSpecification
-    name: Create feature specification
-    action: github:copilot:speckit:specify
-    input:
-      repoUrl: ${{ parameters.repoUrl }}
-      prompt: ${{ parameters.featureDescription }}
-```
-
-The action takes the same inputs and returns the same outputs as
-`github:copilot:speckit:constitution`. The agent is always `speckit.specify` and
-cannot be overridden.
+Each action starts a separate Copilot task and returns as soon as the task is
+launched. The scaffolder does not wait for one task to finish before starting the
+next. Spec Kit agents build on each other's output, such as `plan` reading the
+specification that `specify` creates. A template should usually launch only one
+Spec Kit agent action, and later steps should be run after its pull request is
+merged.
