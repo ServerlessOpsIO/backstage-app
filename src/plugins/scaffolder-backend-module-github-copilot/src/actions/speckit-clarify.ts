@@ -6,5 +6,6 @@ export function createSpecKitClarifyAction() {
     description:
       'Launches the speckit.clarify agent to clarify underspecified areas of the feature specification for a Spec Kit project published to GitHub',
     customAgent: 'speckit.clarify',
+    skillCommand: '/speckit.clarify',
   })
 }

@@ -29,7 +29,7 @@ describe('github:copilot:speckit:constitution', () => {
     mockRequest.mockReset()
   })
 
-  test('launches the constitution agent with defaults and exposes task outputs', async () => {
+  test('runs the /speckit.constitution skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -39,23 +39,23 @@ describe('github:copilot:speckit:constitution', () => {
 
     expect(action.id).toBe('github:copilot:speckit:constitution')
     expect(action.schema?.input?.properties).not.toHaveProperty('customAgent')
+    expect(action.schema?.input?.properties).toHaveProperty('integrationType')
     expect(action.schema?.input?.required).toEqual(['repoUrl', 'prompt'])
     expect(mockRequest).toHaveBeenCalledWith(
       'POST /agents/repos/{owner}/{repo}/tasks',
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: input.prompt,
+        prompt: `/speckit.constitution ${input.prompt}`,
         model: 'auto',
         create_pull_request: true,
-        agent: 'speckit.constitution',
       },
     )
     expect(ctx.output).toHaveBeenCalledWith('taskId', '12345')
     expect(ctx.output).toHaveBeenCalledWith('taskUrl', taskUrl)
   })
 
-  test('forwards task options and credentials but does not allow an agent override', async () => {
+  test('forwards task options and credentials to the agent integration but does not allow an agent override', async () => {
     const ctx = createMockActionContext({
       input: {
         ...input,
@@ -63,6 +63,7 @@ describe('github:copilot:speckit:constitution', () => {
         model: 'custom-model',
         createPullRequest: false,
         userCredentialsSecretKey: 'CUSTOM_GITHUB_TOKEN',
+        integrationType: 'agent',
         customAgent: 'another-agent',
       },
       secrets: { CUSTOM_GITHUB_TOKEN: 'custom-user-token' },

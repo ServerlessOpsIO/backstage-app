@@ -38,6 +38,7 @@ export function createGithubCopilotAgentAction(options: {
   id: string
   description: string
   customAgent?: string
+  skillCommand?: string
 }) {
   return createTemplateAction({
     id: options.id,
@@ -78,6 +79,16 @@ export function createGithubCopilotAgentAction(options: {
             })
             .optional(),
         })
+        if (options.skillCommand) {
+          return inputSchema.omit({ customAgent: true }).extend({
+            integrationType: z
+              .enum(['skill', 'agent'], {
+                description:
+                  'Whether to run the Spec Kit command as a skill or as a custom agent. Defaults to skill.',
+              })
+              .optional(),
+          })
+        }
         return options.customAgent
           ? inputSchema.omit({ customAgent: true })
           : inputSchema
@@ -98,12 +109,27 @@ export function createGithubCopilotAgentAction(options: {
       },
     },
     async handler(ctx) {
-      const prompt = (ctx.input.prompt as string).trim()
-      if (!prompt) {
+      const userPrompt = (ctx.input.prompt as string).trim()
+      if (!userPrompt) {
         throw new Error(
           'A non-empty prompt is required to launch a Copilot agent',
         )
       }
+
+      const integrationType =
+        ('integrationType' in ctx.input
+          ? ctx.input.integrationType
+          : undefined) ?? 'skill'
+      if (integrationType !== 'skill' && integrationType !== 'agent') {
+        throw new Error(
+          `Unsupported integrationType: ${String(integrationType)}. Use "skill" or "agent".`,
+        )
+      }
+      const useSkill =
+        Boolean(options.skillCommand) && integrationType === 'skill'
+      const prompt = useSkill
+        ? `${options.skillCommand} ${userPrompt}`
+        : userPrompt
 
       const { host, owner, repo } = parseRepoUrl(ctx.input.repoUrl as string)
       if (host !== 'github.com') {
@@ -145,9 +171,10 @@ export function createGithubCopilotAgentAction(options: {
         if (baseRef) {
           requestBody.base_ref = baseRef
         }
-        const customAgent =
-          options.customAgent ??
-          ('customAgent' in ctx.input ? ctx.input.customAgent : undefined)
+        const customAgent = useSkill
+          ? undefined
+          : options.customAgent ??
+            ('customAgent' in ctx.input ? ctx.input.customAgent : undefined)
         if (customAgent) {
           requestBody.agent = customAgent
         }

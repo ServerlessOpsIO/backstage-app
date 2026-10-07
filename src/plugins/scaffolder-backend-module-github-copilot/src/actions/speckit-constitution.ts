@@ -6,5 +6,6 @@ export function createSpecKitConstitutionAction() {
     description:
       'Launches the speckit.constitution agent to create a constitution for a Spec Kit project published to GitHub',
     customAgent: 'speckit.constitution',
+    skillCommand: '/speckit.constitution',
   })
 }

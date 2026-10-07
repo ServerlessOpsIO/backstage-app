@@ -28,7 +28,7 @@ describe('github:copilot:speckit:implement', () => {
     mockRequest.mockReset()
   })
 
-  test('launches the implement agent with the user prompt and exposes task outputs', async () => {
+  test('runs the /speckit.implement skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -38,25 +38,29 @@ describe('github:copilot:speckit:implement', () => {
 
     expect(action.id).toBe('github:copilot:speckit:implement')
     expect(action.schema?.input?.properties).not.toHaveProperty('customAgent')
+    expect(action.schema?.input?.properties).toHaveProperty('integrationType')
     expect(action.schema?.input?.required).toEqual(['repoUrl', 'prompt'])
     expect(mockRequest).toHaveBeenCalledWith(
       'POST /agents/repos/{owner}/{repo}/tasks',
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: input.prompt,
+        prompt: `/speckit.implement ${input.prompt}`,
         model: 'auto',
         create_pull_request: true,
-        agent: 'speckit.implement',
       },
     )
     expect(ctx.output).toHaveBeenCalledWith('taskId', '12345')
     expect(ctx.output).toHaveBeenCalledWith('taskUrl', taskUrl)
   })
 
-  test('does not allow the agent to be overridden', async () => {
+  test('launches the speckit.implement agent when integrationType is agent and does not allow an override', async () => {
     const ctx = createMockActionContext({
-      input: { ...input, customAgent: 'another-agent' },
+      input: {
+        ...input,
+        integrationType: 'agent',
+        customAgent: 'another-agent',
+      },
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
     })
 
@@ -64,7 +68,22 @@ describe('github:copilot:speckit:implement', () => {
 
     expect(mockRequest).toHaveBeenCalledWith(
       'POST /agents/repos/{owner}/{repo}/tasks',
-      expect.objectContaining({ agent: 'speckit.implement' }),
+      expect.objectContaining({
+        prompt: input.prompt,
+        agent: 'speckit.implement',
+      }),
     )
+  })
+
+  test('rejects an unsupported integrationType', async () => {
+    const ctx = createMockActionContext({
+      input: { ...input, integrationType: 'plugin' },
+      secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
+    })
+
+    await expect(action.handler(ctx)).rejects.toThrow(
+      'Unsupported integrationType: plugin',
+    )
+    expect(mockRequest).not.toHaveBeenCalled()
   })
 })

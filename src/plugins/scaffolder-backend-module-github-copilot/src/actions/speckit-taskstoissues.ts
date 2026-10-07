@@ -6,5 +6,6 @@ export function createSpecKitTasksToIssuesAction() {
     description:
       'Launches the speckit.tasks-to-issues agent to convert tasks into GitHub issues for a Spec Kit project published to GitHub',
     customAgent: 'speckit.taskstoissues',
+    skillCommand: '/speckit.taskstoissues',
   })
 }

@@ -62,32 +62,41 @@ step.
 
 ### Spec Kit agent actions
 
-These actions launch a Copilot task that runs one of the Spec Kit custom agents
-on a repository. Each action always uses its own agent, and the agent cannot be
+These actions launch a Copilot task that runs one of the Spec Kit commands on a
+repository. Each action is tied to one Spec Kit command, which cannot be
 overridden.
 
-| Action | Agent | Purpose |
-| --- | --- | --- |
-| `github:copilot:speckit:constitution` | `speckit.constitution` | Create the project constitution: the principles that guide development. |
-| `github:copilot:speckit:specify` | `speckit.specify` | Create a feature specification from a description of the feature. |
-| `github:copilot:speckit:clarify` | `speckit.clarify` | Clarify underspecified areas of the feature specification. |
-| `github:copilot:speckit:checklist` | `speckit.checklist` | Generate a quality checklist for the feature specification. |
-| `github:copilot:speckit:plan` | `speckit.plan` | Create a technical implementation plan for the feature. |
-| `github:copilot:speckit:tasks` | `speckit.tasks` | Break the plan into tasks. |
-| `github:copilot:speckit:analyze` | `speckit.analyze` | Check consistency and coverage across the spec, plan, and tasks. |
-| `github:copilot:speckit:taskstoissues` | `speckit.taskstoissues` | Convert the tasks into GitHub issues. |
-| `github:copilot:speckit:implement` | `speckit.implement` | Implement the feature tasks. |
-| `github:copilot:speckit:converge` | `speckit.converge` | Converge the feature artifacts. |
+| Action | Skill command | Custom agent | Purpose |
+| --- | --- | --- | --- |
+| `github:copilot:speckit:constitution` | `/speckit.constitution` | `speckit.constitution` | Create the project constitution: the principles that guide development. |
+| `github:copilot:speckit:specify` | `/speckit.specify` | `speckit.specify` | Create a feature specification from a description of the feature. |
+| `github:copilot:speckit:clarify` | `/speckit.clarify` | `speckit.clarify` | Clarify underspecified areas of the feature specification. |
+| `github:copilot:speckit:checklist` | `/speckit.checklist` | `speckit.checklist` | Generate a quality checklist for the feature specification. |
+| `github:copilot:speckit:plan` | `/speckit.plan` | `speckit.plan` | Create a technical implementation plan for the feature. |
+| `github:copilot:speckit:tasks` | `/speckit.tasks` | `speckit.tasks` | Break the plan into tasks. |
+| `github:copilot:speckit:analyze` | `/speckit.analyze` | `speckit.analyze` | Check consistency and coverage across the spec, plan, and tasks. |
+| `github:copilot:speckit:taskstoissues` | `/speckit.taskstoissues` | `speckit.taskstoissues` | Convert the tasks into GitHub issues. |
+| `github:copilot:speckit:implement` | `/speckit.implement` | `speckit.implement` | Implement the feature tasks. |
+| `github:copilot:speckit:converge` | `/speckit.converge` | `speckit.converge` | Converge the feature artifacts. |
 
 Run these actions **after** initializing Spec Kit and publishing the generated
-project to GitHub. The repository must have the matching custom agent profile
-available.
+project to GitHub.
 
-The `prompt` input is passed to the agent. Use it to describe the project
-principles for `constitution`, the feature for `specify`, or extra guidance for
-the other agents. The actions accept the same inputs as
-`github:copilot:agent:launch`, except `customAgent`, and return the same `taskId`
-and `taskUrl` outputs. The same GitHub user token requirement applies.
+Use the `integrationType` input to choose how the Spec Kit command runs:
+
+- `skill` (default): launches Copilot without a custom agent and puts the
+  action's skill command in front of your prompt. For example,
+  `github:copilot:speckit:constitution` with the prompt `Emphasize testing` sends
+  `/speckit.constitution Emphasize testing`.
+- `agent`: launches the action's custom agent and sends your prompt unchanged.
+  The repository must have the matching custom agent profile available, which
+  `github:copilot:speckit:init` sets up.
+
+Use the `prompt` input to describe the project principles for `constitution`,
+the feature for `specify`, or extra guidance for the other commands. The actions
+accept the same inputs as `github:copilot:agent:launch`, except `customAgent`,
+and return the same `taskId` and `taskUrl` outputs. The same GitHub user token
+requirement applies.
 
 ```yaml
 steps:
@@ -107,11 +116,13 @@ steps:
     input:
       repoUrl: ${{ parameters.repoUrl }}
       prompt: This is an AWS serverless REST API written in Python...
+      # Optional: run the speckit.constitution custom agent instead of the skill
+      # integrationType: agent
 ```
 
 Each action starts a separate Copilot task and returns as soon as the task is
 launched. The scaffolder does not wait for one task to finish before starting the
-next. Spec Kit agents build on each other's output, such as `plan` reading the
+next. Spec Kit commands build on each other's output, such as `plan` reading the
 specification that `specify` creates. A template should usually launch only one
-Spec Kit agent action, and later steps should be run after its pull request is
+Spec Kit action, and later steps should be run after its pull request is
 merged.

@@ -6,5 +6,6 @@ export function createSpecKitTasksAction() {
     description:
       'Launches the speckit.tasks agent to manage tasks for a Spec Kit project published to GitHub',
     customAgent: 'speckit.tasks',
+    skillCommand: '/speckit.tasks',
   })
 }
