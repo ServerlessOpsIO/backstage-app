@@ -76,3 +76,25 @@ GitHub user token in the `USER_GITHUB_TOKEN` secret, or set
 The action returns optional `taskId` and `taskUrl` outputs. It launches the task
 asynchronously; a successful scaffolder step does not mean that constitution
 creation or the pull request has completed.
+
+### `github:copilot:speckit:specify`
+
+Launches a Copilot task to create a feature specification using the
+`speckit.specify` agent. Your `prompt` is passed to the agent as the description
+of the feature to specify. Run this action **after** initializing Spec Kit and
+publishing the generated project to GitHub. The repository must have the
+`speckit.specify` custom agent profile available.
+
+```yaml
+steps:
+  - id: createSpecification
+    name: Create feature specification
+    action: github:copilot:speckit:specify
+    input:
+      repoUrl: ${{ parameters.repoUrl }}
+      prompt: ${{ parameters.featureDescription }}
+```
+
+The action takes the same inputs and returns the same outputs as
+`github:copilot:speckit:constitution`. The agent is always `speckit.specify` and
+cannot be overridden.
