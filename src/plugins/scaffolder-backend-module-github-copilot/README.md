@@ -38,7 +38,20 @@ user token. Configure `requestUserCredentials` in the template to store the toke
 in the `USER_GITHUB_TOKEN` secret, or set `userCredentialsSecretKey` to the secret
 key your template uses.
 
-The action returns optional `taskId`, `taskUrl`, and `taskState` outputs.
+The action returns these optional outputs:
+
+| Output | Description |
+| --- | --- |
+| `taskId` | ID of the Copilot task. |
+| `taskUrl` | URL of the Copilot task on GitHub. |
+| `taskState` | Last known state of the task, such as `queued` or `completed`. |
+| `headRef` | Branch the Copilot task works on. |
+
+GitHub may not report the task's branch until the task has started. Without
+`waitForCompletion`, `headRef` is only set if the launch response already
+includes the branch. With `waitForCompletion`, the action reads the branch from
+each status check, so `headRef` is set once the task finishes, including when the
+task fails.
 
 By default, the action returns as soon as the Copilot task is launched, so a
 successful scaffolder step does not mean that the task or its pull request has
@@ -112,8 +125,8 @@ Use the `integrationType` input to choose how the Spec Kit command runs:
 Use the `prompt` input to describe the project principles for `constitution`,
 the feature for `specify`, or extra guidance for the other commands. The actions
 accept the same inputs as `github:copilot:agent:launch`, except `customAgent`,
-including `waitForCompletion`, and return the same `taskId`, `taskUrl`, and
-`taskState` outputs. The same GitHub user token
+including `waitForCompletion`, and return the same `taskId`, `taskUrl`,
+`taskState`, and `headRef` outputs. The same GitHub user token
 requirement applies.
 
 ```yaml

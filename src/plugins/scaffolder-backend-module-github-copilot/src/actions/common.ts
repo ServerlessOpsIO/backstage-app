@@ -37,6 +37,25 @@ function readTaskState(
   return undefined
 }
 
+function readHeadRef(
+  task: Record<string, unknown> | undefined,
+): string | undefined {
+  const artifacts = Array.isArray(task?.artifacts) ? task.artifacts : []
+  for (const artifact of artifacts) {
+    const data = artifact?.data
+    if (artifact?.type === 'branch' && typeof data?.head_ref === 'string') {
+      return data.head_ref
+    }
+  }
+  const sessions = Array.isArray(task?.sessions) ? task.sessions : []
+  for (const session of [...sessions].reverse()) {
+    if (typeof session?.head_ref === 'string') {
+      return session.head_ref
+    }
+  }
+  return undefined
+}
+
 function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise((resolve, reject) => {
     const abortError = () =>
@@ -148,6 +167,13 @@ export function createGithubCopilotAgentAction(options: {
               description: 'URL of the launched Copilot agent task',
             })
             .optional(),
+        headRef: z =>
+          z
+            .string({
+              description:
+                'Branch the Copilot agent task works on, once GitHub reports it',
+            })
+            .optional(),
         taskState: z =>
           z
             .string({
@@ -209,6 +235,7 @@ export function createGithubCopilotAgentAction(options: {
 
       let taskId: string | undefined
       let taskState: string | undefined
+      let headRef: string | undefined
       try {
         const requestBody: Record<string, unknown> = {
           owner,
@@ -252,6 +279,7 @@ export function createGithubCopilotAgentAction(options: {
           taskUrl = nestedTask.html_url
         }
         taskState = readTaskState(body, nestedTask)
+        headRef = readHeadRef(body) ?? readHeadRef(nestedTask) ?? headRef
         taskId =
           normalizeTaskId(body.id) ??
           normalizeTaskId(body.task_id) ??
@@ -279,6 +307,9 @@ export function createGithubCopilotAgentAction(options: {
       }
 
       if (!ctx.input.waitForCompletion) {
+        if (headRef) {
+          ctx.output('headRef', headRef)
+        }
         if (taskState) {
           ctx.output('taskState', taskState)
         }
@@ -319,6 +350,7 @@ export function createGithubCopilotAgentAction(options: {
             ? (body.task as Record<string, unknown>)
             : undefined
         taskState = readTaskState(body, nestedTask)
+        headRef = readHeadRef(body) ?? readHeadRef(nestedTask) ?? headRef
         if (!taskState) {
           throw new Error(
             `Failed to check Copilot agent task ${taskId} status: GitHub did not return a task state`,
@@ -326,6 +358,9 @@ export function createGithubCopilotAgentAction(options: {
         }
       }
 
+      if (headRef) {
+        ctx.output('headRef', headRef)
+      }
       ctx.output('taskState', taskState)
       if (taskState !== 'completed') {
         throw new Error(

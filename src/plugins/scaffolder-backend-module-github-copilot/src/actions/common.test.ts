@@ -115,12 +115,22 @@ describe('createGithubCopilotAgentAction', () => {
 
       expect(requestMock).toHaveBeenCalledTimes(1)
       expect(ctx.output).toHaveBeenCalledWith('taskState', 'queued')
+      expect(ctx.output).not.toHaveBeenCalledWith('headRef', expect.anything())
     })
 
     test('polls while the task is queued or in progress and succeeds when it completes', async () => {
       requestMock
         .mockResolvedValueOnce({ data: { id: 12345, state: 'in_progress' } })
-        .mockResolvedValueOnce({ data: { id: 12345, state: 'completed' } })
+        .mockResolvedValueOnce({
+          data: {
+            id: 12345,
+            state: 'completed',
+            sessions: [
+              { head_ref: 'copilot/first-attempt' },
+              { head_ref: 'copilot/create-starter-implementation' },
+            ],
+          },
+        })
       const ctx = context(true)
 
       const result = createAction().handler(ctx)
@@ -135,6 +145,10 @@ describe('createGithubCopilotAgentAction', () => {
       })
       expect(ctx.output).toHaveBeenCalledWith('taskId', '12345')
       expect(ctx.output).toHaveBeenCalledWith('taskState', 'completed')
+      expect(ctx.output).toHaveBeenCalledWith(
+        'headRef',
+        'copilot/create-starter-implementation',
+      )
     })
 
     test.each([
@@ -219,6 +233,37 @@ describe('createGithubCopilotAgentAction', () => {
       'taskUrl',
       'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/77777',
     )
+  })
+
+  test('outputs the head ref from a branch artifact in the launch response', async () => {
+    requestMock.mockResolvedValueOnce({
+      data: {
+        id: 12345,
+        artifacts: [
+          { provider: 'github', type: 'pull', data: { id: 42 } },
+          {
+            provider: 'github',
+            type: 'branch',
+            data: { head_ref: 'copilot/starter', base_ref: 'main' },
+          },
+        ],
+      },
+    })
+    const output = jest.fn()
+
+    await createAction().handler({
+      input: {
+        repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
+        prompt: 'Create starter implementation',
+      },
+      logger: { info: jest.fn() } as any,
+      output,
+      secrets: {
+        USER_GITHUB_TOKEN: 'gh-user-token',
+      },
+    } as any)
+
+    expect(output).toHaveBeenCalledWith('headRef', 'copilot/starter')
   })
 
   test('reads task output fields from nested task payload', async () => {
