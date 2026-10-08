@@ -1,2 +1,12 @@
 export * from './launch'
-
+export * from './speckit-analyze'
+export * from './speckit-checklist'
+export * from './speckit-clarify'
+export * from './speckit-constitution'
+export * from './speckit-converge'
+export * from './speckit-implement'
+export * from './speckit-init'
+export * from './speckit-plan'
+export * from './speckit-specify'
+export * from './speckit-tasks'
+export * from './speckit-taskstoissues'

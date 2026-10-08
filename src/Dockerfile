@@ -1,5 +1,9 @@
-# Add any local image custimization here
+# Add any local image customization here
 FROM backstage:latest
+
+USER root
+RUN pip install specify-cli
+USER node
 
 # Add SSL cert for RDS. We support all US regions
 ADD --chown=node:node https://truststore.pki.rds.amazonaws.com/us-east-1/us-east-1-bundle.pem ./
