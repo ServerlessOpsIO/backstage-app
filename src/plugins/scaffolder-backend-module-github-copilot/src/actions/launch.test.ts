@@ -72,6 +72,97 @@ describe('github:copilot:agent:launch', () => {
     )
   })
 
+  describe('waitForCompletion', () => {
+    const taskPath = 'GET /agents/repos/{owner}/{repo}/tasks/{task_id}'
+    const context = (waitForCompletion?: boolean) =>
+      ({
+        input: {
+          repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
+          prompt: 'Create starter implementation',
+          waitForCompletion,
+        },
+        logger: { info: jest.fn() } as any,
+        output: jest.fn(),
+        secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
+      }) as any
+
+    beforeEach(() => {
+      jest.useFakeTimers()
+      requestMock.mockResolvedValueOnce({
+        data: {
+          id: 12345,
+          state: 'queued',
+          html_url:
+            'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/12345',
+        },
+      })
+    })
+
+    afterEach(() => {
+      jest.useRealTimers()
+    })
+
+    test('does not wait by default', async () => {
+      const ctx = context()
+
+      await launchGithubCopilotAgentAction().handler(ctx)
+
+      expect(requestMock).toHaveBeenCalledTimes(1)
+      expect(ctx.output).toHaveBeenCalledWith('taskState', 'queued')
+    })
+
+    test('polls while the task is queued or in progress and succeeds when it completes', async () => {
+      requestMock
+        .mockResolvedValueOnce({ data: { id: 12345, state: 'in_progress' } })
+        .mockResolvedValueOnce({ data: { id: 12345, state: 'completed' } })
+      const ctx = context(true)
+
+      const result = launchGithubCopilotAgentAction().handler(ctx)
+      await jest.runAllTimersAsync()
+      await result
+
+      expect(requestMock).toHaveBeenCalledTimes(3)
+      expect(requestMock).toHaveBeenLastCalledWith(taskPath, {
+        owner: 'ServerlessOpsIO',
+        repo: 'example-repo',
+        task_id: '12345',
+      })
+      expect(ctx.output).toHaveBeenCalledWith('taskId', '12345')
+      expect(ctx.output).toHaveBeenCalledWith('taskState', 'completed')
+    })
+
+    test.each([
+      'failed',
+      'idle',
+      'waiting_for_user',
+      'timed_out',
+      'cancelled',
+    ])('fails when the task finishes as %s', async state => {
+      requestMock.mockResolvedValueOnce({ data: { id: 12345, state } })
+      const ctx = context(true)
+
+      const result = expect(launchGithubCopilotAgentAction().handler(ctx)).rejects.toThrow(
+        `Copilot agent task 12345 finished with state "${state}"`,
+      )
+      await jest.runAllTimersAsync()
+      await result
+
+      expect(ctx.output).toHaveBeenCalledWith('taskUrl', expect.any(String))
+      expect(ctx.output).toHaveBeenCalledWith('taskState', state)
+    })
+
+    test('fails when the task status cannot be read', async () => {
+      requestMock.mockRejectedValueOnce(new Error('Not Found'))
+      const ctx = context(true)
+
+      const result = expect(launchGithubCopilotAgentAction().handler(ctx)).rejects.toThrow(
+        'Failed to check Copilot agent task 12345 status: Not Found',
+      )
+      await jest.runAllTimersAsync()
+      await result
+    })
+  })
+
   test('throws for invalid repoUrl', async () => {
     const action = launchGithubCopilotAgentAction()
 

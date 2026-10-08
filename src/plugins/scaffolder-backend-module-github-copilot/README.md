@@ -31,15 +31,32 @@ The action accepts these inputs:
 | `model` | No | GitHub's default | Model to use for the Copilot task. The allowed models depend on the user's Copilot plan and organization policies. |
 | `createPullRequest` | No | `true` | Whether the Copilot task opens a pull request. |
 | `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+| `waitForCompletion` | No | `false` | Whether the step waits for the Copilot task to finish. |
 
 The action calls GitHub as the user running the template, so it needs a GitHub
 user token. Configure `requestUserCredentials` in the template to store the token
 in the `USER_GITHUB_TOKEN` secret, or set `userCredentialsSecretKey` to the secret
 key your template uses.
 
-The action returns optional `taskId` and `taskUrl` outputs. It launches the task
-asynchronously, so a successful scaffolder step does not mean that the Copilot
-task or its pull request has completed.
+The action returns optional `taskId`, `taskUrl`, and `taskState` outputs.
+
+By default, the action returns as soon as the Copilot task is launched, so a
+successful scaffolder step does not mean that the task or its pull request has
+completed. In that case, `taskState` is the state GitHub reported at launch,
+usually `queued`.
+
+Set `waitForCompletion: true` to make the step wait for the task to finish. The
+action checks the task status every 30 seconds while the task is `queued` or
+`in_progress`:
+
+- If the task ends as `completed`, the step succeeds.
+- If the task ends in any other state, such as `failed`, `idle`,
+  `waiting_for_user`, `timed_out`, or `cancelled`, the step fails.
+- If the task status can't be read, the step fails.
+
+The `taskId` and `taskUrl` outputs are set before waiting starts, so they are
+available in the task log even when the step fails. There is no time limit on
+the wait. If the scaffolder task is cancelled, the action stops waiting.
 
 ### `github:copilot:speckit:init`
 
@@ -95,7 +112,8 @@ Use the `integrationType` input to choose how the Spec Kit command runs:
 Use the `prompt` input to describe the project principles for `constitution`,
 the feature for `specify`, or extra guidance for the other commands. The actions
 accept the same inputs as `github:copilot:agent:launch`, except `customAgent`,
-and return the same `taskId` and `taskUrl` outputs. The same GitHub user token
+including `waitForCompletion`, and return the same `taskId`, `taskUrl`, and
+`taskState` outputs. The same GitHub user token
 requirement applies.
 
 ```yaml
@@ -120,9 +138,14 @@ steps:
       # integrationType: agent
 ```
 
-Each action starts a separate Copilot task and returns as soon as the task is
-launched. The scaffolder does not wait for one task to finish before starting the
-next. Spec Kit commands build on each other's output, such as `plan` reading the
-specification that `specify` creates. A template should usually launch only one
+Each action starts a separate Copilot task. Unless `waitForCompletion` is set,
+the step returns as soon as the task is launched, and the scaffolder does not
+wait for one task to finish before starting the next.
+
+Spec Kit commands build on each other's output, such as `plan` reading the
+specification that `specify` creates. Waiting for a task to complete is not
+enough for the next command to see its output: each task starts from `baseRef`,
+or the repository default branch, and the previous task's changes are in its
+pull request until that is merged. A template should usually launch only one
 Spec Kit action, and later steps should be run after its pull request is
 merged.

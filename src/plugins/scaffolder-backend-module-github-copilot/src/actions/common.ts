@@ -9,6 +9,9 @@ type RepoDetails = {
 
 const GITHUB_API_VERSION = '2026-03-10'
 
+const TASK_POLL_INTERVAL_MS = 30_000
+const PENDING_TASK_STATES = ['queued', 'in_progress']
+
 function extractTaskIdFromUrl(taskUrl: string): string | undefined {
   const match = taskUrl.match(/\/(\d+)(?:\/)?$/)
   return match?.[1]
@@ -19,6 +22,39 @@ function normalizeTaskId(value: unknown): string | undefined {
     return String(value)
   }
   return undefined
+}
+
+function readTaskState(
+  body: Record<string, unknown>,
+  nestedTask?: Record<string, unknown>,
+): string | undefined {
+  if (typeof body.state === 'string') {
+    return body.state
+  }
+  if (typeof nestedTask?.state === 'string') {
+    return nestedTask.state
+  }
+  return undefined
+}
+
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const abortError = () =>
+      new Error('Stopped waiting for the Copilot agent task: step was aborted')
+    if (signal?.aborted) {
+      reject(abortError())
+      return
+    }
+    const onAbort = () => {
+      clearTimeout(timer)
+      reject(abortError())
+    }
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort)
+      resolve()
+    }, ms)
+    signal?.addEventListener('abort', onAbort, { once: true })
+  })
 }
 
 function parseRepoUrl(repoUrl: string): RepoDetails {
@@ -78,6 +114,12 @@ export function createGithubCopilotAgentAction(options: {
                 'Secret key containing the GitHub user token from requestUserCredentials',
             })
             .optional(),
+          waitForCompletion: z
+            .boolean({
+              description:
+                'If true, wait for the Copilot task to finish and fail the step unless it completes successfully. Defaults to false.',
+            })
+            .optional(),
         })
         if (options.skillCommand) {
           return inputSchema.omit({ customAgent: true }).extend({
@@ -104,6 +146,13 @@ export function createGithubCopilotAgentAction(options: {
           z
             .string({
               description: 'URL of the launched Copilot agent task',
+            })
+            .optional(),
+        taskState: z =>
+          z
+            .string({
+              description:
+                'Last known state of the Copilot agent task, such as queued or completed',
             })
             .optional(),
       },
@@ -158,6 +207,8 @@ export function createGithubCopilotAgentAction(options: {
         },
       })
 
+      let taskId: string | undefined
+      let taskState: string | undefined
       try {
         const requestBody: Record<string, unknown> = {
           owner,
@@ -200,7 +251,8 @@ export function createGithubCopilotAgentAction(options: {
         } else if (typeof nestedTask?.html_url === 'string') {
           taskUrl = nestedTask.html_url
         }
-        const taskId =
+        taskState = readTaskState(body, nestedTask)
+        taskId =
           normalizeTaskId(body.id) ??
           normalizeTaskId(body.task_id) ??
           normalizeTaskId(nestedTask?.id) ??
@@ -225,6 +277,62 @@ export function createGithubCopilotAgentAction(options: {
           error instanceof Error ? error.message : 'Unknown GitHub API error'
         throw new Error(`Failed to launch Copilot agent task: ${message}`)
       }
+
+      if (!ctx.input.waitForCompletion) {
+        if (taskState) {
+          ctx.output('taskState', taskState)
+        }
+        return
+      }
+
+      if (!taskId) {
+        throw new Error(
+          'Cannot wait for the Copilot agent task: GitHub did not return a task ID',
+        )
+      }
+
+      while (!taskState || PENDING_TASK_STATES.includes(taskState)) {
+        ctx.logger.info(
+          `Copilot agent task ${taskId} is ${
+            taskState ?? 'starting'
+          }; checking again in ${TASK_POLL_INTERVAL_MS / 1000} seconds`,
+        )
+        await sleep(TASK_POLL_INTERVAL_MS, ctx.signal)
+
+        let body: Record<string, unknown>
+        try {
+          const response = await octokit.request(
+            'GET /agents/repos/{owner}/{repo}/tasks/{task_id}',
+            { owner, repo, task_id: taskId },
+          )
+          body = response.data as Record<string, unknown>
+        } catch (error: unknown) {
+          const message =
+            error instanceof Error ? error.message : 'Unknown GitHub API error'
+          throw new Error(
+            `Failed to check Copilot agent task ${taskId} status: ${message}`,
+          )
+        }
+
+        const nestedTask =
+          typeof body.task === 'object' && body.task !== null
+            ? (body.task as Record<string, unknown>)
+            : undefined
+        taskState = readTaskState(body, nestedTask)
+        if (!taskState) {
+          throw new Error(
+            `Failed to check Copilot agent task ${taskId} status: GitHub did not return a task state`,
+          )
+        }
+      }
+
+      ctx.output('taskState', taskState)
+      if (taskState !== 'completed') {
+        throw new Error(
+          `Copilot agent task ${taskId} finished with state "${taskState}"`,
+        )
+      }
+      ctx.logger.info(`Copilot agent task ${taskId} completed`)
     },
   })
 }
