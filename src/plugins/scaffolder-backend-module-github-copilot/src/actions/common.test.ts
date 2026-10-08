@@ -1,3 +1,4 @@
+import { setTimeout as sleepFor } from 'node:timers/promises'
 import { Octokit } from 'octokit'
 
 import { createGithubCopilotAgentAction } from './common'
@@ -5,6 +6,13 @@ import { createGithubCopilotAgentAction } from './common'
 jest.mock('octokit', () => ({
   Octokit: jest.fn(),
 }))
+
+// Resolve the polling delay immediately instead of waiting.
+jest.mock('node:timers/promises', () => ({
+  setTimeout: jest.fn(),
+}))
+
+const sleepForMock = sleepFor as unknown as jest.Mock
 
 const createAction = () =>
   createGithubCopilotAgentAction({
@@ -93,7 +101,6 @@ describe('createGithubCopilotAgentAction', () => {
       }) as any
 
     beforeEach(() => {
-      jest.useFakeTimers()
       requestMock.mockResolvedValueOnce({
         data: {
           id: 12345,
@@ -104,16 +111,13 @@ describe('createGithubCopilotAgentAction', () => {
       })
     })
 
-    afterEach(() => {
-      jest.useRealTimers()
-    })
-
     test('does not wait by default', async () => {
       const ctx = context()
 
       await createAction().handler(ctx)
 
       expect(requestMock).toHaveBeenCalledTimes(1)
+      expect(sleepForMock).not.toHaveBeenCalled()
       expect(ctx.output).toHaveBeenCalledWith('taskState', 'queued')
       expect(ctx.output).not.toHaveBeenCalledWith('headRef', expect.anything())
     })
@@ -133,10 +137,12 @@ describe('createGithubCopilotAgentAction', () => {
         })
       const ctx = context(true)
 
-      const result = createAction().handler(ctx)
-      await jest.runAllTimersAsync()
-      await result
+      await createAction().handler(ctx)
 
+      expect(sleepForMock).toHaveBeenCalledTimes(2)
+      expect(sleepForMock).toHaveBeenCalledWith(30_000, undefined, {
+        signal: undefined,
+      })
       expect(requestMock).toHaveBeenCalledTimes(3)
       expect(requestMock).toHaveBeenLastCalledWith(taskPath, {
         owner: 'ServerlessOpsIO',
@@ -161,11 +167,9 @@ describe('createGithubCopilotAgentAction', () => {
       requestMock.mockResolvedValueOnce({ data: { id: 12345, state } })
       const ctx = context(true)
 
-      const result = expect(createAction().handler(ctx)).rejects.toThrow(
+      await expect(createAction().handler(ctx)).rejects.toThrow(
         `Copilot agent task 12345 finished with state "${state}"`,
       )
-      await jest.runAllTimersAsync()
-      await result
 
       expect(ctx.output).toHaveBeenCalledWith('taskUrl', expect.any(String))
       expect(ctx.output).toHaveBeenCalledWith('taskState', state)
@@ -175,11 +179,25 @@ describe('createGithubCopilotAgentAction', () => {
       requestMock.mockRejectedValueOnce(new Error('Not Found'))
       const ctx = context(true)
 
-      const result = expect(createAction().handler(ctx)).rejects.toThrow(
+      await expect(createAction().handler(ctx)).rejects.toThrow(
         'Failed to check Copilot agent task 12345 status: Not Found',
       )
-      await jest.runAllTimersAsync()
-      await result
+    })
+
+    test('stops waiting when the scaffolder step is aborted', async () => {
+      const controller = new AbortController()
+      controller.abort()
+      sleepForMock.mockRejectedValueOnce(
+        Object.assign(new Error('The operation was aborted'), {
+          name: 'AbortError',
+        }),
+      )
+      const ctx = { ...context(true), signal: controller.signal }
+
+      await expect(createAction().handler(ctx)).rejects.toThrow(
+        'Stopped waiting for the Copilot agent task: step was aborted',
+      )
+      expect(requestMock).toHaveBeenCalledTimes(1)
     })
   })
 

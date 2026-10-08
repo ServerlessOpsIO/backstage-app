@@ -1,4 +1,5 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
+import { setTimeout as sleepFor } from 'node:timers/promises'
 import { Octokit } from 'octokit'
 
 type RepoDetails = {
@@ -56,24 +57,18 @@ function readHeadRef(
   return undefined
 }
 
-function sleep(ms: number, signal?: AbortSignal): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const abortError = () =>
-      new Error('Stopped waiting for the Copilot agent task: step was aborted')
+async function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  try {
+    await sleepFor(ms, undefined, { signal })
+  } catch (error: unknown) {
     if (signal?.aborted) {
-      reject(abortError())
-      return
+      throw new Error(
+        'Stopped waiting for the Copilot agent task: step was aborted',
+        { cause: error },
+      )
     }
-    const timer = setTimeout(() => {
-      signal?.removeEventListener('abort', onAbort)
-      resolve()
-    }, ms)
-    function onAbort() {
-      clearTimeout(timer)
-      reject(abortError())
-    }
-    signal?.addEventListener('abort', onAbort, { once: true })
-  })
+    throw error
+  }
 }
 
 function parseRepoUrl(repoUrl: string): RepoDetails {

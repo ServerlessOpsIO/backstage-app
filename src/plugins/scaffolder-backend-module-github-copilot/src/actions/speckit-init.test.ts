@@ -123,7 +123,8 @@ describe('github:copilot:speckit:init', () => {
   test('fails the scaffolder action when specify exits unsuccessfully', async () => {
     const processError = Object.assign(
       new Error('Command failed: specify init --integration copilot --integration-options=--skills --non-interactive --force .'),
-      { code: 1 },
+      // Like the real promisified execFile, the error carries the command's stderr.
+      { code: 1, stderr: 'Spec Kit initialization failed' },
     )
     execFileMock.mockImplementationOnce(
       (
@@ -135,7 +136,7 @@ describe('github:copilot:speckit:init', () => {
           stdout?: string,
           stderr?: string,
         ) => void,
-      ) => callback(processError, '', 'Spec Kit initialization failed'),
+      ) => callback(processError),
     )
 
     const action = initializeSpecKitAction()
