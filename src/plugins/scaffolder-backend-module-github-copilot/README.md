@@ -73,22 +73,46 @@ the wait. If the scaffolder task is cancelled, the action stops waiting.
 
 ### `github:copilot:speckit:init`
 
-Initializes [Spec Kit](https://github.com/github/spec-kit) with the Copilot
-integration in the generated project workspace. Add it to a scaffolder template
-after the project files have been generated:
+Initializes [Spec Kit](https://github.com/github/spec-kit) in the generated project
+workspace. Add it to a scaffolder template after the project files have been
+generated:
 
 ```yaml
 steps:
   - id: initializeSpecKit
     name: Initialize Spec Kit
     action: github:copilot:speckit:init
+    input:
+      # Optional: copilot (default), claude, or codex
+      integration: copilot
+      # Optional: skills (default) or commands
+      integrationOptions: commands
 ```
 
-The action runs
-`specify init --integration copilot --integration-options="--commands" --non-interactive --force .`
-from the project root. The scaffolder task runtime must have the `specify`
+Use the `integration` input to choose which AI coding agent Spec Kit is set up
+for. The supported values are `copilot`, `claude`, and `codex`, and the default is
+`copilot`. Any other value fails the step.
+
+Use the `integrationOptions` input to choose how Spec Kit installs its commands
+for the `copilot` integration:
+
+- `skills` (default): installs the commands as skills under `.github/skills/`.
+- `commands`: installs the commands as custom agents in `.github/agents/`, with
+  matching prompt files in `.github/prompts/`.
+
+Only the `copilot` integration supports `commands`. Setting `integrationOptions:
+commands` with `claude` or `codex` fails the step, and `skills` has no effect for
+them.
+
+For the `copilot` integration, the action runs
+`specify init --integration copilot --integration-options=--<integrationOptions> --non-interactive --force .`
+from the project root. For `claude` and `codex`, it runs
+`specify init --integration <integration> --non-interactive --force .`. The scaffolder task runtime must have the `specify`
 executable on its `PATH`. A missing executable or unsuccessful command fails the
 step.
+
+The Spec Kit agent actions below launch GitHub Copilot tasks, so they work with
+projects initialized with the `copilot` integration.
 
 ### Spec Kit agent actions
 
