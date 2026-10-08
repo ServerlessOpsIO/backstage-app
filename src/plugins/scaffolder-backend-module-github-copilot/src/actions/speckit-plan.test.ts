@@ -46,7 +46,7 @@ describe('github:copilot:speckit:plan', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.plan ${input.prompt}`,
-        create_pull_request: true,
+        create_pull_request: false,
       },
     )
     expect(ctx.output).toHaveBeenCalledWith('taskId', '12345')

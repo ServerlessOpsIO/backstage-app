@@ -29,7 +29,7 @@ The action accepts these inputs:
 | `customAgent` | No | | Name of a custom Copilot agent profile to use. |
 | `baseRef` | No | Repository default branch | Branch the Copilot task starts from. |
 | `model` | No | GitHub's default | Model to use for the Copilot task. The allowed models depend on the user's Copilot plan and organization policies. |
-| `createPullRequest` | No | `true` | Whether the Copilot task opens a pull request. |
+| `createPullRequest` | No | `false` | Whether the Copilot task opens a pull request. |
 | `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
 | `waitForCompletion` | No | `false` | Whether the step waits for the Copilot task to finish. |
 

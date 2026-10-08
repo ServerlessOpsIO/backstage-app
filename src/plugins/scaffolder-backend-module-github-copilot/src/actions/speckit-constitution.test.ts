@@ -47,7 +47,7 @@ describe('github:copilot:speckit:constitution', () => {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
         prompt: `/speckit.constitution ${input.prompt}`,
-        create_pull_request: true,
+        create_pull_request: false,
       },
     )
     expect(ctx.output).toHaveBeenCalledWith('taskId', '12345')
@@ -60,7 +60,7 @@ describe('github:copilot:speckit:constitution', () => {
         ...input,
         baseRef: 'develop',
         model: 'custom-model',
-        createPullRequest: false,
+        createPullRequest: true,
         userCredentialsSecretKey: 'CUSTOM_GITHUB_TOKEN',
         integrationType: 'agent',
         customAgent: 'another-agent',
@@ -84,7 +84,7 @@ describe('github:copilot:speckit:constitution', () => {
         prompt: input.prompt,
         base_ref: 'develop',
         model: 'custom-model',
-        create_pull_request: false,
+        create_pull_request: true,
         custom_agent: 'speckit.constitution',
       },
     )

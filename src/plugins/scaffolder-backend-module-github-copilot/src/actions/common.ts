@@ -242,7 +242,7 @@ export function createGithubCopilotAgentAction(options: {
           repo,
           prompt,
           create_pull_request:
-            (ctx.input.createPullRequest as boolean | undefined) ?? true,
+            (ctx.input.createPullRequest as boolean | undefined) ?? false,
         }
         const model = ctx.input.model as string | undefined
         if (model) {
