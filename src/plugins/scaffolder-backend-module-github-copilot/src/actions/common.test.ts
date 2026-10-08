@@ -198,6 +198,9 @@ describe('createGithubCopilotAgentAction', () => {
         'Stopped waiting for the Copilot agent task: step was aborted',
       )
       expect(requestMock).toHaveBeenCalledTimes(1)
+      expect(sleepForMock).toHaveBeenCalledWith(30_000, undefined, {
+        signal: controller.signal,
+      })
     })
   })
 
