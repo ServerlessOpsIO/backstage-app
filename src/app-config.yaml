@@ -141,12 +141,22 @@ app:
             - title: Catalog Entities
               filter:
                 spec.type: { "$in": ["domain", "system", "environment"] }
-            - title: Serverless
+            - title: Serverless API
               filter:
-                metadata.tags: { "$contains": "serverless" }
+                $all:
+                  - metadata.tags: { "$contains": "serverless" }
+                  - metadata.tags: { "$contains": "api" }
+            - title: Serverless Event-Driven
+              filter:
+                $all:
+                  - metadata.tags: { "$contains": "serverless" }
+                  - metadata.tags: { "$contains": "event-driven" }
             - title: Containers
               filter:
                 metadata.tags: { "$contains": "containerization" }
+            - title: Infrastructure
+              filter:
+                metadata.tags: { "$contains": "infrastructure" }
     - page:catalog-unprocessed-entities
 
 organization:
