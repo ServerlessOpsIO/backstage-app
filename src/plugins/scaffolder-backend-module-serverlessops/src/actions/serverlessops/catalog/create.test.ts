@@ -28,6 +28,7 @@ describe('serverlessops:catalog:create', () => {
 
         (getJwt as jest.Mock).mockResolvedValue('mock-jwt-token')
 
+        mockFetch.resetMocks()
         mockFetch.enableMocks()
     })
     afterEach(() => {
