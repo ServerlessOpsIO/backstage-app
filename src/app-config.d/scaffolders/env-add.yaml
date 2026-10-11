@@ -106,6 +106,8 @@ spec:
         type: ${{ parameters.type }}
         namespace: ${{parameters.namespace}}
         system: ${{ parameters.system }}
+        annotations:
+          serverlessops.io/giuthub-environment: ${{ parameters.environment }}
         dependsOn:
           - ${{ parameters.account }}
 
