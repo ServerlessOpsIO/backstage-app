@@ -42,6 +42,9 @@ export function createServerlessOpsCatalogAction(
                 title: z => z.string({
                     description: 'Title of entity to create'
                 }).optional(),
+                annotations: z => z.record(z.string({
+                    description: 'Annotation values of entity to create'
+                })).optional(),
                 type: z => z.string({
                     description: 'Type of entity to create'
                 }).optional(),
@@ -77,6 +80,7 @@ export function createServerlessOpsCatalogAction(
                     name: normalizedName as string,
                     title: ctx.input.title as string  || ctx.input.name as string,
                     description: ctx.input.description as string,
+                    ...(ctx.input.annotations && { annotations: ctx.input.annotations }),
                 },
                 spec: {
                     type: ctx.input.type,

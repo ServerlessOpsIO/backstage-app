@@ -28,6 +28,7 @@ describe('serverlessops:catalog:create', () => {
 
         (getJwt as jest.Mock).mockResolvedValue('mock-jwt-token')
 
+        mockFetch.resetMocks()
         mockFetch.enableMocks()
     })
     afterEach(() => {
@@ -68,5 +69,32 @@ describe('serverlessops:catalog:create', () => {
             })
         )
         expect(getJwt).toHaveBeenCalled();
+        const entity = JSON.parse(mockFetch.mock.calls[0][1]!.body as string);
+        expect(entity.metadata).not.toHaveProperty('annotations');
+    });
+
+    it.each(['prod', 'dev', 'poc'])('should preserve annotations for the %s environment', async environment => {
+        const action = createServerlessOpsCatalogAction(config);
+        const annotations = {
+            'serverlessops.io/giuthub-environment': environment,
+        };
+        mockFetch.mockResponse(JSON.stringify({}), {status: 201});
+
+        await action.handler(
+            createMockActionContext({
+                input: {
+                    kind: 'Resource',
+                    namespace: 'default',
+                    name: `env-test-${environment}`,
+                    description: 'Test environment',
+                    owner: 'test',
+                    type: 'environment',
+                    annotations,
+                },
+            }),
+        );
+
+        const entity = JSON.parse(mockFetch.mock.calls[0][1]!.body as string);
+        expect(entity.metadata.annotations).toEqual(annotations);
     });
 });
