@@ -59,6 +59,7 @@ describe('github:copilot:speckit:constitution', () => {
       input: {
         ...input,
         baseRef: 'develop',
+        headRef: 'copilot/existing-task',
         model: 'custom-model',
         createPullRequest: true,
         userCredentialsSecretKey: 'CUSTOM_GITHUB_TOKEN',
@@ -83,6 +84,7 @@ describe('github:copilot:speckit:constitution', () => {
         repo: 'example-repo',
         prompt: input.prompt,
         base_ref: 'develop',
+        head_ref: 'copilot/existing-task',
         model: 'custom-model',
         create_pull_request: true,
         custom_agent: 'speckit.constitution',

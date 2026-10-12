@@ -110,6 +110,12 @@ export function createGithubCopilotAgentAction(options: {
               description: 'Branch that the Copilot task should start from',
             })
             .optional(),
+          headRef: z
+            .string({
+              description:
+                'Existing branch that the Copilot task should commit to instead of creating a new branch',
+            })
+            .optional(),
           model: z
             .string({
               description: 'Optional model override for the Copilot task',
@@ -272,6 +278,11 @@ export function createGithubCopilotAgentAction(options: {
         const baseRef = ctx.input.baseRef as string | undefined
         if (baseRef) {
           requestBody.base_ref = baseRef
+        }
+        const inputHeadRef = ctx.input.headRef as string | undefined
+        if (inputHeadRef) {
+          requestBody.head_ref = inputHeadRef
+          headRef = inputHeadRef
         }
         const customAgent = useSkill
           ? undefined

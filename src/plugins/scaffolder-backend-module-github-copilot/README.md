@@ -28,6 +28,7 @@ The action accepts these inputs:
 | `prompt` | Yes | | Prompt for the Copilot agent. Must not be empty. |
 | `customAgent` | No | | Name of a custom Copilot agent profile to use. |
 | `baseRef` | No | Repository default branch | Branch the Copilot task starts from. |
+| `headRef` | No | | Existing branch for the Copilot task to commit to. Without it, Copilot creates a new branch from `baseRef`. GitHub uses the open pull request from `headRef` into `baseRef`, if there is one, as context for the task. |
 | `model` | No | GitHub's default | Model to use for the Copilot task. The allowed models depend on the user's Copilot plan and organization policies. |
 | `createPullRequest` | No | `false` | Whether the Copilot task opens a pull request. |
 | `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |

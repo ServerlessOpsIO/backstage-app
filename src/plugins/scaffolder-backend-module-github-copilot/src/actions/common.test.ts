@@ -50,6 +50,7 @@ describe('createGithubCopilotAgentAction', () => {
           repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
           prompt: 'Create starter implementation',
           baseRef: 'main',
+          headRef: 'feature/existing-branch',
           customAgent: 'security-reviewer',
           createPullRequest: true,
         },
@@ -75,11 +76,13 @@ describe('createGithubCopilotAgentAction', () => {
         repo: 'example-repo',
         prompt: 'Create starter implementation',
         base_ref: 'main',
+        head_ref: 'feature/existing-branch',
         create_pull_request: true,
         custom_agent: 'security-reviewer',
       }),
     )
     expect(output).toHaveBeenCalledWith('taskId', '12345')
+    expect(output).toHaveBeenCalledWith('headRef', 'feature/existing-branch')
     expect(output).toHaveBeenCalledWith(
       'taskUrl',
       'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/12345',
@@ -248,6 +251,7 @@ describe('createGithubCopilotAgentAction', () => {
     const requestInput = requestMock.mock.calls[0][1]
     expect(requestInput).not.toHaveProperty('model')
     expect(requestInput).not.toHaveProperty('base_ref')
+    expect(requestInput).not.toHaveProperty('head_ref')
     expect(requestInput).not.toHaveProperty('custom_agent')
     expect(output).toHaveBeenCalledWith('taskId', '77777')
     expect(output).toHaveBeenCalledWith(
