@@ -2,8 +2,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: environment-add
-  title: Add Environment
+  name: 3-environment-add
+  title: 3. Add Environment
   description: Add a new environment to Backstage
   tags:
     - catalog

@@ -2,8 +2,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: system-add
-  title: Add Application System
+  name: 2-system-add
+  title: 2. Add Application System
   description: Add a new application system to Backstage
   tags:
     - catalog

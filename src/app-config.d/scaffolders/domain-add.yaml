@@ -2,8 +2,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: domain-add
-  title: Add Application Domain
+  name: 1-domain-add
+  title: 1. Add Application Domain
   description: Add a new application domain to Backstage
   tags:
     - catalog
