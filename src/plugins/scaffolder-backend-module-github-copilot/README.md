@@ -219,3 +219,109 @@ The step fails if the branch doesn't add exactly one `specs/<directory>/spec.md`
 Without `waitForCompletion`, the action doesn't look for the spec and these
 outputs aren't set.
 
+### `github:repo:commitFiles`
+
+Commits files from the scaffolder workspace on top of an existing branch of a
+GitHub repository, as the user running the template. Set `push` to add the
+commit to the branch, for example to add generated files to the branch of a
+Copilot agent task:
+
+```yaml
+steps:
+  - id: commit-spec-catalog
+    name: Add catalog file to spec
+    action: github:repo:commitFiles
+    input:
+      repoUrl: ${{ parameters.repoUrl }}
+      branch: ${{ steps['speckit-specify'].output.headRef }}
+      sourcePath: ./spec-catalog
+      targetPath: ${{ steps['speckit-specify'].output.specDirectory }}
+      commitMessage: Add Backstage catalog file for spec
+      push: true
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format. Only `github.com` is supported. |
+| `branch` | Yes | | Existing branch the commit is based on. |
+| `commitMessage` | Yes | | Message for the commit. |
+| `sourcePath` | No | Workspace root | Workspace directory whose files are committed. |
+| `targetPath` | No | Repository root | Repository directory the files are committed to. |
+| `push` | No | `false` | Whether to move `branch` to the new commit. When `false`, the commit is created in the repository but isn't on any branch. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+All files are added in one commit on top of the branch, and the action returns
+its SHA as the `commitSha` output whether or not it pushes. Files that already
+exist at the same path are replaced. When pushing, the action doesn't
+force-push, so it fails if someone else pushes to the branch while it runs. An
+unpushed commit isn't reachable from any branch, so GitHub can eventually remove
+it unless a later step, such as a branch or tag created from `commitSha`,
+refers to it.
+
+### `github:pullRequest:create`
+
+Opens a pull request from a branch that already exists, as the user running the
+template. Use it to open a pull request for a branch that earlier steps created,
+such as the branch of a Copilot agent task:
+
+```yaml
+steps:
+  - id: open-pull-request
+    name: Open pull request
+    action: github:pullRequest:create
+    input:
+      repoUrl: ${{ parameters.repoUrl }}
+      head: ${{ steps['speckit-plan'].output.headRef }}
+      base: main
+      title: Add feature specification and plan
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format. Only `github.com` is supported. |
+| `head` | Yes | | Existing branch with the changes to merge. |
+| `base` | No | Repository default branch | Branch to merge the changes into. |
+| `title` | Yes | | Title of the pull request. |
+| `description` | No | | Body of the pull request. |
+| `draft` | No | `false` | Whether to open the pull request as a draft. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+The action returns the `pullRequestUrl` and `pullRequestNumber` outputs. If a
+pull request from `head` into `base` is already open, for example one a Copilot
+task opened, the action returns that pull request instead of opening another.
+
+### `github:branch:rename`
+
+Renames a branch of a GitHub repository, as the user running the template. Use
+it to give a branch an earlier step created a clearer name, such as the branch
+of a Copilot agent task:
+
+```yaml
+steps:
+  - id: rename-branch
+    name: Rename branch
+    action: github:branch:rename
+    input:
+      repoUrl: ${{ parameters.repoUrl }}
+      branch: ${{ steps['speckit-specify'].output.headRef }}
+      newName: spec/${{ steps['speckit-specify'].output.specName }}
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format. Only `github.com` is supported. |
+| `branch` | Yes | | Current name of the branch. |
+| `newName` | Yes | | New name for the branch. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+The action returns the new name as the `branch` output, so later steps can refer
+to the branch without repeating the name. GitHub updates open pull requests that
+use the branch. The step fails if a branch with the new name already exists, or
+if the user can't push to the repository.
+
