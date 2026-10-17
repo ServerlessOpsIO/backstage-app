@@ -59,6 +59,26 @@ function readHeadRef(
   return undefined
 }
 
+export async function readDefaultBranch(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+): Promise<string> {
+  try {
+    const response = await octokit.request('GET /repos/{owner}/{repo}', {
+      owner,
+      repo,
+    })
+    return (response.data as { default_branch: string }).default_branch
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown GitHub API error'
+    throw new Error(
+      `Failed to read the default branch of ${owner}/${repo}: ${message}`,
+    )
+  }
+}
+
 async function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   try {
     await sleepFor(ms, undefined, { signal })
