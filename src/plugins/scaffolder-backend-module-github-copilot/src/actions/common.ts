@@ -149,28 +149,25 @@ export function createGithubCopilotAgentAction(options: {
           ? inputSchema.omit({ customAgent: true })
           : inputSchema
       },
-      output: {
-        taskId: z =>
-          z
+      output: z => {
+        const outputSchema = z.object({
+          taskId: z
             .string({
               description: 'ID of the launched Copilot agent task',
             })
             .optional(),
-        taskUrl: z =>
-          z
+          taskUrl: z
             .string({
               description: 'URL of the launched Copilot agent task',
             })
             .optional(),
-        headRef: z =>
-          z
+          headRef: z
             .string({
               description:
                 'Branch the Copilot agent task works on, once GitHub reports it',
             })
             .optional(),
-        taskState: z =>
-          z
+          taskState: z
             .string({
               description:
                 'Last known state of the Copilot agent task, such as queued or completed',
