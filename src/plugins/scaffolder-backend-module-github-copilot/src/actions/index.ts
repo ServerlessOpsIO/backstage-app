@@ -1,4 +1,5 @@
 export * from './launch'
+export * from './rename-branch'
 export * from './speckit-analyze'
 export * from './speckit-checklist'
 export * from './speckit-clarify'

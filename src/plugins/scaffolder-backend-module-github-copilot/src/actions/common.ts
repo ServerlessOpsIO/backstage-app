@@ -86,6 +86,29 @@ export function parseRepoUrl(repoUrl: string): RepoDetails {
   return { host, owner, repo }
 }
 
+export function createUserOctokit(
+  secrets: Record<string, string> | undefined,
+  userCredentialsSecretKey: string | undefined,
+): Octokit {
+  const secretKey = userCredentialsSecretKey ?? 'USER_GITHUB_TOKEN'
+  const userGithubToken = secrets?.[secretKey]
+
+  if (!userGithubToken || typeof userGithubToken !== 'string') {
+    throw new Error(
+      `Missing GitHub user token secret "${secretKey}". Configure requestUserCredentials in the template step to provide this secret.`,
+    )
+  }
+
+  return new Octokit({
+    auth: userGithubToken,
+    request: {
+      headers: {
+        'X-GitHub-Api-Version': GITHUB_API_VERSION,
+      },
+    },
+  })
+}
+
 export function createGithubCopilotAgentAction(options: {
   id: string
   description: string
@@ -240,25 +263,10 @@ export function createGithubCopilotAgentAction(options: {
         )
       }
 
-      const userCredentialsSecretKey =
-        (ctx.input.userCredentialsSecretKey as string | undefined) ??
-        'USER_GITHUB_TOKEN'
-      const userGithubToken = ctx.secrets?.[userCredentialsSecretKey]
-
-      if (!userGithubToken || typeof userGithubToken !== 'string') {
-        throw new Error(
-          `Missing GitHub user token secret "${userCredentialsSecretKey}". Configure requestUserCredentials in the template step to provide this secret.`,
-        )
-      }
-
-      const octokit = new Octokit({
-        auth: userGithubToken,
-        request: {
-          headers: {
-            'X-GitHub-Api-Version': GITHUB_API_VERSION,
-          },
-        },
-      })
+      const octokit = createUserOctokit(
+        ctx.secrets,
+        ctx.input.userCredentialsSecretKey as string | undefined,
+      )
 
       let taskId: string | undefined
       let taskState: string | undefined
