@@ -16,7 +16,7 @@
 	"ContainerDesiredCount": "1",
 	"ContainerPort": "7007",
 	"ServiceScalingTimezone": "America/New_York",
-	"ServiceScaleOutCron": "cron(0 12 ? * 1,7 *)",
+	"ServiceScaleOutCron": "",
 	"ServiceScaleInCron": "cron(0 22 ? * * *)",
 	"AlbRulePriority": "1",
 	"AlbRulePath": "*",

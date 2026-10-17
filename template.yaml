@@ -74,10 +74,12 @@ Parameters:
   ServiceScaleOutCron:
     Type: String
     Description: UTC cron expression for scaling up service capacity
+    Default: ''
 
   ServiceScaleInCron:
     Type: String
     Description: UTC cron expression for scaling down service capacity
+    Default: ''
 
   ContainerPort:
     Type: Number
@@ -164,6 +166,13 @@ Parameters:
     Description: ServerlessOps auth client secret
     NoEcho: true
 
+Conditions:
+  ServiceScalingEnabled: !Or [
+    !Not [!Equals [ !Ref ServiceScaleOutCron, '' ]],
+    !Not [!Equals [ !Ref ServiceScaleInCron, '' ]]
+  ]
+  ServiceScaleOutEnabled: !Not [!Equals [ !Ref ServiceScaleOutCron, '' ]]
+  ServiceScaleInEnabled: !Not [!Equals [ !Ref ServiceScaleInCron, '' ]]
 
 Resources:
   TaskDefinition:
@@ -256,6 +265,7 @@ Resources:
 
   ServiceScalableTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Condition: ServiceScalingEnabled
     Properties:
       ServiceNamespace: ecs
       ScalableDimension: ecs:service:DesiredCount
@@ -264,18 +274,24 @@ Resources:
       MinCapacity: 0
       MaxCapacity: !Ref ContainerDesiredCount
       ScheduledActions:
-        - ScheduledActionName: ScaleOut
-          Schedule: !Ref ServiceScaleOutCron
-          Timezone: !Ref ServiceScalingTimezone
-          ScalableTargetAction:
-            MinCapacity: !Ref ContainerDesiredCount
-            MaxCapacity: !Ref ContainerDesiredCount
-        - ScheduledActionName: ScaleIn
-          Timezone: !Ref ServiceScalingTimezone
-          Schedule: !Ref ServiceScaleInCron
-          ScalableTargetAction:
-            MinCapacity: 0
-            MaxCapacity: 0
+        - !If
+          - ServiceScaleOutEnabled
+          - ScheduledActionName: ScaleOut
+            Schedule: !Ref ServiceScaleOutCron
+            Timezone: !Ref ServiceScalingTimezone
+            ScalableTargetAction:
+              MinCapacity: !Ref ContainerDesiredCount
+              MaxCapacity: !Ref ContainerDesiredCount
+          - !Ref AWS::NoValue
+        - !If
+          - ServiceScaleInEnabled
+          - ScheduledActionName: ScaleIn
+            Timezone: !Ref ServiceScalingTimezone
+            Schedule: !Ref ServiceScaleInCron
+            ScalableTargetAction:
+              MinCapacity: 0
+              MaxCapacity: 0
+          - !Ref AWS::NoValue
 
   AlbTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
