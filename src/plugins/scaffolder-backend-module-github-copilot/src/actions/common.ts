@@ -2,6 +2,8 @@ import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 import { setTimeout as sleepFor } from 'node:timers/promises'
 import { Octokit } from 'octokit'
 
+import { findNewSpecDirectory } from './spec-directory'
+
 type RepoDetails = {
   host: string
   owner: string
@@ -71,7 +73,7 @@ async function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   }
 }
 
-function parseRepoUrl(repoUrl: string): RepoDetails {
+export function parseRepoUrl(repoUrl: string): RepoDetails {
   const [host, queryString] = repoUrl.split('?')
   const searchParams = new URLSearchParams(queryString)
   const owner = searchParams.get('owner')
@@ -89,6 +91,7 @@ export function createGithubCopilotAgentAction(options: {
   description: string
   customAgent?: string
   skillCommand?: string
+  outputSpecDirectory?: boolean
 }) {
   return createTemplateAction({
     id: options.id,
@@ -173,6 +176,32 @@ export function createGithubCopilotAgentAction(options: {
                 'Last known state of the Copilot agent task, such as queued or completed',
             })
             .optional(),
+        })
+        const specOutputSchema = outputSchema.extend({
+          specDirectory: z
+            .string({
+              description:
+                'Spec Kit feature directory the task added, such as specs/20261012-143000-add-login. Requires waitForCompletion.',
+            })
+            .optional(),
+          specId: z
+            .string({
+              description:
+                'Timestamp or number that prefixes the feature directory. Requires waitForCompletion.',
+            })
+            .optional(),
+          specName: z
+            .string({
+              description:
+                'Feature directory name without its timestamp or number prefix. Requires waitForCompletion.',
+            })
+            .optional(),
+        })
+        // Only actions that create a spec list the spec outputs; the cast
+        // keeps them typed for the handler either way${{ steps['speckit-specify'].output.headRef }}
+        return (
+          options.outputSpecDirectory ? specOutputSchema : outputSchema
+        ) as typeof specOutputSchema
       },
     },
     async handler(ctx) {
@@ -360,6 +389,29 @@ export function createGithubCopilotAgentAction(options: {
         )
       }
       ctx.logger.info(`Copilot agent task ${taskId} completed`)
+
+      if (options.outputSpecDirectory) {
+        if (!headRef) {
+          throw new Error(
+            `Cannot find the spec created by Copilot agent task ${taskId}: GitHub did not report the task's branch`,
+          )
+        }
+        const base =
+          (ctx.input.baseRef as string | undefined) ??
+          (await readDefaultBranch(octokit, owner, repo))
+        const spec = await findNewSpecDirectory(octokit, {
+          owner,
+          repo,
+          base,
+          head: headRef,
+        })
+        ctx.output('specDirectory', spec.specDirectory)
+        if (spec.specId) {
+          ctx.output('specId', spec.specId)
+        }
+        ctx.output('specName', spec.specName)
+        ctx.logger.info(`Copilot agent task created ${spec.specDirectory}`)
+      }
     },
   })
 }
