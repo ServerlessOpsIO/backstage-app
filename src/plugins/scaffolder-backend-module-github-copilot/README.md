@@ -186,3 +186,35 @@ or the repository default branch, and the previous task's changes are in its
 pull request until that is merged. A template should usually launch only one
 Spec Kit action, and later steps should be run after its pull request is
 merged.
+To continue on the branch an earlier task created, pass that task's `headRef`
+output as the `headRef` input of the next step, together with `baseRef`. The
+next task then commits to the same branch instead of creating a new one. This
+needs `waitForCompletion` on the earlier step, because the branch name is only
+known once GitHub reports it.
+
+```yaml
+- id: speckit-plan
+  action: github:copilot:speckit:plan
+  input:
+    repoUrl: ${{ parameters.repoUrl }}
+    baseRef: main
+    headRef: ${{ steps['speckit-specify'].output.headRef }}
+    prompt: ${{ parameters.speckit_plan }}
+    waitForCompletion: true
+```
+
+`github:copilot:speckit:specify` also reports the feature directory it created,
+so later steps can work with the new spec. With `waitForCompletion` set, the
+action compares the task's branch with `baseRef`, or the repository default
+branch, and returns these outputs:
+
+| Output | Example | Description |
+| --- | --- | --- |
+| `specDirectory` | `specs/20261012-143000-photo-album` | Feature directory the task added. |
+| `specId` | `20261012-143000` | Timestamp or number that prefixes the directory, depending on the repository's Spec Kit `feature_numbering` setting. |
+| `specName` | `photo-album` | Directory name without that prefix. |
+
+The step fails if the branch doesn't add exactly one `specs/<directory>/spec.md`.
+Without `waitForCompletion`, the action doesn't look for the spec and these
+outputs aren't set.
+
