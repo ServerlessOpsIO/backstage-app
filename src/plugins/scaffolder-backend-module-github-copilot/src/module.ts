@@ -14,6 +14,7 @@ import {
   createSpecKitTasksToIssuesAction,
   initializeSpecKitAction,
   launchGithubCopilotAgentAction,
+  renameGithubBranchAction,
 } from './actions'
 
 export const scaffolderModuleGithubCopilot = createBackendModule({
@@ -38,6 +39,7 @@ export const scaffolderModuleGithubCopilot = createBackendModule({
           createSpecKitClarifyAction(),
           createSpecKitConvergeAction(),
           createSpecKitImplementAction(),
+          renameGithubBranchAction(),
         )
       },
     })
