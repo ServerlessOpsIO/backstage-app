@@ -3,6 +3,7 @@ import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-no
 
 import {
   commitFilesToGithubBranchAction,
+  createGithubPullRequestAction,
   createSpecKitAnalyzeAction,
   createSpecKitChecklistAction,
   createSpecKitClarifyAction,
@@ -41,6 +42,7 @@ export const scaffolderModuleGithubCopilot = createBackendModule({
           createSpecKitConvergeAction(),
           createSpecKitImplementAction(),
           commitFilesToGithubBranchAction(),
+          createGithubPullRequestAction(),
           renameGithubBranchAction(),
         )
       },

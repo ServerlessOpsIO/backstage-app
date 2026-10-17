@@ -1,5 +1,6 @@
 export * from './commit-files'
 export * from './launch'
+export * from './pull-request'
 export * from './rename-branch'
 export * from './speckit-analyze'
 export * from './speckit-checklist'
