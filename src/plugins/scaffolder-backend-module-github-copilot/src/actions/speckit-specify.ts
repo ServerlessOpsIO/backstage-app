@@ -6,6 +6,7 @@ export function createSpecKitSpecifyAction() {
     description:
       'Launches the speckit.specify agent to create a feature specification for a Spec Kit project published to GitHub',
     customAgent: 'speckit.specify',
-    skillCommand: '/speckit.specify',
+    skillCommand: '/speckit-specify',
+    outputSpecDirectory: true,
   })
 }

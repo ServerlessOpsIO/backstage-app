@@ -6,6 +6,6 @@ export function createSpecKitImplementAction() {
     description:
       'Launches the speckit.implement agent to implement the feature tasks of a Spec Kit project published to GitHub',
     customAgent: 'speckit.implement',
-    skillCommand: '/speckit.implement',
+    skillCommand: '/speckit-implement',
   })
 }
