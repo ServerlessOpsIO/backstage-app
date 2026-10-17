@@ -1,3 +1,4 @@
+export * from './commit-files'
 export * from './launch'
 export * from './rename-branch'
 export * from './speckit-analyze'
