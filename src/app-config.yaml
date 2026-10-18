@@ -269,6 +269,24 @@ catalog:
           frequency: { minutes: 30 }
           # supports ISO duration, "human duration" as used in code
           timeout: { minutes: 3 }
+      # Spec Kit specs created by the speckit-feature template. Each spec
+      # directory has its own catalog-info.yaml, found once merged to main.
+      serverlessOpsIOSpecs:
+        organization: 'ServerlessOpsIO'
+        catalogPath: '/specs/*/catalog-info.yaml'
+        filters:
+          branch: 'main'
+        schedule:
+          frequency: { minutes: 30 }
+          timeout: { minutes: 3 }
+      pitCrewIOSpecs:
+        organization: 'PitCrewIO'
+        catalogPath: '/specs/*/catalog-info.yaml'
+        filters:
+          branch: 'main'
+        schedule:
+          frequency: { minutes: 30 }
+          timeout: { minutes: 3 }
   import:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
