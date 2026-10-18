@@ -106,7 +106,24 @@ The action accepts these inputs:
 
 The action writes the YAML to a temporary file outside the workspace and runs
 `specify workflow run <file> --input <name>=<value> ... --json` from the
-project root. It returns the `runId` and `status` outputs.
+project root. It returns these outputs:
+
+| Output | Example | Description |
+| --- | --- | --- |
+| `runId` | `29567d74` | ID of the Spec Kit workflow run. |
+| `status` | `completed` | Final status of the run. |
+| `specDirectory` | `specs/20261018-101500-photo-album` | Feature directory a `speckit.specify` step in the run created, relative to the project root. |
+| `specPath` | `/tmp/backstage/workspace/specs/20261018-101500-photo-album` | Absolute path of that directory in the scaffolder workspace. |
+| `specId` | `20261018-101500` | Timestamp or number that prefixes the directory. |
+| `specName` | `photo-album` | Directory name without that prefix. |
+
+Spec Kit workflows don't report their own outputs, so the spec outputs come
+from the feature directory that `speckit.specify` records in
+`.specify/feature.json`. They're only set when the run creates or changes that
+record, so a workflow that doesn't run `speckit.specify`, or a workspace left
+over from an earlier run, doesn't report a spec. Later steps can use them, for
+example `spec/${{ steps['specifyAndPlan'].output.specName }}` for a branch
+name.
 
 - The step fails unless the run's status is `completed`, including when a step
   fails or Spec Kit can't load the workflow.

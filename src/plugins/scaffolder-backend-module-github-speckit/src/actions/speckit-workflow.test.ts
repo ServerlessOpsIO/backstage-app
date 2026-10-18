@@ -190,6 +190,55 @@ describe('github:speckit:workflow', () => {
     expect(ctx.output).toHaveBeenCalledWith('runId', 'log001')
   })
 
+  test('reports the spec a specify step created, but not one left from an earlier run', async () => {
+    const writeFeature = (featureDirectory: string) =>
+      workspace.addContent({
+        '.specify/feature.json': JSON.stringify({
+          feature_directory: featureDirectory,
+        }),
+      })
+    const completedRun = (featureDirectory?: string) =>
+      spawnMock.mockImplementationOnce(() => {
+        if (featureDirectory) {
+          writeFeature(featureDirectory)
+        }
+        return fakeChild({
+          stdout: ['{"run_id": "spec01", "status": "completed"}\n'],
+        })
+      })
+
+    completedRun('specs/20261018-101500-photo-album')
+    const ctx = createContext({ workflow: workflowYaml })
+    await action.handler(ctx)
+    expect(ctx.output).toHaveBeenCalledWith(
+      'specDirectory',
+      'specs/20261018-101500-photo-album',
+    )
+    expect(ctx.output).toHaveBeenCalledWith(
+      'specPath',
+      workspace.resolve('specs/20261018-101500-photo-album'),
+    )
+    expect(ctx.output).toHaveBeenCalledWith('specId', '20261018-101500')
+    expect(ctx.output).toHaveBeenCalledWith('specName', 'photo-album')
+
+    // feature.json is unchanged from the previous run.
+    completedRun()
+    const unchangedCtx = createContext({ workflow: workflowYaml })
+    await action.handler(unchangedCtx)
+    expect(unchangedCtx.output).not.toHaveBeenCalledWith(
+      'specName',
+      expect.anything(),
+    )
+
+    completedRun('../outside/specs/004-escape')
+    const outsideCtx = createContext({ workflow: workflowYaml })
+    await action.handler(outsideCtx)
+    expect(outsideCtx.output).not.toHaveBeenCalledWith(
+      'specDirectory',
+      expect.anything(),
+    )
+  })
+
   test('uses the token secret the template names, or the host credentials by default', async () => {
     mockSpecify({ run_id: 'tok001', status: 'completed' })
 

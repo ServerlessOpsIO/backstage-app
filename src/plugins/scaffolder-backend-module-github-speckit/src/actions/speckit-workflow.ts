@@ -7,6 +7,8 @@ import {
 } from '@backstage/backend-plugin-api'
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 
+import { parseSpecDirectoryName, SpecDirectory } from './spec-directory'
+
 // Only the end of stdout is needed to read the run outcome, so cap how much
 // of the agent CLIs' output is kept in memory.
 const MAX_KEPT_OUTPUT_CHARS = 1024 * 1024
@@ -184,6 +186,42 @@ async function logStepResults(
   }
 }
 
+/**
+ * Reads the feature directory that Spec Kit's specify command records in
+ * .specify/feature.json, as a path relative to the workspace.
+ */
+async function readFeatureDirectory(
+  workspacePath: string,
+): Promise<string | undefined> {
+  try {
+    const featureJson = JSON.parse(
+      await fs.readFile(
+        path.join(workspacePath, '.specify', 'feature.json'),
+        'utf8',
+      ),
+    )
+    const featureDirectory = featureJson?.feature_directory
+    if (typeof featureDirectory !== 'string' || !featureDirectory.trim()) {
+      return undefined
+    }
+    const relative = path
+      .relative(workspacePath, path.resolve(workspacePath, featureDirectory))
+      .split(path.sep)
+      .join('/')
+    // Ignore a directory outside the workspace.
+    return relative && !relative.startsWith('..') ? relative : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function toSpecDirectory(featureDirectory: string): SpecDirectory {
+  return {
+    specDirectory: featureDirectory,
+    ...parseSpecDirectoryName(path.posix.basename(featureDirectory)),
+  }
+}
+
 function describeFailure(outcome: WorkflowRunOutcome): string {
   if (outcome.status === 'paused') {
     const gate = outcome.gate?.step_id ?? outcome.current_step_id
@@ -238,6 +276,34 @@ export function runSpecKitWorkflowAction() {
               description: 'Final status of the workflow run',
             })
             .optional(),
+        specDirectory: z =>
+          z
+            .string({
+              description:
+                'Feature directory a specify step in the run created, such as specs/20261012-143000-add-login',
+            })
+            .optional(),
+        specPath: z =>
+          z
+            .string({
+              description:
+                'Absolute path of the feature directory in the scaffolder workspace',
+            })
+            .optional(),
+        specId: z =>
+          z
+            .string({
+              description:
+                'Timestamp or number that prefixes the feature directory',
+            })
+            .optional(),
+        specName: z =>
+          z
+            .string({
+              description:
+                'Feature directory name without its timestamp or number prefix',
+            })
+            .optional(),
       },
     },
     async handler(ctx) {
@@ -271,6 +337,12 @@ export function runSpecKitWorkflowAction() {
         ([name, value]) => ['--input', `${name}=${String(value)}`],
       )
 
+      // A workspace can already record a feature from an earlier run, so only
+      // report the spec if the run changes it.
+      const featureDirectoryBefore = await readFeatureDirectory(
+        ctx.workspacePath,
+      )
+
       let stdout = ''
       let commandError: SpecifyError | undefined
       try {
@@ -291,6 +363,21 @@ export function runSpecKitWorkflowAction() {
       }
       if (outcome?.status) {
         ctx.output('status', outcome.status)
+      }
+
+      const featureDirectory = await readFeatureDirectory(ctx.workspacePath)
+      if (featureDirectory && featureDirectory !== featureDirectoryBefore) {
+        const spec = toSpecDirectory(featureDirectory)
+        ctx.output('specDirectory', spec.specDirectory)
+        ctx.output(
+          'specPath',
+          resolveSafeChildPath(ctx.workspacePath, spec.specDirectory),
+        )
+        if (spec.specId) {
+          ctx.output('specId', spec.specId)
+        }
+        ctx.output('specName', spec.specName)
+        ctx.logger.info(`Spec Kit workflow created ${spec.specDirectory}`)
       }
 
       // Spec Kit keeps run state for resuming a run, which a scaffolder task
