@@ -6122,6 +6122,7 @@ __metadata:
     "@backstage/plugin-scaffolder-backend": "backstage:^"
     "@backstage/plugin-scaffolder-node": "backstage:^"
     "@backstage/plugin-scaffolder-node-test-utils": "backstage:^"
+    isomorphic-git: "npm:^1.23.0"
     octokit: "npm:^3.2.1"
   languageName: unknown
   linkType: soft

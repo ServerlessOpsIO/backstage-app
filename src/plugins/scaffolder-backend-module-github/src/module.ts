@@ -1,7 +1,9 @@
 import { createBackendModule } from "@backstage/backend-plugin-api";
 import { scaffolderActionsExtensionPoint  } from '@backstage/plugin-scaffolder-node';
 import {
+  cloneGithubRepoAction,
   commitFilesToGithubBranchAction,
+  commitGitChangesAction,
   pushGitBranchAction,
 } from './actions';
 
@@ -18,7 +20,9 @@ export const scaffolderModule = createBackendModule({
       },
       async init({ scaffolderActions}) {
         scaffolderActions.addActions(
+          cloneGithubRepoAction(),
           commitFilesToGithubBranchAction(),
+          commitGitChangesAction(),
           pushGitBranchAction(),
         );
       }

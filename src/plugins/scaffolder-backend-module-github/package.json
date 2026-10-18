@@ -28,6 +28,7 @@
   "dependencies": {
     "@backstage/backend-plugin-api": "backstage:^",
     "@backstage/plugin-scaffolder-node": "backstage:^",
+    "isomorphic-git": "^1.23.0",
     "octokit": "^3.2.1"
   },
   "devDependencies": {

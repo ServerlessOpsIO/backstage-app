@@ -8,6 +8,40 @@ request their GitHub token with `requestUserCredentials`.
 
 ## Actions
 
+### `x_github:clone`
+
+Clones a GitHub repository into the workspace as a git repository, with its
+history, as the user running the template. Unlike `fetch:plain`, which only
+downloads files, the clone can be committed to and pushed with `x_github:commit`
+and `x_github:push`:
+
+```yaml
+steps:
+  - id: clone
+    name: Clone repository
+    action: x_github:clone
+    input:
+      repoUrl: github.com?owner=my-org&repo=my-service
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format. Only `github.com` is supported. |
+| `branch` | No | Repository default branch | Branch to clone and check out. |
+| `targetPath` | No | Workspace root | Workspace directory to clone into. |
+| `depth` | No | `1` | Number of commits of history to fetch. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+The action clones only the chosen branch, and by default only its latest
+commit. That's enough to commit on top of it and push with `x_github:push`.
+Increase `depth` if later steps need more history. It returns the `branch` and
+`commitSha` outputs for the checkout. The clone's `origin` remote is the plain
+HTTPS URL; the token is only used to fetch and isn't stored in the clone. The
+action uses Backstage's built-in git client, so it doesn't need the `git`
+executable.
+
 ### `x_github:commitFiles`
 
 Commits files from the scaffolder workspace on top of an existing branch of a
@@ -48,6 +82,38 @@ force-push, so it fails if someone else pushes to the branch while it runs. An
 unpushed commit isn't reachable from any branch, so GitHub can eventually remove
 it unless a later step, such as a branch or tag created from `commitSha`,
 refers to it.
+
+### `x_github:commit`
+
+Commits every change in the workspace's git repository, including new and
+deleted files, on the branch that's checked out. Use it after steps that change
+a repository cloned into the workspace, before `x_github:push`:
+
+```yaml
+steps:
+  - id: commit-spec
+    name: Commit spec changes
+    action: x_github:commit
+    input:
+      commitMessage: Add spec and plan
+      gitAuthorName: ${{ user.entity.spec.profile.displayName }}
+      gitAuthorEmail: ${{ user.entity.spec.profile.email }}
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `commitMessage` | Yes | | Message for the commit. |
+| `gitAuthorName` | No | git's configured name | Name of the commit author. |
+| `gitAuthorEmail` | No | git's configured email | Email of the commit author. |
+
+The action returns the `commitSha` output, and `committed`, which is `false`
+when there was nothing to commit. In that case it makes no commit and
+`commitSha` is the current commit. The commit only exists in the workspace
+until a later step pushes it. The scaffolder host needs the `git` executable on
+its `PATH`, and git needs an author name and email, either from these inputs or
+from its configuration.
 
 ### `x_github:push`
 
