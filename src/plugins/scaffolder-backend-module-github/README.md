@@ -83,6 +83,73 @@ unpushed commit isn't reachable from any branch, so GitHub can eventually remove
 it unless a later step, such as a branch or tag created from `commitSha`,
 refers to it.
 
+### `x_github:pr:create`
+
+Opens a pull request from an existing branch of a GitHub repository, as the
+user running the template. Use it after `x_github:push` to propose the pushed
+changes:
+
+```yaml
+steps:
+  - id: open-spec-pr
+    name: Open spec pull request
+    action: x_github:pr:create
+    input:
+      repoUrl: github.com?owner=${{ parameters.github_org }}&repo=my-service
+      head: ${{ steps['push-spec-branch'].output.branch }}
+      title: Add spec and plan
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format. Only `github.com` is supported. |
+| `head` | Yes | | Existing branch with the changes to merge. |
+| `title` | Yes | | Title of the pull request. |
+| `base` | No | Repository default branch | Branch to merge the changes into. |
+| `description` | No | | Body of the pull request. |
+| `draft` | No | `false` | Whether to open the pull request as a draft. |
+| `labels` | No | | Labels to add to the pull request. Labels the repository doesn't have yet are created. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+If a pull request from `head` into `base` is already open, for example one a
+Copilot agent task opened, the action returns that one instead of opening
+another, and leaves its title and description unchanged. Any `labels` are
+added to that pull request alongside the ones it already has. It returns the
+`pullRequestUrl` and `pullRequestNumber` outputs. The `head` branch must be in
+the same repository; pull requests from forks aren't supported.
+
+### `x_github:pr:comment`
+
+Posts a comment on a pull request, as the user running the template. Use it
+after `x_github:pr:create`, for example to ask Copilot to work on the pull
+request:
+
+```yaml
+steps:
+  - id: clarify-spec
+    name: Ask Copilot to clarify the spec
+    action: x_github:pr:comment
+    input:
+      repoUrl: github.com?owner=${{ parameters.github_org }}&repo=my-service
+      pullRequestNumber: ${{ steps['open-spec-pr'].output.pullRequestNumber }}
+      body: '@copilot /speckit-clarify'
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format. Only `github.com` is supported. |
+| `pullRequestNumber` | Yes | | Number of the pull request to comment on. |
+| `body` | Yes | | Markdown text of the comment. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+The comment goes on the pull request's conversation, not on a line of its
+diff. The action returns the `commentUrl` and `commentId` outputs. Copilot only
+responds to `@copilot` mentions from users who can write to the repository.
+
 ### `x_github:commit`
 
 Commits every change in the workspace's git repository, including new and
