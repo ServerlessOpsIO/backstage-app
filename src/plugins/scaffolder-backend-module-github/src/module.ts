@@ -4,6 +4,7 @@ import {
   cloneGithubRepoAction,
   commitFilesToGithubBranchAction,
   commitGitChangesAction,
+  createGithubPullRequestAction,
   pushGitBranchAction,
 } from './actions';
 
@@ -23,6 +24,7 @@ export const scaffolderModule = createBackendModule({
           cloneGithubRepoAction(),
           commitFilesToGithubBranchAction(),
           commitGitChangesAction(),
+          createGithubPullRequestAction(),
           pushGitBranchAction(),
         );
       }
