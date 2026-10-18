@@ -6,7 +6,7 @@
 
 ## Summary
 
-Add and register a no-input scaffolder action, `github:copilot:speckit:init`, in
+Add and register a no-input scaffolder action, `github:speckit:init`, in
 the existing GitHub Copilot backend module. The action will start `specify`
 with arguments `init --non-interactive --force .` using the task workspace as
 its working directory, wait for completion, and surface process errors and

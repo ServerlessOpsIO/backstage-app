@@ -157,6 +157,48 @@ describe('createGithubCopilotAgentAction', () => {
       )
     })
 
+    test('lists additionalOutputs and calls onCompleted only after a completed task', async () => {
+      const onCompleted = jest.fn(async task => {
+        task.output('summary', `done on ${task.headRef}`)
+      })
+      const action = createGithubCopilotAgentAction({
+        id: 'test:copilot:hooks',
+        description: 'Test Copilot agent action with hooks',
+        additionalOutputs: { summary: 'Summary of the task' },
+        onCompleted,
+      })
+      expect(action.schema?.output?.properties).toHaveProperty('summary')
+      expect(createAction().schema?.output?.properties).not.toHaveProperty(
+        'summary',
+      )
+
+      requestMock.mockResolvedValueOnce({
+        data: {
+          id: 12345,
+          state: 'completed',
+          sessions: [{ head_ref: 'copilot/hooks' }],
+        },
+      })
+      const ctx = context(true)
+      ctx.input.baseRef = 'develop'
+      await action.handler(ctx)
+
+      expect(onCompleted).toHaveBeenCalledWith(
+        expect.objectContaining({
+          owner: 'ServerlessOpsIO',
+          repo: 'example-repo',
+          taskId: '12345',
+          baseRef: 'develop',
+          headRef: 'copilot/hooks',
+        }),
+      )
+      expect(ctx.output).toHaveBeenCalledWith('summary', 'done on copilot/hooks')
+
+      onCompleted.mockClear()
+      await action.handler(context())
+      expect(onCompleted).not.toHaveBeenCalled()
+    })
+
     test.each([
       'failed',
       'idle',

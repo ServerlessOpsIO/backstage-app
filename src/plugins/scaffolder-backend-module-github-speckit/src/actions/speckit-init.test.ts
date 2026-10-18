@@ -8,7 +8,7 @@ jest.mock('node:child_process', () => ({
 
 const execFileMock = execFile as unknown as jest.Mock
 
-describe('github:copilot:speckit:init', () => {
+describe('github:speckit:init', () => {
   beforeEach(() => {
     execFileMock.mockImplementation(
       (

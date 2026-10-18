@@ -201,7 +201,7 @@ function describeFailure(outcome: WorkflowRunOutcome): string {
 
 export function runSpecKitWorkflowAction() {
   return createTemplateAction({
-    id: 'github:copilot:speckit:workflow',
+    id: 'github:speckit:workflow',
     description:
       'Runs a GitHub Spec Kit workflow in the generated project from the workflow YAML',
     schema: {

@@ -1,6 +1,6 @@
 import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 
-import { createSpecKitImplementAction } from './speckit-implement'
+import { createSpecKitChecklistAction } from './speckit-checklist'
 
 const mockRequest = jest.fn()
 
@@ -8,11 +8,11 @@ jest.mock('octokit', () => ({
   Octokit: jest.fn(() => ({ request: mockRequest })),
 }))
 
-describe('github:copilot:speckit:implement', () => {
-  const action = createSpecKitImplementAction()
+describe('github:speckit:checklist', () => {
+  const action = createSpecKitChecklistAction()
   const input = {
     repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
-    prompt: 'Implement all tasks in the first phase',
+    prompt: 'Create a security review checklist',
   }
   const taskUrl =
     'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/12345'
@@ -28,7 +28,7 @@ describe('github:copilot:speckit:implement', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit-implement skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-checklist skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -36,7 +36,7 @@ describe('github:copilot:speckit:implement', () => {
 
     await action.handler(ctx)
 
-    expect(action.id).toBe('github:copilot:speckit:implement')
+    expect(action.id).toBe('github:speckit:checklist')
     expect(action.schema?.input?.properties).not.toHaveProperty('customAgent')
     expect(action.schema?.input?.properties).toHaveProperty('integrationType')
     expect(action.schema?.input?.required).toEqual(['repoUrl', 'prompt'])
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:implement', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit-implement ${input.prompt}`,
+        prompt: `/speckit-checklist ${input.prompt}`,
         create_pull_request: false,
       },
     )
@@ -53,7 +53,7 @@ describe('github:copilot:speckit:implement', () => {
     expect(ctx.output).toHaveBeenCalledWith('taskUrl', taskUrl)
   })
 
-  test('launches the speckit.implement agent when integrationType is agent and does not allow an override', async () => {
+  test('launches the speckit.checklist agent when integrationType is agent and does not allow an override', async () => {
     const ctx = createMockActionContext({
       input: {
         ...input,
@@ -69,7 +69,7 @@ describe('github:copilot:speckit:implement', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        custom_agent: 'speckit.implement',
+        custom_agent: 'speckit.checklist',
       }),
     )
   })

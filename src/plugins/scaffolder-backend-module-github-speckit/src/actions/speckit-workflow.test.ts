@@ -56,7 +56,7 @@ steps:
       args: "{{ inputs.spec }}"
 `
 
-describe('github:copilot:speckit:workflow', () => {
+describe('github:speckit:workflow', () => {
   const action = runSpecKitWorkflowAction()
   const workspace = createMockDirectory()
   const tempDir = createMockDirectory()

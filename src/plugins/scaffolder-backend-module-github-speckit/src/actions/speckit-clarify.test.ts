@@ -1,6 +1,6 @@
 import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 
-import { createSpecKitTasksAction } from './speckit-tasks'
+import { createSpecKitClarifyAction } from './speckit-clarify'
 
 const mockRequest = jest.fn()
 
@@ -8,11 +8,11 @@ jest.mock('octokit', () => ({
   Octokit: jest.fn(() => ({ request: mockRequest })),
 }))
 
-describe('github:copilot:speckit:tasks', () => {
-  const action = createSpecKitTasksAction()
+describe('github:speckit:clarify', () => {
+  const action = createSpecKitClarifyAction()
   const input = {
     repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
-    prompt: 'Break the plan into tasks',
+    prompt: 'Clarify the authentication requirements',
   }
   const taskUrl =
     'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/12345'
@@ -28,7 +28,7 @@ describe('github:copilot:speckit:tasks', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit-tasks skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-clarify skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -36,7 +36,7 @@ describe('github:copilot:speckit:tasks', () => {
 
     await action.handler(ctx)
 
-    expect(action.id).toBe('github:copilot:speckit:tasks')
+    expect(action.id).toBe('github:speckit:clarify')
     expect(action.schema?.input?.properties).not.toHaveProperty('customAgent')
     expect(action.schema?.input?.properties).toHaveProperty('integrationType')
     expect(action.schema?.input?.required).toEqual(['repoUrl', 'prompt'])
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:tasks', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit-tasks ${input.prompt}`,
+        prompt: `/speckit-clarify ${input.prompt}`,
         create_pull_request: false,
       },
     )
@@ -53,7 +53,7 @@ describe('github:copilot:speckit:tasks', () => {
     expect(ctx.output).toHaveBeenCalledWith('taskUrl', taskUrl)
   })
 
-  test('launches the speckit.tasks agent when integrationType is agent and does not allow an override', async () => {
+  test('launches the speckit.clarify agent when integrationType is agent and does not allow an override', async () => {
     const ctx = createMockActionContext({
       input: {
         ...input,
@@ -69,7 +69,7 @@ describe('github:copilot:speckit:tasks', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        custom_agent: 'speckit.tasks',
+        custom_agent: 'speckit.clarify',
       }),
     )
   })

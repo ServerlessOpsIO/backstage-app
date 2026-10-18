@@ -1,6 +1,6 @@
 import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 
-import { createSpecKitAnalyzeAction } from './speckit-analyze'
+import { createSpecKitImplementAction } from './speckit-implement'
 
 const mockRequest = jest.fn()
 
@@ -8,11 +8,11 @@ jest.mock('octokit', () => ({
   Octokit: jest.fn(() => ({ request: mockRequest })),
 }))
 
-describe('github:copilot:speckit:analyze', () => {
-  const action = createSpecKitAnalyzeAction()
+describe('github:speckit:implement', () => {
+  const action = createSpecKitImplementAction()
   const input = {
     repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
-    prompt: 'Focus on gaps between the spec and the tasks',
+    prompt: 'Implement all tasks in the first phase',
   }
   const taskUrl =
     'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/12345'
@@ -28,7 +28,7 @@ describe('github:copilot:speckit:analyze', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit-analyze skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-implement skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -36,7 +36,7 @@ describe('github:copilot:speckit:analyze', () => {
 
     await action.handler(ctx)
 
-    expect(action.id).toBe('github:copilot:speckit:analyze')
+    expect(action.id).toBe('github:speckit:implement')
     expect(action.schema?.input?.properties).not.toHaveProperty('customAgent')
     expect(action.schema?.input?.properties).toHaveProperty('integrationType')
     expect(action.schema?.input?.required).toEqual(['repoUrl', 'prompt'])
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:analyze', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit-analyze ${input.prompt}`,
+        prompt: `/speckit-implement ${input.prompt}`,
         create_pull_request: false,
       },
     )
@@ -53,7 +53,7 @@ describe('github:copilot:speckit:analyze', () => {
     expect(ctx.output).toHaveBeenCalledWith('taskUrl', taskUrl)
   })
 
-  test('launches the speckit.analyze agent when integrationType is agent and does not allow an override', async () => {
+  test('launches the speckit.implement agent when integrationType is agent and does not allow an override', async () => {
     const ctx = createMockActionContext({
       input: {
         ...input,
@@ -69,7 +69,7 @@ describe('github:copilot:speckit:analyze', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        custom_agent: 'speckit.analyze',
+        custom_agent: 'speckit.implement',
       }),
     )
   })

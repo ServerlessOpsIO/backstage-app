@@ -1,8 +1,8 @@
-import { createGithubCopilotAgentAction } from '../common'
+import { createGithubCopilotAgentAction } from '@internal/backstage-plugin-scaffolder-backend-module-github-copilot'
 
 export function createSpecKitConstitutionAction() {
   return createGithubCopilotAgentAction({
-    id: 'github:copilot:speckit:constitution',
+    id: 'github:speckit:constitution',
     description:
       'Launches the speckit.constitution agent to create a constitution for a Spec Kit project published to GitHub',
     customAgent: 'speckit.constitution',

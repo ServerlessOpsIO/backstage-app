@@ -76,4 +76,5 @@ backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverless
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-serverlessops'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-github-copilot'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-google'));
+backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-github-speckit'));
 backend.start();

@@ -9,7 +9,7 @@ jest.mock('octokit', () => ({
   Octokit: jest.fn(() => ({ request: mockRequest })),
 }))
 
-describe('github:copilot:speckit:constitution', () => {
+describe('github:speckit:constitution', () => {
   const action = createSpecKitConstitutionAction()
   const input = {
     repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
@@ -37,7 +37,7 @@ describe('github:copilot:speckit:constitution', () => {
 
     await action.handler(ctx)
 
-    expect(action.id).toBe('github:copilot:speckit:constitution')
+    expect(action.id).toBe('github:speckit:constitution')
     expect(action.schema?.input?.properties).not.toHaveProperty('customAgent')
     expect(action.schema?.input?.properties).toHaveProperty('integrationType')
     expect(action.schema?.input?.required).toEqual(['repoUrl', 'prompt'])

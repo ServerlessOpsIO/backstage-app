@@ -35,7 +35,7 @@ function specifyArgs(
 
 export function initializeSpecKitAction() {
   return createTemplateAction({
-    id: 'github:copilot:speckit:init',
+    id: 'github:speckit:init',
     description: 'Initializes GitHub Spec Kit in the generated project',
     schema: {
       input: {

@@ -1,6 +1,6 @@
 import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 
-import { createSpecKitTasksToIssuesAction } from './speckit-taskstoissues'
+import { createSpecKitAnalyzeAction } from './speckit-analyze'
 
 const mockRequest = jest.fn()
 
@@ -8,11 +8,11 @@ jest.mock('octokit', () => ({
   Octokit: jest.fn(() => ({ request: mockRequest })),
 }))
 
-describe('github:copilot:speckit:taskstoissues', () => {
-  const action = createSpecKitTasksToIssuesAction()
+describe('github:speckit:analyze', () => {
+  const action = createSpecKitAnalyzeAction()
   const input = {
     repoUrl: 'github.com?owner=ServerlessOpsIO&repo=example-repo',
-    prompt: 'Convert the tasks into GitHub issues',
+    prompt: 'Focus on gaps between the spec and the tasks',
   }
   const taskUrl =
     'https://github.com/ServerlessOpsIO/example-repo/agents/tasks/12345'
@@ -28,7 +28,7 @@ describe('github:copilot:speckit:taskstoissues', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit-taskstoissues skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-analyze skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -36,7 +36,7 @@ describe('github:copilot:speckit:taskstoissues', () => {
 
     await action.handler(ctx)
 
-    expect(action.id).toBe('github:copilot:speckit:taskstoissues')
+    expect(action.id).toBe('github:speckit:analyze')
     expect(action.schema?.input?.properties).not.toHaveProperty('customAgent')
     expect(action.schema?.input?.properties).toHaveProperty('integrationType')
     expect(action.schema?.input?.required).toEqual(['repoUrl', 'prompt'])
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:taskstoissues', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit-taskstoissues ${input.prompt}`,
+        prompt: `/speckit-analyze ${input.prompt}`,
         create_pull_request: false,
       },
     )
@@ -53,7 +53,7 @@ describe('github:copilot:speckit:taskstoissues', () => {
     expect(ctx.output).toHaveBeenCalledWith('taskUrl', taskUrl)
   })
 
-  test('launches the speckit.taskstoissues agent when integrationType is agent and does not allow an override', async () => {
+  test('launches the speckit.analyze agent when integrationType is agent and does not allow an override', async () => {
     const ctx = createMockActionContext({
       input: {
         ...input,
@@ -69,7 +69,7 @@ describe('github:copilot:speckit:taskstoissues', () => {
       'POST /agents/repos/{owner}/{repo}/tasks',
       expect.objectContaining({
         prompt: input.prompt,
-        custom_agent: 'speckit.taskstoissues',
+        custom_agent: 'speckit.analyze',
       }),
     )
   })

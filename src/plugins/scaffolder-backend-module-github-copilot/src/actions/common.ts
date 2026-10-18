@@ -1,8 +1,7 @@
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 import { setTimeout as sleepFor } from 'node:timers/promises'
+import { LoggerService } from '@backstage/backend-plugin-api'
 import { Octokit } from 'octokit'
-
-import { findNewSpecDirectory } from './speckit/spec-directory'
 
 type RepoDetails = {
   host: string
@@ -59,26 +58,6 @@ function readHeadRef(
   return undefined
 }
 
-export async function readDefaultBranch(
-  octokit: Octokit,
-  owner: string,
-  repo: string,
-): Promise<string> {
-  try {
-    const response = await octokit.request('GET /repos/{owner}/{repo}', {
-      owner,
-      repo,
-    })
-    return (response.data as { default_branch: string }).default_branch
-  } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Unknown GitHub API error'
-    throw new Error(
-      `Failed to read the default branch of ${owner}/${repo}: ${message}`,
-    )
-  }
-}
-
 async function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   try {
     await sleepFor(ms, undefined, { signal })
@@ -106,12 +85,36 @@ export function parseRepoUrl(repoUrl: string): RepoDetails {
   return { host, owner, repo }
 }
 
+/** Details of a completed Copilot agent task, for `onCompleted`. */
+export type CompletedCopilotAgentTask = {
+  octokit: Octokit
+  owner: string
+  repo: string
+  taskId: string
+  /** The `baseRef` input, if the template set one. */
+  baseRef?: string
+  /** Branch the task worked on, if GitHub reported it. */
+  headRef?: string
+  logger: LoggerService
+  /** Sets one of the action's `additionalOutputs`. */
+  output: (name: string, value: string) => void
+}
+
 export function createGithubCopilotAgentAction(options: {
   id: string
   description: string
   customAgent?: string
   skillCommand?: string
-  outputSpecDirectory?: boolean
+  /**
+   * Extra optional string outputs the action reports, by name, with their
+   * descriptions. Set them from `onCompleted`.
+   */
+  additionalOutputs?: Record<string, string>
+  /**
+   * Runs once the task completes successfully. Only called when the step
+   * sets `waitForCompletion`.
+   */
+  onCompleted?: (task: CompletedCopilotAgentTask) => Promise<void>
 }) {
   return createTemplateAction({
     id: options.id,
@@ -197,31 +200,16 @@ export function createGithubCopilotAgentAction(options: {
             })
             .optional(),
         })
-        const specOutputSchema = outputSchema.extend({
-          specDirectory: z
-            .string({
-              description:
-                'Spec Kit feature directory the task added, such as specs/20261012-143000-add-login. Requires waitForCompletion.',
-            })
-            .optional(),
-          specId: z
-            .string({
-              description:
-                'Timestamp or number that prefixes the feature directory. Requires waitForCompletion.',
-            })
-            .optional(),
-          specName: z
-            .string({
-              description:
-                'Feature directory name without its timestamp or number prefix. Requires waitForCompletion.',
-            })
-            .optional(),
-        })
-        // Only actions that create a spec list the spec outputs; the cast
-        // keeps them typed for the handler either way${{ steps['speckit-specify'].output.headRef }}
-        return (
-          options.outputSpecDirectory ? specOutputSchema : outputSchema
-        ) as typeof specOutputSchema
+        return outputSchema.extend(
+          Object.fromEntries(
+            Object.entries(options.additionalOutputs ?? {}).map(
+              ([name, description]) => [
+                name,
+                z.string({ description }).optional(),
+              ],
+            ),
+          ),
+        )
       },
     },
     async handler(ctx) {
@@ -410,27 +398,18 @@ export function createGithubCopilotAgentAction(options: {
       }
       ctx.logger.info(`Copilot agent task ${taskId} completed`)
 
-      if (options.outputSpecDirectory) {
-        if (!headRef) {
-          throw new Error(
-            `Cannot find the spec created by Copilot agent task ${taskId}: GitHub did not report the task's branch`,
-          )
-        }
-        const base =
-          (ctx.input.baseRef as string | undefined) ??
-          (await readDefaultBranch(octokit, owner, repo))
-        const spec = await findNewSpecDirectory(octokit, {
+      if (options.onCompleted) {
+        const output = ctx.output as (name: string, value: string) => void
+        await options.onCompleted({
+          octokit,
           owner,
           repo,
-          base,
-          head: headRef,
+          taskId,
+          baseRef: ctx.input.baseRef as string | undefined,
+          headRef,
+          logger: ctx.logger,
+          output: (name, value) => output(name, value),
         })
-        ctx.output('specDirectory', spec.specDirectory)
-        if (spec.specId) {
-          ctx.output('specId', spec.specId)
-        }
-        ctx.output('specName', spec.specName)
-        ctx.logger.info(`Copilot agent task created ${spec.specDirectory}`)
       }
     },
   })
