@@ -29,7 +29,7 @@ describe('github:copilot:speckit:constitution', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit.constitution skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-constitution skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -46,7 +46,7 @@ describe('github:copilot:speckit:constitution', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit.constitution ${input.prompt}`,
+        prompt: `/speckit-constitution ${input.prompt}`,
         create_pull_request: false,
       },
     )

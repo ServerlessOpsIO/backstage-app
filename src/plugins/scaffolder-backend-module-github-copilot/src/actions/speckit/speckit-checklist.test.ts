@@ -28,7 +28,7 @@ describe('github:copilot:speckit:checklist', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit.checklist skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-checklist skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:checklist', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit.checklist ${input.prompt}`,
+        prompt: `/speckit-checklist ${input.prompt}`,
         create_pull_request: false,
       },
     )

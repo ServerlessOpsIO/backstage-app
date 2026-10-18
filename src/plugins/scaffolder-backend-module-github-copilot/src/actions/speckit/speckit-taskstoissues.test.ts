@@ -28,7 +28,7 @@ describe('github:copilot:speckit:taskstoissues', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit.taskstoissues skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-taskstoissues skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:taskstoissues', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit.taskstoissues ${input.prompt}`,
+        prompt: `/speckit-taskstoissues ${input.prompt}`,
         create_pull_request: false,
       },
     )

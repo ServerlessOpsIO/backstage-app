@@ -28,7 +28,7 @@ describe('github:copilot:speckit:clarify', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit.clarify skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-clarify skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:clarify', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit.clarify ${input.prompt}`,
+        prompt: `/speckit-clarify ${input.prompt}`,
         create_pull_request: false,
       },
     )

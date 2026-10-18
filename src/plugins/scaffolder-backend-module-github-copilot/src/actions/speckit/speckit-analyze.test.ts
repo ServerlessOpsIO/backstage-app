@@ -28,7 +28,7 @@ describe('github:copilot:speckit:analyze', () => {
     mockRequest.mockReset()
   })
 
-  test('runs the /speckit.analyze skill by default and exposes task outputs', async () => {
+  test('runs the /speckit-analyze skill by default and exposes task outputs', async () => {
     const ctx = createMockActionContext({
       input,
       secrets: { USER_GITHUB_TOKEN: 'gh-user-token' },
@@ -45,7 +45,7 @@ describe('github:copilot:speckit:analyze', () => {
       {
         owner: 'ServerlessOpsIO',
         repo: 'example-repo',
-        prompt: `/speckit.analyze ${input.prompt}`,
+        prompt: `/speckit-analyze ${input.prompt}`,
         create_pull_request: false,
       },
     )
