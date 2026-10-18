@@ -229,7 +229,7 @@ Use the `integrationType` input to choose how the Spec Kit command runs:
 - `skill` (default): launches Copilot without a custom agent and puts the
   action's skill command in front of your prompt. For example,
   `github:copilot:speckit:constitution` with the prompt `Emphasize testing` sends
-  `/speckit.constitution Emphasize testing`.
+  `/speckit-constitution Emphasize testing`.
 - `agent`: launches the action's custom agent and sends your prompt unchanged.
   The repository must have the matching custom agent profile available, which
   `github:copilot:speckit:init` sets up.
