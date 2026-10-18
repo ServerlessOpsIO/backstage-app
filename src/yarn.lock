@@ -6112,6 +6112,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@internal/backstage-plugin-scaffolder-backend-module-github@workspace:^, @internal/backstage-plugin-scaffolder-backend-module-github@workspace:plugins/scaffolder-backend-module-github":
+  version: 0.0.0-use.local
+  resolution: "@internal/backstage-plugin-scaffolder-backend-module-github@workspace:plugins/scaffolder-backend-module-github"
+  dependencies:
+    "@backstage/backend-plugin-api": "backstage:^"
+    "@backstage/backend-test-utils": "backstage:^"
+    "@backstage/cli": "backstage:^"
+    "@backstage/plugin-scaffolder-backend": "backstage:^"
+    "@backstage/plugin-scaffolder-node": "backstage:^"
+    "@backstage/plugin-scaffolder-node-test-utils": "backstage:^"
+    octokit: "npm:^3.2.1"
+  languageName: unknown
+  linkType: soft
+
 "@internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:^, @internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops":
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-scaffolder-backend-module-serverlessops@workspace:plugins/scaffolder-backend-module-serverlessops"
@@ -14045,6 +14059,7 @@ __metadata:
     "@backstage/plugin-user-settings-backend": "backstage:^"
     "@internal/backstage-plugin-catalog-backend-module-google": "workspace:^"
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^"
+    "@internal/backstage-plugin-scaffolder-backend-module-github": "workspace:^"
     "@internal/backstage-plugin-scaffolder-backend-module-github-copilot": "workspace:^"
     "@internal/backstage-plugin-scaffolder-backend-module-github-speckit": "workspace:^"
     "@internal/backstage-plugin-scaffolder-backend-module-serverlessops": "workspace:^"
