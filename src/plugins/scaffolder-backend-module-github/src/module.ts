@@ -5,6 +5,7 @@ import {
   commitFilesToGithubBranchAction,
   commitGitChangesAction,
   createGithubPullRequestAction,
+  createGithubPullRequestCommentAction,
   pushGitBranchAction,
 } from './actions';
 
@@ -25,6 +26,7 @@ export const scaffolderModule = createBackendModule({
           commitFilesToGithubBranchAction(),
           commitGitChangesAction(),
           createGithubPullRequestAction(),
+          createGithubPullRequestCommentAction(),
           pushGitBranchAction(),
         );
       }
