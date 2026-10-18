@@ -2,7 +2,7 @@ import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 import { setTimeout as sleepFor } from 'node:timers/promises'
 import { Octokit } from 'octokit'
 
-import { findNewSpecDirectory } from './spec-directory'
+import { findNewSpecDirectory } from './speckit/spec-directory'
 
 type RepoDetails = {
   host: string
@@ -57,6 +57,26 @@ function readHeadRef(
     }
   }
   return undefined
+}
+
+export async function readDefaultBranch(
+  octokit: Octokit,
+  owner: string,
+  repo: string,
+): Promise<string> {
+  try {
+    const response = await octokit.request('GET /repos/{owner}/{repo}', {
+      owner,
+      repo,
+    })
+    return (response.data as { default_branch: string }).default_branch
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown GitHub API error'
+    throw new Error(
+      `Failed to read the default branch of ${owner}/${repo}: ${message}`,
+    )
+  }
 }
 
 async function sleep(ms: number, signal?: AbortSignal): Promise<void> {
