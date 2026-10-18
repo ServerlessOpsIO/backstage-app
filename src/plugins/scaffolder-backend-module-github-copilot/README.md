@@ -114,6 +114,94 @@ step.
 The Spec Kit agent actions below launch GitHub Copilot tasks, so they work with
 projects initialized with the `copilot` integration.
 
+### `github:copilot:speckit:workflow`
+
+Runs a [Spec Kit workflow](https://github.com/github/spec-kit) in the generated
+project workspace. Like `github:copilot:speckit:init`, it runs Spec Kit on the
+scaffolder host rather than launching a Copilot cloud agent task. Pass the
+workflow's YAML content in the `workflow` input, and values for the inputs the
+workflow declares in `inputs`:
+
+```yaml
+steps:
+  - id: initializeSpecKit
+    name: Initialize Spec Kit
+    action: github:copilot:speckit:init
+
+  - id: specifyAndPlan
+    name: Specify and plan
+    action: github:copilot:speckit:workflow
+    input:
+      workflow: |
+        schema_version: "1.0"
+        workflow:
+          id: specify-plan
+          name: Specify and plan
+          version: 1.0.0
+        inputs:
+          spec:
+            type: string
+            required: true
+        steps:
+          - id: specify
+            command: speckit.specify
+            integration: auto
+            input:
+              args: "{{ inputs.spec }}"
+          - id: plan
+            command: speckit.plan
+            integration: auto
+            input:
+              args: "{{ inputs.spec }}"
+      inputs:
+        spec: ${{ parameters.feature }}
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `workflow` | Yes | | Content of the Spec Kit workflow YAML. |
+| `inputs` | No | | Values for the workflow's inputs, by input name. Strings, numbers, and booleans are accepted. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub token for the agent CLIs the workflow runs. |
+
+The action writes the YAML to a temporary file outside the workspace and runs
+`specify workflow run <file> --input <name>=<value> ... --json` from the
+project root. It returns the `runId` and `status` outputs.
+
+- The step fails unless the run's status is `completed`, including when a step
+  fails or Spec Kit can't load the workflow.
+- Gate steps pause a run until someone answers them, which can't happen in a
+  scaffolder task, so a paused run fails the step. Leave gate steps out of
+  workflows run with this action.
+- The step log shows Spec Kit's output as it runs, including the output of
+  the agent CLIs that command steps start. Spec Kit only records the output of
+  other steps, such as shell steps, so the action adds each step's result and
+  recorded output to the log when the run ends.
+- Spec Kit saves each run's state under `.specify/workflows/runs/<runId>/` so a
+  run can be resumed. Scaffolder tasks can't resume a run, so the action deletes
+  that state from the workspace afterwards, whether the run succeeded or not,
+  and a later publish step doesn't commit it.
+
+The scaffolder task runtime must have the `specify` executable on its `PATH`,
+and the workspace must already be a Spec Kit project. Command steps such as
+`speckit.specify` run the integration's own CLI on the same host, for example
+`copilot` for the `copilot` integration, so that CLI must also be installed
+there.
+
+The action passes the token from the `userCredentialsSecretKey` secret to those
+CLIs as `GH_TOKEN`. The GitHub CLI uses it for workflow `github` steps, and the
+Copilot CLI uses it for command steps, so Copilot usage is billed to the
+token's owner. The Copilot CLI prefers `COPILOT_GITHUB_TOKEN` over `GH_TOKEN`,
+so don't set `COPILOT_GITHUB_TOKEN` on the backend if workflows should use the
+template user's token.
+If you set `userCredentialsSecretKey` and the secret is missing, the step fails.
+If you leave it unset and there's no `USER_GITHUB_TOKEN` secret, the CLIs use
+whatever credentials the scaffolder host provides, such as a `GH_TOKEN`
+environment variable on the backend. The Copilot CLI
+accepts fine-grained personal access tokens with the Copilot Requests
+permission, but not classic personal access tokens.
+
 ### Spec Kit agent actions
 
 These actions launch a Copilot task that runs one of the Spec Kit commands on a
