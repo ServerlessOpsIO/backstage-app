@@ -1,4 +1,4 @@
-import { createGithubCopilotAgentAction } from './common'
+import { createGithubCopilotAgentAction } from '../common'
 
 export function createSpecKitAnalyzeAction() {
   return createGithubCopilotAgentAction({
