@@ -1,6 +1,9 @@
 import { createBackendModule } from "@backstage/backend-plugin-api";
 import { scaffolderActionsExtensionPoint  } from '@backstage/plugin-scaffolder-node';
-import { commitFilesToGithubBranchAction } from './actions';
+import {
+  commitFilesToGithubBranchAction,
+  pushGitBranchAction,
+} from './actions';
 
 /**
  * A backend module that registers GitHub actions into the scaffolder
@@ -14,7 +17,10 @@ export const scaffolderModule = createBackendModule({
         scaffolderActions: scaffolderActionsExtensionPoint
       },
       async init({ scaffolderActions}) {
-        scaffolderActions.addActions(commitFilesToGithubBranchAction());
+        scaffolderActions.addActions(
+          commitFilesToGithubBranchAction(),
+          pushGitBranchAction(),
+        );
       }
     });
   },
