@@ -15,7 +15,7 @@
 - Q: Which types of Datadog alarms should templates be able to create in the first release? → A: Metric monitors only.
 - Q: Should template authors provide complete Datadog monitor definitions or select a centrally defined baseline and provide project-specific values? → A: Authors provide each complete monitor definition.
 - Q: How should alarm notifications be routed? → A: Each template specifies notification destinations.
-- Q: What should happen when a retry finds an alarm with the same project identity and name? → A: Always create another alarm.
+- Q: What should happen when a retry finds an alarm with the same project identity and name? → A: Reuse and update the existing alarm rather than creating a duplicate.
 - Q: Which Datadog account should receive alarms created by scaffolding? → A: Use one platform-configured Datadog account.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -32,6 +32,7 @@ As a platform user, I can scaffold a new project that automatically includes a p
 
 1. **Given** a template includes Datadog alarm defaults, **When** a project is scaffolded, **Then** the resulting project includes all configured default alarms.
 2. **Given** a project is scaffolded with the alarm-enabled template, **When** scaffolding completes, **Then** users can identify the created or configured Datadog alarms from scaffold output.
+3. **Given** the same project identity and alarm definitions are submitted again, **When** scaffolding retries, **Then** the existing alarms are updated and no duplicate alarms are created.
 
 ---
 
@@ -68,7 +69,8 @@ As a template author, I receive clear validation feedback when alarm definitions
 - A template attempts to define duplicate alarm names for the same project context.
 - Required Datadog account or authorization context is unavailable at scaffold time.
 - A template defines an empty alarm list while the template is marked as requiring baseline monitoring.
-- A scaffold retry is triggered after a partial failure and creates another alarm for each processed definition, even if an alarm with the same project identity and name already exists.
+- A scaffold retry is triggered after a partial failure; it reuses or updates alarms already processed and creates only alarms that do not yet exist for the same project identity and name.
+- A single request contains duplicate alarm names for the same project identity.
 
 ## Requirements *(mandatory)*
 
@@ -80,9 +82,10 @@ As a template author, I receive clear validation feedback when alarm definitions
 - **FR-004**: The system MUST return identifiable results for each processed alarm so users can trace scaffold output to alarm outcomes.
 - **FR-005**: The system MUST fail the scaffold step when any required alarm cannot be created or configured.
 - **FR-006**: Failure output MUST identify the specific alarm definition that failed and include a clear reason.
-- **FR-007**: A retry MUST create another Datadog alarm for each processed definition, even when an alarm with the same project identity and name already exists.
+- **FR-007**: The action MUST be idempotent for a given project identity and alarm name: it MUST use a stable action-managed Datadog monitor tag to find and update the existing alarm when one exists, and create one only when none exists.
 - **FR-008**: Templates configured to require baseline monitoring MUST produce at least one Datadog alarm outcome during scaffold execution.
 - **FR-009**: The system MUST create alarms in one platform-configured Datadog account; templates MUST NOT select the account.
+- **FR-010**: Each action request MUST include a non-empty, stable project identity used with the alarm name to identify the logical alarm across retries; duplicate alarm names for that identity in one request MUST be rejected.
 
 ### Key Entities *(include if feature involves data)*
 
