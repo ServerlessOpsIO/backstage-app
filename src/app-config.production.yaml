@@ -130,3 +130,15 @@ catalog:
       target: https://github.com/ServerlessOpsIO/backstage-aws-sam-empty-template/blob/main/template.yaml
       rules:
         - allow: [Template]
+    - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-github-speckit-feature/blob/main/template-spec.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-github-speckit-feature/blob/main/template-plan.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-github-speckit-feature/blob/main/template-work.yaml
+      rules:
+        - allow: [Template]
