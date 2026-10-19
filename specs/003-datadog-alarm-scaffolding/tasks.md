@@ -49,12 +49,12 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add success-path unit test for single-monitor creation output in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
+- [ ] T010 [P] [US1] Add unit tests for single-monitor creation output and repeat-request idempotency (existing monitor is updated, not duplicated) in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Implement action id `x_datadog:alarm:create` and handler wiring in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T012 [US1] Map successful Datadog responses to `AlarmProvisioningResult` fields (`index`, `name`, `status`, `monitorId`, `monitorUrl`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [ ] T011 [US1] Implement action id `x_datadog:alarm:create`, handler wiring, and idempotent upsert using an action-managed Datadog tag derived from stable project identity and monitor name in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [ ] T012 [US1] Map successful Datadog responses to `AlarmProvisioningResult` fields (`index`, `name`, `status: created | updated`, `monitorId`, `monitorUrl`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 - [ ] T013 [US1] Emit per-monitor scaffold outputs for traceability in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: P1 baseline monitor provisioning works independently.
@@ -73,9 +73,9 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Enforce top-level request constraint `monitors` with `minItems = 1` in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [ ] T015 [US2] Enforce top-level request constraints: non-empty stable `projectIdentity`, `monitors` with `minItems = 1`, and unique monitor names in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 - [ ] T016 [US2] Enforce monitor field constraints `name: Non-empty`, `type: Must represent Datadog metric monitor type`, `query: Non-empty Datadog metric query`, and `message: Non-empty; includes notification destinations` in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T017 [US2] Pass optional template fields `tags`, `options`, and `priority` through to Datadog monitor create payloads in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [ ] T017 [US2] Pass optional template fields `tags`, `options`, and `priority` through to Datadog monitor create/update payloads in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: P2 template-defined multi-monitor configuration works independently.
 
@@ -89,14 +89,13 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 ### Tests for User Story 3
 
-- [ ] T018 [P] [US3] Add validation failure unit test for missing required fields with index/name-specific errors in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
+- [ ] T018 [P] [US3] Add validation failure unit tests for missing required fields, missing project identity, and duplicate monitor names with actionable errors in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
 - [ ] T019 [US3] Add partial-failure unit test for one invalid monitor in a multi-monitor request in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
 
 ### Implementation for User Story 3
 
 - [ ] T020 [US3] Implement failure result mapping with `status: "failed"` and actionable `error` per monitor in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 - [ ] T021 [US3] Fail scaffolder action execution when any required monitor fails while preserving collected per-monitor outcomes in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T022 [US3] Preserve non-idempotent retry behavior by always calling Datadog create monitor and never deduplicating by project identity/name in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: P3 invalid-definition feedback is clear and independently testable.
 

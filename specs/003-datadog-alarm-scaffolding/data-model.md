@@ -25,6 +25,7 @@ Top-level action input.
 
 | Field | Type | Required | Validation |
 |---|---|---:|---|
+| `projectIdentity` | string | Yes | Non-empty and stable across retries for the same project |
 | `monitors` | `DatadogMonitorDefinition[]` | Yes | `minItems = 1` |
 
 ## Entity: AlarmProvisioningResult
@@ -35,9 +36,9 @@ Per-monitor action outcome.
 |---|---|---:|---|
 | `index` | number | Yes | Original monitor index in input array |
 | `name` | string | Yes | Monitor name from input |
-| `status` | `"created"` \| `"failed"` | Yes | Outcome state |
+| `status` | `"created"` \| `"updated"` \| `"failed"` | Yes | Outcome state |
 | `monitorId` | string | On success | Datadog monitor identifier |
-| `monitorUrl` | string | On success | URL for created Datadog monitor |
+| `monitorUrl` | string | On success | URL for the Datadog monitor |
 | `error` | string | On failure | Actionable failure reason |
 
 ## Entity: DatadogAccountConfig
@@ -55,5 +56,12 @@ Backend runtime configuration for one platform account.
 - Every monitor entry is attempted in-order.
 - The action reports one `AlarmProvisioningResult` per processed entry.
 - If any required monitor fails, the scaffolder step fails.
-- Retry behavior is non-idempotent by design: re-running the step creates
-  additional monitors rather than deduplicating by name.
+- The logical identity of a monitor is the pair of stable `projectIdentity` and
+  monitor `name`; duplicate names for one project identity in a request are
+  rejected.
+- The action persists this logical identity as a stable, action-managed Datadog
+  monitor tag and uses that tag for lookup; it does not rely on monitor name
+  alone.
+- On retry, a monitor with the same logical identity tag is updated; otherwise a
+  monitor is created and tagged. Repeated execution therefore converges on one
+  Datadog monitor per logical identity.

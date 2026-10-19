@@ -24,7 +24,7 @@
 ## Requirement Consistency
 
 - [ ] CHK008 Do per-alarm outcome requirements align with step-failure requirements when one alarm fails? [Consistency, Spec §FR-004, Spec §FR-005]
-- [ ] CHK009 Do duplicate-name edge-case expectations align with retry semantics that intentionally create additional alarms? [Consistency, Spec §FR-007, Spec §Edge Cases]
+- [ ] CHK009 Do duplicate-name edge-case expectations align with idempotent upsert semantics keyed by project identity and alarm name? [Consistency, Spec §FR-007, Spec §FR-010]
 - [ ] CHK010 Are assumptions about a standard baseline set consistent with the clarification that authors provide complete definitions? [Consistency, Assumption, Spec §Clarifications, Spec §Assumptions]
 
 ## Acceptance Criteria Quality
@@ -43,7 +43,7 @@
 
 - [ ] CHK017 Are requirements defined for duplicate alarm names within one scaffold request (allow/reject/transform)? [Edge Case, Gap, Spec §Edge Cases]
 - [ ] CHK018 Are requirements defined for unavailable Datadog authorization context before API interaction starts? [Edge Case, Recovery, Spec §Edge Cases]
-- [ ] CHK019 Are requirements defined for retry boundaries and expected duplicate-monitor side effects? [Edge Case, Risk, Spec §FR-007]
+- [ ] CHK019 Are retry boundaries and idempotent create-or-update outcomes defined? [Edge Case, Risk, Spec §FR-007]
 
 ## Non-Functional Requirements
 
@@ -59,7 +59,7 @@
 
 ## Ambiguities & Conflicts
 
-- [ ] CHK026 Is any conflict resolved between "always create another alarm on retry" and production governance on duplicate monitor proliferation? [Conflict, Spec §FR-007, Plan §Constraints]
+- [ ] CHK026 Is retry behavior consistent with the constitution's idempotent-outcome requirement and the defined monitor identity? [Consistency, Constitution §II, Spec §FR-007, Plan §Constraints]
 - [ ] CHK027 Is "requires baseline monitoring" defined consistently across template authoring, validation, and scaffold execution expectations? [Ambiguity, Spec §FR-008]
 - [ ] CHK028 Is the requirement/acceptance-criteria ID scheme sufficient for downstream traceability into implementation and review artifacts? [Traceability, Spec §Requirements, Spec §Success Criteria]
 

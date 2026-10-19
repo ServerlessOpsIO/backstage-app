@@ -8,9 +8,10 @@
 
 Create a new Backstage scaffolder backend plugin module that provides a single
 action, `x_datadog:alarm:create`, for template-driven Datadog metric monitor
-creation. The action will accept one or more complete monitor definitions from
-templates, validate required fields before API calls, create monitors in one
-platform-configured Datadog account, and emit per-monitor outcomes. The plugin
+creation. The action will accept a stable project identity and one or more
+complete monitor definitions from templates, validate required fields before
+API calls, create or update monitors idempotently in one platform-configured
+Datadog account, and emit per-monitor outcomes. The plugin
 will be registered through backend composition and accompanied by focused unit
 tests and configuration wiring guidance.
 
@@ -23,7 +24,7 @@ tests and configuration wiring guidance.
 **Target Platform**: Backstage backend scaffolder runtime
 **Project Type**: Backstage backend plugin module with backend composition/config updates
 **Performance Goals**: Process all monitor definitions in one scaffolder step and return per-monitor outcomes without retries hidden from users
-**Constraints**: Metric monitors only; one platform-configured Datadog account; fail the step when any required monitor fails; retries must create additional monitors rather than deduplicate
+**Constraints**: Metric monitors only; one platform-configured Datadog account; fail the step when any required monitor fails; retries must converge on one monitor per stable project identity and alarm name
 **Scale/Scope**: One new scaffolder backend module package, one action, related tests, backend registration, and environment-driven config wiring
 
 ## Constitution Check
@@ -36,8 +37,9 @@ tests and configuration wiring guidance.
   backend plugin module under `src/plugins/` and registered through backend
   composition.
 - **Catalog Integrity**: Pass. The action has explicit failure semantics,
-  reports deterministic per-monitor outcomes, and defines repeat-execution
-  behavior (no deduplication).
+  reports deterministic per-monitor outcomes, and defines idempotent
+  repeat-execution behavior by updating a monitor with the same project identity
+  and name instead of creating a duplicate.
 - **Environment-Driven Configuration**: Pass. Datadog credentials and site are
   sourced from app configuration/environment variables, not template inputs.
 - **Secrets and Least Privilege**: Pass. Secrets remain in runtime config and
@@ -50,7 +52,8 @@ tests and configuration wiring guidance.
 ### Post-Phase 1 Re-check
 
 - **Status**: Pass. Research, data model, contract, and quickstart preserve all
-  constitutional constraints with no required exceptions.
+  constitutional constraints with no required exceptions, including idempotent
+  retry behavior.
 
 ## Project Structure
 

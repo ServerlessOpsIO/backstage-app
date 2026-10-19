@@ -24,15 +24,16 @@
    yarn lint:all
    ```
 
-3. Add a scaffolder template step with at least one monitor definition (see
+3. Add a scaffolder template step with a stable project identity and at least
+   one monitor definition (see
    [contract example](./contracts/scaffolder-action.md#template-usage-example))
    and run a scaffold.
 4. Confirm scaffold outputs include one result per monitor and contain Datadog
-   identifiers for successful creations.
+   identifiers for successful creations or updates.
 5. Run with one intentionally invalid monitor in a multi-monitor set and verify
    the step fails with a monitor-specific error.
-6. Retry the same scaffold input and verify a new Datadog alarm is created
-   again for each processed definition.
+6. Retry the same scaffold input and verify existing Datadog alarms are updated
+   rather than duplicated.
 
 The runtime input/output shapes and failure semantics are detailed in
 [data-model.md](./data-model.md).

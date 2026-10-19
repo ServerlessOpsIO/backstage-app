@@ -34,14 +34,19 @@
   in action inputs. Rejected because they violate the single-account rule and
   complicate governance.
 
-## Decision 4: Preserve duplicate creation on retries
+## Decision 4: Make retry execution idempotent
 
-- **Decision**: Always call Datadog monitor creation for every input monitor;
-  do not perform idempotency checks by name/project identity.
-- **Rationale**: FR-007 explicitly requires retry behavior to create another
-  alarm even when a same-name alarm exists.
-- **Alternatives considered**: Name-based lookup and update/upsert behavior.
-  Rejected because it conflicts with required retry semantics.
+- **Decision**: Require a stable project identity and use it with each monitor
+  name as the logical alarm identity. Persist that identity in a stable,
+  action-managed monitor tag, use the tag to update a matching existing monitor,
+  and create one only when no match exists; reject duplicate names for one
+  project identity in a single request.
+- **Rationale**: FR-007 and the constitution require deterministic,
+  idempotent retry outcomes. Converging repeated requests on the same monitor
+  avoids duplicate alarms after partial failures or retries.
+- **Alternatives considered**: Always creating a new monitor on every retry.
+  Rejected because it creates duplicate monitoring resources and conflicts with
+  the catalog idempotency principle.
 
 ## Decision 5: Return per-monitor outcomes with traceable references
 
