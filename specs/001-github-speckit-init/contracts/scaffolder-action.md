@@ -2,7 +2,7 @@
 
 ## Identifier
 
-`github:copilot:speckit:init`
+`github:speckit:init`
 
 ## Inputs and outputs
 
@@ -26,5 +26,5 @@ must have the `specify` executable available.
 steps:
   - id: initializeSpecKit
     name: Initialize Spec Kit
-    action: github:copilot:speckit:init
+    action: github:speckit:init
 ```

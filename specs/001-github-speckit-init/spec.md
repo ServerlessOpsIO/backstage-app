@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: User description: "Add a new scaffolder action named github:copilot:speckit:init. When a scaffolder step uses this action the command `specify init --non-interactive  --force .` will be run at the top-level of the newly created project."
+**Input**: User description: "Add a new scaffolder action named github:speckit:init. When a scaffolder step uses this action the command `specify init --non-interactive  --force .` will be run at the top-level of the newly created project."
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -20,7 +20,7 @@ A template author adds the GitHub Copilot Spec Kit initialization action to a sc
 
 **Acceptance Scenarios**:
 
-1. **Given** a scaffolder task has created a project workspace, **When** its template invokes `github:copilot:speckit:init`, **Then** the action runs `specify init --non-interactive  --force .` with that project root as its working directory.
+1. **Given** a scaffolder task has created a project workspace, **When** its template invokes `github:speckit:init`, **Then** the action runs `specify init --non-interactive  --force .` with that project root as its working directory.
 2. **Given** the initialization command completes successfully, **When** the scaffolder task continues, **Then** the action completes successfully and the template can proceed.
 
 ### User Story 2 - Detect initialization failures (Priority: P2)
@@ -46,7 +46,7 @@ A template author receives a failed scaffolder step when the initialization comm
 
 ### Functional Requirements
 
-- **FR-001**: The scaffolder MUST expose an action with the identifier `github:copilot:speckit:init`.
+- **FR-001**: The scaffolder MUST expose an action with the identifier `github:speckit:init`.
 - **FR-002**: When invoked for a newly created project, the action MUST run the exact command `specify init --non-interactive  --force .` from the top-level directory of that project.
 - **FR-003**: The action MUST wait for command completion and report success only when the command completes successfully.
 - **FR-004**: If the command cannot be started or completes unsuccessfully, the action MUST fail the scaffolder step with an actionable failure indication.
