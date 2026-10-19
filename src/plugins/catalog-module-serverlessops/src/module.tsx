@@ -10,12 +10,13 @@ import {
   ExtensionDefinition,
   PageBlueprint,
 } from '@backstage/frontend-plugin-api'
-import { RiGitPullRequestLine, RiMindMap } from "@remixicon/react"
+import { RiFileList3Line, RiGitPullRequestLine, RiMindMap } from "@remixicon/react"
 
 const cicdRouteRef = createRouteRef()
 const activityRouteRef = createRouteRef()
 const tabbedDirectoryRouteRef = createRouteRef()
 const relationsRouteRef = createRouteRef()
+const specsRouteRef = createRouteRef()
 
 // Page Content
 export const cicdCatalogEntityContent: ExtensionDefinition<any> = EntityContentBlueprint.make({
@@ -58,6 +59,21 @@ export const relationsCatalogEntityContent: ExtensionDefinition<any> = EntityCon
     loader: async () => {
       const { RelationsCatalogEntityContent } = await import('./components/CatalogEntityContent/RelationsCatalogEntityContent')
       return <RelationsCatalogEntityContent />
+    }
+  },
+})
+
+export const specsCatalogEntityContent: ExtensionDefinition<any> = EntityContentBlueprint.make({
+  name: 'specs',
+  params: {
+    path: 'specs',
+    title: 'Specs',
+    filter: 'kind:component',
+    icon: <RiFileList3Line />,
+    routeRef: specsRouteRef,
+    loader: async () => {
+      const { SpecsCatalogEntityContent } = await import('./components/CatalogEntityContent/SpecsCatalogEntityContent')
+      return <SpecsCatalogEntityContent />
     }
   },
 })
@@ -151,6 +167,7 @@ export const serverlessOpsCatalogModule = createFrontendModule({
     catalogTabbedDirectoryIndexPage,
     activityCatalogEntityContent,
     cicdCatalogEntityContent,
-    relationsCatalogEntityContent
+    relationsCatalogEntityContent,
+    specsCatalogEntityContent
   ]
 });
