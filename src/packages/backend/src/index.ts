@@ -75,6 +75,7 @@ backend.add(import('@backstage/plugin-mcp-actions-backend'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-serverlessops'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-github-copilot'));
+backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-datadog'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-google'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-github-speckit'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-github'));

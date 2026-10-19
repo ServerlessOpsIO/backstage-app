@@ -23,6 +23,7 @@ Rules:
 - `monitors` MUST contain at least one entry.
 - `projectIdentity` MUST be non-empty and stable for the same project.
 - Every entry MUST include required monitor fields.
+- `type` MUST be a supported metric monitor type (`query alert` or `metric alert`).
 - Monitor names MUST be unique within a request.
 - Invalid entries fail validation with index/name-specific errors.
 
@@ -45,8 +46,9 @@ results:
 - Returns per-monitor outcomes for traceability.
 - Fails the scaffolder step when any required monitor creation or update fails.
 - Persists the `projectIdentity` and monitor name identity in an action-managed
-  Datadog tag. It uses that tag to update an existing logical monitor or create
-  one when absent; retries do not create duplicate monitors.
+  Datadog tag (`serverlessops_scaffolder_identity:<sha256>`). It uses that tag
+  to update an existing logical monitor or create one when absent; retries do
+  not create duplicate monitors.
 
 ## Template Usage Example
 

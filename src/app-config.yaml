@@ -245,6 +245,10 @@ clientIdMetadataDocuments:
 
 scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
+  datadog:
+    site: ${DATADOG_SITE}
+    apiKey: ${DATADOG_API_KEY}
+    appKey: ${DATADOG_APP_KEY}
 
 catalog:
   providers:

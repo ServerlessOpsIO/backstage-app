@@ -49,6 +49,7 @@
     "@backstage/plugin-user-settings-backend": "backstage:^",
     "@internal/backstage-plugin-catalog-backend-module-google": "workspace:^",
     "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog": "workspace:^",
+    "@internal/backstage-plugin-scaffolder-backend-module-datadog": "workspace:^",
     "@internal/backstage-plugin-scaffolder-backend-module-github": "workspace:^",
     "@internal/backstage-plugin-scaffolder-backend-module-github-copilot": "workspace:^",
     "@internal/backstage-plugin-scaffolder-backend-module-github-speckit": "workspace:^",
