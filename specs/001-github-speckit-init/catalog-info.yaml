@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: backstage-app-spec-001
+  title: "001 - Github speckit init"
+  description: "Scaffolder action that initializes Spec Kit in newly created projects"
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/backstage-app
+    serverlessops.io/spec-dir: specs/001-github-speckit-init
+    serverlessops.io/spec-number: "001"
+    backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/001-github-speckit-init/
+  tags:
+    - speckit
+  links:
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/001-github-speckit-init/spec.md
+      title: Specification
+      icon: docs
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/001-github-speckit-init/plan.md
+      title: Implementation plan
+      icon: docs
+spec:
+  type: doc-spec
+  owner: group:00gjdgxs1ur6lsu
+  system: backstage
+  dependsOn:
+    - component:default/backstage-app
