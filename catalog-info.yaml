@@ -13,6 +13,5 @@ spec:
   system: backstage
   domain: platform
   dependsOn:
-    - resource:backstage-app-container
-    - resource:backstage-cluster
-    - resource:backstage-db
+    - component:backstage-cluster
+    - component:backstage-db
