@@ -1,1 +1,7 @@
 playwright.config.ts
+node_modules/
+dist/
+dist-types/
+build/
+coverage/
+*.min.js
