@@ -50,10 +50,10 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Independent Test**: Execute one scaffold request with a valid `projectKey` and one dashboard selection, then rerun the same request and verify first-run `created`, retry `updated`, and no duplicate dashboard creation.
 
-- [ ] T009 [US1] Add create/update idempotency tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts` for first-run create and retry update outcomes
-- [ ] T010 [US1] Implement `x_datadog:dashboard:create` action schema and handler input/output contract in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T011 [US1] Implement per-dashboard provisioning loop (create or update by logical identity, retain successful outcomes) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T012 [US1] Finalize action registration/export wiring in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
+- [X] T009 [US1] Add create/update idempotency tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts` for first-run create and retry update outcomes
+- [X] T010 [US1] Implement `x_datadog:dashboard:create` action schema and handler input/output contract in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T011 [US1] Implement per-dashboard provisioning loop (create or update by logical identity, retain successful outcomes) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T012 [US1] Finalize action registration/export wiring in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 

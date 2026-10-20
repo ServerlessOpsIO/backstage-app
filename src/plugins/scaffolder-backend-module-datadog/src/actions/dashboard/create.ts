@@ -40,13 +40,13 @@ type DatadogAccountConfig = {
 }
 
 type DatadogDashboardSummary = {
-  id?: string
+  id?: string | number
   title?: string
   url?: string
 }
 
 type DatadogDashboardResponse = {
-  id?: string
+  id?: string | number
   title?: string
   description?: string
   layout_type?: string
@@ -84,6 +84,10 @@ function normalizeTagPart(value: string): string {
     .replace(/^_+|_+$/g, '')
 }
 
+function normalizeDashboardName(value: string): string {
+  return value.trim().toLowerCase()
+}
+
 function buildDashboardIdentityTag(projectKey: string, dashboardName: string): string {
   const normalizedProjectKey = normalizeTagPart(projectKey)
   const normalizedName = normalizeTagPart(dashboardName)
@@ -99,6 +103,10 @@ function buildProjectKeyTag(projectKey: string): string {
 
 function buildManagedTag(): string {
   return `${DASHBOARD_MANAGED_TAG_KEY}:${DASHBOARD_MANAGED_TAG_VALUE}`
+}
+
+function hasTag(tags: string[], expectedTag: string): boolean {
+  return tags.some(tag => tag.trim().toLowerCase() === expectedTag.toLowerCase())
 }
 
 function toErrorMessage(error: unknown): string {
@@ -131,6 +139,37 @@ function extractDatadogError(responseBody: unknown): string {
   }
 
   return JSON.stringify(body)
+}
+
+function parseDashboardId(
+  dashboard: DatadogDashboardSummary | DatadogDashboardResponse,
+  contextMessage: string,
+): string {
+  if (typeof dashboard.id === 'string' && dashboard.id.trim().length > 0) {
+    return dashboard.id.trim()
+  }
+  if (typeof dashboard.id === 'number' && Number.isFinite(dashboard.id)) {
+    return String(dashboard.id)
+  }
+  throw new Error(contextMessage)
+}
+
+function buildDashboardUrl(
+  site: string,
+  dashboard: DatadogDashboardSummary | DatadogDashboardResponse,
+): string {
+  if (typeof dashboard.url === 'string' && dashboard.url.length > 0) {
+    if (dashboard.url.startsWith('http://') || dashboard.url.startsWith('https://')) {
+      return dashboard.url
+    }
+    return `https://app.${site}${dashboard.url}`
+  }
+
+  const dashboardId = parseDashboardId(
+    dashboard,
+    'Datadog dashboard response did not include an id or URL',
+  )
+  return `https://app.${site}/dashboard/${dashboardId}`
 }
 
 function getDatadogAccountConfig(config: Config): DatadogAccountConfig {
@@ -265,6 +304,25 @@ function validateTopLevelRequest(input: DatadogDashboardCreateRequest): void {
   if (!Array.isArray(input.dashboards) || input.dashboards.length === 0) {
     throw new Error('dashboards must contain at least one dashboard definition')
   }
+
+  const duplicateNames = new Set<string>()
+  const seenNames = new Set<string>()
+  for (const dashboard of input.dashboards) {
+    const normalizedName = normalizeDashboardName(dashboard.name ?? '')
+    if (!normalizedName) {
+      continue
+    }
+    if (seenNames.has(normalizedName)) {
+      duplicateNames.add(dashboard.name.trim())
+    }
+    seenNames.add(normalizedName)
+  }
+
+  if (duplicateNames.size > 0) {
+    throw new Error(
+      `Duplicate dashboard names are not allowed in one request: ${Array.from(duplicateNames).join(', ')}`,
+    )
+  }
 }
 
 function getSelectionValidationErrors(
@@ -330,6 +388,62 @@ function buildDashboardPayload(
   }
 }
 
+async function findExistingManagedDashboard(
+  datadogApi: DatadogDashboardApiClient,
+  dashboardName: string,
+  identityTag: string,
+  projectKeyTag: string,
+): Promise<DatadogDashboardResponse | undefined> {
+  const summaries = await datadogApi.listDashboards()
+  const normalizedName = normalizeDashboardName(dashboardName)
+  const managedMatches: DatadogDashboardResponse[] = []
+  const unmanagedMatches: DatadogDashboardResponse[] = []
+
+  for (const summary of summaries) {
+    const summaryTitle = typeof summary.title === 'string' ? summary.title : ''
+    if (normalizeDashboardName(summaryTitle) !== normalizedName) {
+      continue
+    }
+
+    const summaryId = parseDashboardId(
+      summary,
+      `Datadog dashboard summary for "${dashboardName}" is missing an id`,
+    )
+    const details = await datadogApi.getDashboard(summaryId)
+    const tags = details.tags ?? []
+    const hasIdentityTag = hasTag(tags, identityTag)
+    const hasProjectTag = hasTag(tags, projectKeyTag)
+    const hasManagedTag = hasTag(tags, buildManagedTag())
+
+    if (hasIdentityTag || hasProjectTag) {
+      if (hasManagedTag) {
+        managedMatches.push(details)
+      } else {
+        unmanagedMatches.push(details)
+      }
+    }
+  }
+
+  if (unmanagedMatches.length > 0) {
+    const conflictingDashboard = unmanagedMatches[0]
+    const conflictId = parseDashboardId(
+      conflictingDashboard,
+      `Unmanaged dashboard "${dashboardName}" is missing an id`,
+    )
+    throw new Error(
+      `Dashboard "${dashboardName}" is not managed by scaffolder for this project key (dashboard id: ${conflictId})`,
+    )
+  }
+
+  if (managedMatches.length > 1) {
+    throw new Error(
+      `Found multiple managed Datadog dashboards for "${dashboardName}" and this project key; manual cleanup is required before retry`,
+    )
+  }
+
+  return managedMatches[0]
+}
+
 export function createDatadogDashboardAction(options: { config: Config }) {
   return createTemplateAction({
     id: 'x_datadog:dashboard:create',
@@ -388,22 +502,22 @@ export function createDatadogDashboardAction(options: { config: Config }) {
         }),
     },
     async handler(ctx) {
-      void options.config
       const input = ctx.input as DatadogDashboardCreateRequest
       validateTopLevelRequest(input)
 
-      getDatadogAccountConfig(options.config)
-      createDatadogDashboardApiClient(getDatadogAccountConfig(options.config))
+      const accountConfig = getDatadogAccountConfig(options.config)
+      const datadogApi = createDatadogDashboardApiClient(accountConfig)
       const results: DashboardProvisioningResult[] = []
 
       for (const [index, dashboard] of input.dashboards.entries()) {
         const dashboardName = dashboard.name?.trim() || `dashboard-${index}`
+        const baselineId = dashboard.baselineId?.trim() || 'unknown-baseline'
         const validationErrors = getSelectionValidationErrors(dashboard, index)
         if (validationErrors.length > 0) {
           results.push({
             index,
             name: dashboardName,
-            baselineId: dashboard.baselineId?.trim() || 'unknown-baseline',
+            baselineId,
             status: 'failed',
             error: validationErrors.join('; '),
           })
@@ -411,20 +525,50 @@ export function createDatadogDashboardAction(options: { config: Config }) {
         }
 
         try {
-          buildDashboardPayload(input.projectKey, dashboard)
+          const payload = buildDashboardPayload(input.projectKey, dashboard)
+          const identityTag = buildDashboardIdentityTag(
+            input.projectKey,
+            dashboard.name,
+          )
+          const projectKeyTag = buildProjectKeyTag(input.projectKey)
+          const existingDashboard = await findExistingManagedDashboard(
+            datadogApi,
+            dashboard.name,
+            identityTag,
+            projectKeyTag,
+          )
+
+          const status: 'created' | 'updated' =
+            typeof existingDashboard === 'undefined' ? 'created' : 'updated'
+          const response =
+            status === 'created'
+              ? await datadogApi.createDashboard(payload)
+              : await datadogApi.updateDashboard(
+                  parseDashboardId(
+                    existingDashboard,
+                    `Managed dashboard "${dashboardName}" is missing an id`,
+                  ),
+                  payload,
+                )
+
+          const dashboardId = parseDashboardId(
+            response,
+            `Datadog API response for "${dashboardName}" did not include a dashboard id`,
+          )
+
           results.push({
             index,
             name: dashboardName,
-            baselineId: dashboard.baselineId.trim(),
-            status: 'failed',
-            error:
-              'Datadog dashboard baseline provisioning is scaffolded but not fully implemented yet',
+            baselineId,
+            status,
+            dashboardId,
+            dashboardUrl: buildDashboardUrl(accountConfig.site, response),
           })
         } catch (error: unknown) {
           results.push({
             index,
             name: dashboardName,
-            baselineId: dashboard.baselineId.trim(),
+            baselineId,
             status: 'failed',
             error: toErrorMessage(error),
           })
@@ -432,9 +576,16 @@ export function createDatadogDashboardAction(options: { config: Config }) {
       }
 
       ctx.output('results', results)
-      throw new Error(
-        'Datadog dashboard baseline provisioning has not been implemented yet',
-      )
+
+      const failedResults = results.filter(result => result.status === 'failed')
+      if (failedResults.length > 0) {
+        const failureDetails = failedResults
+          .map(result => `[${result.index}] ${result.name}: ${result.error}`)
+          .join('; ')
+        throw new Error(
+          `Failed to provision ${failedResults.length} of ${results.length} Datadog dashboard(s): ${failureDetails}`,
+        )
+      }
     },
   })
 }
