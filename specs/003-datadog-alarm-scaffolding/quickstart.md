@@ -4,6 +4,10 @@
 
 - Backend includes `@internal/backstage-plugin-scaffolder-backend-module-datadog`.
 - Datadog runtime credentials are configured via environment-backed app config.
+- Required config keys:
+  - `scaffolder.datadog.site`
+  - `scaffolder.datadog.apiKey`
+  - `scaffolder.datadog.appKey`
 - A scaffolder template step uses
   [`x_datadog:alarm:create`](./contracts/scaffolder-action.md).
 

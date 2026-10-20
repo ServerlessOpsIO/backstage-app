@@ -18,9 +18,9 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 **Purpose**: Create the new scaffolder backend module package and source layout.
 
-- [ ] T001 Create Datadog module package manifest in `src/plugins/scaffolder-backend-module-datadog/package.json`
-- [ ] T002 Create module entrypoint and action barrel exports in `src/plugins/scaffolder-backend-module-datadog/src/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts`
-- [ ] T003 Create initial Datadog alarm action source and test files in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
+- [X] T001 Create Datadog module package manifest in `src/plugins/scaffolder-backend-module-datadog/package.json`
+- [X] T002 Create module entrypoint and action barrel exports in `src/plugins/scaffolder-backend-module-datadog/src/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts`
+- [X] T003 Create initial Datadog alarm action source and test files in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
 
 ---
 
@@ -30,12 +30,12 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 **⚠️ CRITICAL**: Complete this phase before implementing user stories.
 
-- [ ] T004 Add workspace dependency for the new module in `src/packages/backend/package.json`
-- [ ] T005 Register Datadog scaffolder backend module import in `src/packages/backend/src/index.ts`
-- [ ] T006 Implement scaffolder action registration in `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
-- [ ] T007 [P] Add Datadog runtime configuration keys in `src/app-config.yaml`, `src/app-config.production.yaml`, and `src/app-config.home.yaml`
-- [ ] T008 Implement Datadog account config loading (`apiKey`, `appKey`, `site`) with explicit missing-config failures in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T009 Implement Datadog API client initialization and monitor create request helper in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T004 Add workspace dependency for the new module in `src/packages/backend/package.json`
+- [X] T005 Register Datadog scaffolder backend module import in `src/packages/backend/src/index.ts`
+- [X] T006 Implement scaffolder action registration in `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
+- [X] T007 [P] Add Datadog runtime configuration keys in `src/app-config.yaml`, `src/app-config.production.yaml`, and `src/app-config.home.yaml`
+- [X] T008 Implement Datadog account config loading (`apiKey`, `appKey`, `site`) with explicit missing-config failures in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T009 Implement Datadog API client initialization and monitor create request helper in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: Backend wiring and runtime configuration are ready for story implementation.
 
@@ -49,13 +49,13 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add unit tests for single-monitor creation output and repeat-request idempotency (existing monitor is updated, not duplicated) in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
+- [X] T010 [P] [US1] Add unit tests for single-monitor creation output and repeat-request idempotency (existing monitor is updated, not duplicated) in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Implement action id `x_datadog:alarm:create`, handler wiring, and idempotent upsert using an action-managed Datadog tag derived from stable project identity and monitor name in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T012 [US1] Map successful Datadog responses to `AlarmProvisioningResult` fields (`index`, `name`, `status: created | updated`, `monitorId`, `monitorUrl`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T013 [US1] Emit per-monitor scaffold outputs for traceability in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T011 [US1] Implement action id `x_datadog:alarm:create`, handler wiring, and idempotent upsert using an action-managed Datadog tag derived from stable project identity and monitor name in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T012 [US1] Map successful Datadog responses to `AlarmProvisioningResult` fields (`index`, `name`, `status: created | updated`, `monitorId`, `monitorUrl`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T013 [US1] Emit per-monitor scaffold outputs for traceability in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: P1 baseline monitor provisioning works independently.
 
@@ -69,13 +69,13 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 ### Tests for User Story 2
 
-- [ ] T014 [P] [US2] Add multi-monitor processing unit test for single-step execution in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
+- [X] T014 [P] [US2] Add multi-monitor processing unit test for single-step execution in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Enforce top-level request constraints: non-empty stable `projectIdentity`, `monitors` with `minItems = 1`, and unique monitor names in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T016 [US2] Enforce monitor field constraints `name: Non-empty`, `type: Must represent Datadog metric monitor type`, `query: Non-empty Datadog metric query`, and `message: Non-empty; includes notification destinations` in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T017 [US2] Pass optional template fields `tags`, `options`, and `priority` through to Datadog monitor create/update payloads in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T015 [US2] Enforce top-level request constraints: non-empty stable `projectIdentity`, `monitors` with `minItems = 1`, and unique monitor names in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T016 [US2] Enforce monitor field constraints `name: Non-empty`, `type: Must represent Datadog metric monitor type`, `query: Non-empty Datadog metric query`, and `message: Non-empty; includes notification destinations` in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T017 [US2] Pass optional template fields `tags`, `options`, and `priority` through to Datadog monitor create/update payloads in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: P2 template-defined multi-monitor configuration works independently.
 
@@ -89,13 +89,13 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 ### Tests for User Story 3
 
-- [ ] T018 [P] [US3] Add validation failure unit tests for missing required fields, missing project identity, and duplicate monitor names with actionable errors in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
-- [ ] T019 [US3] Add partial-failure unit test for one invalid monitor in a multi-monitor request in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
+- [X] T018 [P] [US3] Add validation failure unit tests for missing required fields, missing project identity, and duplicate monitor names with actionable errors in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
+- [X] T019 [US3] Add partial-failure unit test for one invalid monitor in a multi-monitor request in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T020 [US3] Implement failure result mapping with `status: "failed"` and actionable `error` per monitor in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
-- [ ] T021 [US3] Fail scaffolder action execution when any required monitor fails while preserving collected per-monitor outcomes in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T020 [US3] Implement failure result mapping with `status: "failed"` and actionable `error` per monitor in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T021 [US3] Fail scaffolder action execution when any required monitor fails while preserving collected per-monitor outcomes in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: P3 invalid-definition feedback is clear and independently testable.
 
@@ -105,9 +105,9 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 
 **Purpose**: Finalize quality, docs alignment, and validation workflow.
 
-- [ ] T023 [P] Add module registration unit test coverage in `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts`
-- [ ] T024 Align action contract documentation with implemented input/output semantics in `specs/003-datadog-alarm-scaffolding/contracts/scaffolder-action.md`
-- [ ] T025 Validate and update implementation verification steps in `specs/003-datadog-alarm-scaffolding/quickstart.md`
+- [X] T023 [P] Add module registration unit test coverage in `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts`
+- [X] T024 Align action contract documentation with implemented input/output semantics in `specs/003-datadog-alarm-scaffolding/contracts/scaffolder-action.md`
+- [X] T025 Validate and update implementation verification steps in `specs/003-datadog-alarm-scaffolding/quickstart.md`
 
 ---
 

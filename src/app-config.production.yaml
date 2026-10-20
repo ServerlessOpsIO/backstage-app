@@ -61,6 +61,12 @@ integrations:
       apps:
         - $include: /app/app-config.d/credentials/serverlessops-github-app-credentials.yaml
 
+scaffolder:
+  datadog:
+    site: ${DATADOG_SITE}
+    apiKey: ${DATADOG_API_KEY}
+    appKey: ${DATADOG_APP_KEY}
+
 catalog:
   providers:
     google:
