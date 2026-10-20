@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: backstage-app-spec-004
+  title: "004 - Datadog dashboard scaffolding"
+  description: "scaffolder datadog dashboards"
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/backstage-app
+    serverlessops.io/spec-dir: specs/004-datadog-dashboard-scaffolding
+    serverlessops.io/spec-number: "004"
+    backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/004-datadog-dashboard-scaffolding/
+  tags:
+    - speckit
+  links:
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/004-datadog-dashboard-scaffolding/spec.md
+      title: Specification
+      icon: docs
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/004-datadog-dashboard-scaffolding/plan.md
+      title: Implementation plan
+      icon: docs
+spec:
+  type: doc-spec
+  owner: group:00gjdgxs1ur6lsu
+  system: backstage
+  dependsOn:
+    - component:default/backstage-app
