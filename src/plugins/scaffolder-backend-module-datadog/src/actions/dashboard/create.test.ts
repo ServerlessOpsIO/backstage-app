@@ -3,9 +3,14 @@ import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-
 import { createDatadogDashboardAction } from './create'
 
 function createConfig() {
+  const values: Record<string, string> = {
+    'scaffolder.datadog.apiKey': 'dd-api-key',
+    'scaffolder.datadog.appKey': 'dd-app-key',
+    'scaffolder.datadog.site': 'datadoghq.com',
+  }
   return {
-    getOptionalString() {
-      return undefined
+    getOptionalString(path: string) {
+      return values[path]
     },
   } as any
 }
