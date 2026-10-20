@@ -8,6 +8,15 @@
 
 **Input**: User description: "As a user I would like newly scaffolded projects to come with preconfigured datadog dashboards."
 
+## Clarifications
+
+### Session 2026-10-20
+
+- Q: Which stable value should identify a project when matching dashboards across scaffold retries: a catalog entity reference, repository URL, or a dedicated project key? → A: A dedicated stable project key.
+- Q: Should each template provide a complete Datadog dashboard definition, or select a reusable baseline and provide project-specific values? → A: Select a reusable baseline and provide project-specific values.
+- Q: If a dashboard with the matching project identity and name already exists, should scaffolding update it even when it was not created by the scaffolder, or update only scaffolder-managed dashboards? → A: Update only scaffolder-managed dashboards.
+- Q: If provisioning one dashboard fails after others in the same batch succeed, should the successful dashboards remain, or should the whole batch be rolled back? → A: Retain successful dashboards and report per-dashboard outcomes.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Scaffold projects with default dashboards (Priority: P1)
@@ -53,6 +62,7 @@ As a template author, I receive actionable validation errors when dashboard defi
 
 1. **Given** a dashboard definition is missing required fields, **When** the scaffold run starts, **Then** the run fails with a clear message describing missing fields.
 2. **Given** one dashboard in a multi-dashboard request is invalid, **When** the run executes, **Then** the error identifies the specific failing dashboard definition.
+3. **Given** one dashboard fails after others in the batch succeed, **When** the scaffold step completes, **Then** successful dashboards remain provisioned, each dashboard has a reported outcome, and the step fails.
 
 ### Edge Cases
 
@@ -61,6 +71,7 @@ As a template author, I receive actionable validation errors when dashboard defi
 - Platform dashboard authorization is unavailable when scaffolding runs.
 - A retry occurs after partial success, and previously processed dashboards are updated while missing dashboards are created.
 - A template requests dashboard names that already exist in the target project context from a prior scaffold run.
+- A dashboard with the matching project key and name exists but is not marked as scaffolder-managed; provisioning MUST fail clearly without modifying that dashboard.
 
 ## Requirements *(mandatory)*
 
@@ -68,21 +79,21 @@ As a template author, I receive actionable validation errors when dashboard defi
 
 - **FR-001**: The system MUST provide a scaffolding capability that templates can use to provision Datadog dashboards during project creation.
 - **FR-002**: The capability MUST accept one or more dashboard definitions in a single scaffold run.
-- **FR-003**: Each dashboard definition MUST include all required dashboard content and metadata, and validation MUST fail when required fields are missing.
-- **FR-004**: The system MUST return an identifiable per-dashboard outcome so users can trace scaffold results to each dashboard definition.
-- **FR-005**: The system MUST fail the dashboard provisioning step when any required dashboard cannot be provisioned.
+- **FR-003**: Each selected dashboard baseline MUST include all required dashboard content and metadata, and validation MUST fail when required fields are missing; templates MUST provide project-specific display values separately.
+- **FR-004**: The system MUST return an identifiable outcome for each dashboard attempted, including its success or failure status, so users can trace scaffold results to each dashboard definition.
+- **FR-005**: The system MUST fail the dashboard provisioning step when any required dashboard cannot be provisioned, while retaining dashboards that succeeded and reporting their outcomes.
 - **FR-006**: Failure output MUST identify the specific dashboard definition that failed and explain why.
-- **FR-007**: Dashboard provisioning MUST be idempotent for a given project identity and dashboard name by updating an existing matching dashboard instead of creating duplicates.
+- **FR-007**: Dashboard provisioning MUST be idempotent for a given project key and dashboard name by updating an existing matching dashboard only when it is marked as scaffolder-managed; it MUST NOT modify unmanaged dashboards.
 - **FR-008**: Templates marked as requiring dashboard baseline provisioning MUST produce at least one dashboard outcome in each successful scaffold run.
 - **FR-009**: Dashboards MUST be provisioned in a platform-configured Datadog account; template users MUST NOT choose a different account at run time.
-- **FR-010**: Each request MUST include a non-empty project identity used with dashboard name to identify logical dashboards across retries, and duplicate dashboard names for that identity in one request MUST be rejected.
+- **FR-010**: Each request MUST include a non-empty, stable project key used with dashboard name to identify logical dashboards across retries, and duplicate dashboard names for that key in one request MUST be rejected.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Dashboard Definition**: A template-provided dashboard configuration describing dashboard name, required content, and project-specific display values.
+- **Dashboard Definition**: A reusable dashboard configuration describing dashboard name and required content, with project-specific display values supplied separately by the template.
 - **Dashboard Provisioning Result**: The per-dashboard scaffold outcome including success/failure status and an identifying dashboard reference.
-- **Dashboard Baseline Profile**: The set of dashboard definitions associated with a template for a specific project type.
-- **Project Identity**: A stable identifier representing the project context used to correlate dashboard definitions across retries.
+- **Dashboard Baseline Profile**: The set of reusable dashboard definitions a template selects for a specific project type, with project-specific display values.
+- **Project Identity**: A dedicated, stable project key representing the project context used to correlate dashboard definitions across retries.
 
 ## Success Criteria *(mandatory)*
 
