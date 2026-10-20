@@ -223,4 +223,86 @@ describe('x_datadog:dashboard:create', () => {
       },
     ])
   })
+
+  test('processes multiple dashboard selections and composes baseline content with display overrides', async () => {
+    fetchMock
+      .mockResolvedValueOnce(
+        createResponse({
+          dashboards: [],
+        }),
+      )
+      .mockResolvedValueOnce(
+        createResponse({
+          id: 'service-overview',
+          title: 'Checkout Service Overview',
+          url: '/dashboard/service-overview',
+        }),
+      )
+      .mockResolvedValueOnce(
+        createResponse({
+          dashboards: [],
+        }),
+      )
+      .mockResolvedValueOnce(
+        createResponse({
+          id: 'service-sli',
+          title: 'Checkout SLI Dashboard',
+          url: '/dashboard/service-sli',
+        }),
+      )
+
+    const action = createDatadogDashboardAction({ config: createConfig() })
+    const ctx = createMockActionContext({
+      input: {
+        projectKey: 'checkout-service',
+        dashboards: [
+          {
+            name: 'Checkout Service Overview',
+            baselineId: 'service-overview-v1',
+            templateVariables: {
+              service: 'checkout',
+              environment: 'prod',
+            },
+          },
+          {
+            name: 'Checkout SLI Dashboard',
+            baselineId: 'service-overview-v1',
+            description: 'Checkout service SLI view',
+            tags: ['team:payments'],
+            templateVariables: {
+              service: 'checkout',
+              environment: 'staging',
+            },
+          },
+        ],
+      } as any,
+    })
+
+    await action.handler(ctx)
+
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+    const firstPayload = JSON.parse(String(fetchMock.mock.calls[1][1]?.body))
+    expect(firstPayload.description).toContain('checkout in prod')
+    expect(JSON.stringify(firstPayload.widgets)).toContain('service:checkout')
+    expect(JSON.stringify(firstPayload.widgets)).toContain('env:prod')
+
+    const secondPayload = JSON.parse(String(fetchMock.mock.calls[3][1]?.body))
+    expect(secondPayload.description).toBe('Checkout service SLI view')
+    expect(secondPayload.tags).toEqual(
+      expect.arrayContaining(['baseline:service-overview-v1', 'team:payments']),
+    )
+
+    expect(ctx.output).toHaveBeenCalledWith('results', [
+      expect.objectContaining({
+        index: 0,
+        name: 'Checkout Service Overview',
+        status: 'created',
+      }),
+      expect.objectContaining({
+        index: 1,
+        name: 'Checkout SLI Dashboard',
+        status: 'created',
+      }),
+    ])
+  })
 })

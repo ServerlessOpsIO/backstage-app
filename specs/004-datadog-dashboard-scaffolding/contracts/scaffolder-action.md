@@ -73,4 +73,11 @@ steps:
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'
+        - name: '{{ parameters.name }} SLI'
+          baselineId: service-overview-v1
+          tags:
+            - dashboard:sli
+          templateVariables:
+            service: '{{ parameters.name }}'
+            environment: '{{ parameters.environment }}'
 ```
