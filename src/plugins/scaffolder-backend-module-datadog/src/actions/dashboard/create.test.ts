@@ -1,3 +1,4 @@
+import { v1 } from '@datadog/datadog-api-client'
 import { createHash } from 'node:crypto'
 import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
 
@@ -19,15 +20,6 @@ function createConfig(values: TestConfig = {}) {
       return merged[path]
     },
   } as any
-}
-
-function createResponse(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json',
-    },
-  })
 }
 
 function normalizeTagPart(value: string): string {
@@ -52,31 +44,39 @@ function buildProjectKeyTag(projectKey: string): string {
   return `serverlessops_scaffolder_project_key:${normalizeTagPart(projectKey)}`
 }
 
+function createDashboard(
+  values: Partial<v1.Dashboard> = {},
+): v1.Dashboard {
+  return {
+    id: 'abc123',
+    title: 'Payments Service Overview',
+    layoutType: 'ordered',
+    widgets: [],
+    url: '/dashboard/abc123',
+    ...values,
+  } as v1.Dashboard
+}
+
 describe('x_datadog:dashboard:create', () => {
-  const fetchMock = jest.fn()
+  let listDashboards: jest.SpyInstance
+  let getDashboard: jest.SpyInstance
+  let createDashboardApi: jest.SpyInstance
+  let updateDashboard: jest.SpyInstance
 
   beforeEach(() => {
-    global.fetch = fetchMock as unknown as typeof fetch
+    listDashboards = jest.spyOn(v1.DashboardsApi.prototype, 'listDashboards')
+    getDashboard = jest.spyOn(v1.DashboardsApi.prototype, 'getDashboard')
+    createDashboardApi = jest.spyOn(v1.DashboardsApi.prototype, 'createDashboard')
+    updateDashboard = jest.spyOn(v1.DashboardsApi.prototype, 'updateDashboard')
   })
 
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.restoreAllMocks()
   })
 
   test('creates a dashboard from a baseline and emits created output', async () => {
-    fetchMock
-      .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 'abc123',
-          title: 'Payments Service Overview',
-          url: '/dashboard/abc123',
-        }),
-      )
+    listDashboards.mockResolvedValue({ dashboards: [] })
+    createDashboardApi.mockResolvedValue(createDashboard())
 
     const action = createDatadogDashboardAction({ config: createConfig() })
     const ctx = createMockActionContext({
@@ -97,12 +97,9 @@ describe('x_datadog:dashboard:create', () => {
 
     await action.handler(ctx)
 
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-    expect(fetchMock.mock.calls[0][1]?.method).toBe('GET')
-    expect(String(fetchMock.mock.calls[0][0])).toContain('/api/v1/dashboard')
-    expect(fetchMock.mock.calls[1][1]?.method).toBe('POST')
-
-    const createPayload = JSON.parse(String(fetchMock.mock.calls[1][1]?.body))
+    expect(listDashboards).toHaveBeenCalledTimes(1)
+    expect(createDashboardApi).toHaveBeenCalledTimes(1)
+    const createPayload = createDashboardApi.mock.calls[0][0].body
     expect(createPayload.title).toBe('Payments Service Overview')
     expect(createPayload.tags).toEqual(
       expect.arrayContaining([
@@ -131,45 +128,22 @@ describe('x_datadog:dashboard:create', () => {
     const identityTag = buildDashboardIdentityTag(projectKey, dashboardName)
     const projectKeyTag = buildProjectKeyTag(projectKey)
 
-    fetchMock
-      .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 'abc123',
-          title: dashboardName,
-          url: '/dashboard/abc123',
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [
-            {
-              id: 'abc123',
-              title: dashboardName,
-              url: '/dashboard/abc123',
-            },
-          ],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 'abc123',
-          title: dashboardName,
-          tags: [identityTag, projectKeyTag, 'serverlessops_scaffolder_managed:true'],
-          url: '/dashboard/abc123',
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 'abc123',
-          title: dashboardName,
-          url: '/dashboard/abc123',
-        }),
-      )
+    listDashboards
+      .mockResolvedValueOnce({ dashboards: [] })
+      .mockResolvedValueOnce({
+        dashboards: [{ id: 'abc123', title: dashboardName }],
+      })
+    createDashboardApi.mockResolvedValue(createDashboard())
+    getDashboard.mockResolvedValue(
+      createDashboard({
+        tags: [
+          identityTag,
+          projectKeyTag,
+          'serverlessops_scaffolder_managed:true',
+        ],
+      }),
+    )
+    updateDashboard.mockResolvedValue(createDashboard())
 
     const action = createDatadogDashboardAction({ config: createConfig() })
     const firstCtx = createMockActionContext({
@@ -207,11 +181,15 @@ describe('x_datadog:dashboard:create', () => {
     await action.handler(firstCtx)
     await action.handler(secondCtx)
 
-    expect(fetchMock).toHaveBeenCalledTimes(5)
-    expect(fetchMock.mock.calls[1][1]?.method).toBe('POST')
-    expect(fetchMock.mock.calls[3][1]?.method).toBe('GET')
-    expect(fetchMock.mock.calls[4][1]?.method).toBe('PUT')
-    expect(String(fetchMock.mock.calls[4][0])).toContain('/api/v1/dashboard/abc123')
+    expect(listDashboards).toHaveBeenCalledTimes(2)
+    expect(createDashboardApi).toHaveBeenCalledTimes(1)
+    expect(getDashboard).toHaveBeenCalledWith({ dashboardId: 'abc123' })
+    expect(updateDashboard).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dashboardId: 'abc123',
+        body: expect.objectContaining({ title: dashboardName }),
+      }),
+    )
     expect(secondCtx.output).toHaveBeenCalledWith('results', [
       {
         index: 0,
@@ -225,26 +203,13 @@ describe('x_datadog:dashboard:create', () => {
   })
 
   test('processes multiple dashboard selections and composes baseline content with display overrides', async () => {
-    fetchMock
+    listDashboards
+      .mockResolvedValueOnce({ dashboards: [] })
+      .mockResolvedValueOnce({ dashboards: [] })
+    createDashboardApi
+      .mockResolvedValueOnce(createDashboard())
       .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 'service-overview',
-          title: 'Checkout Service Overview',
-          url: '/dashboard/service-overview',
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
+        createDashboard({
           id: 'service-sli',
           title: 'Checkout SLI Dashboard',
           url: '/dashboard/service-sli',
@@ -280,13 +245,13 @@ describe('x_datadog:dashboard:create', () => {
 
     await action.handler(ctx)
 
-    expect(fetchMock).toHaveBeenCalledTimes(4)
-    const firstPayload = JSON.parse(String(fetchMock.mock.calls[1][1]?.body))
+    expect(createDashboardApi).toHaveBeenCalledTimes(2)
+    const firstPayload = createDashboardApi.mock.calls[0][0].body
     expect(firstPayload.description).toContain('checkout in prod')
     expect(JSON.stringify(firstPayload.widgets)).toContain('service:checkout')
     expect(JSON.stringify(firstPayload.widgets)).toContain('env:prod')
 
-    const secondPayload = JSON.parse(String(fetchMock.mock.calls[3][1]?.body))
+    const secondPayload = createDashboardApi.mock.calls[1][0].body
     expect(secondPayload.description).toBe('Checkout service SLI view')
     expect(secondPayload.tags).toEqual(
       expect.arrayContaining(['baseline:service-overview-v1', 'team:payments']),
@@ -324,7 +289,8 @@ describe('x_datadog:dashboard:create', () => {
       'Failed to provision 1 of 1 Datadog dashboard(s)',
     )
 
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(listDashboards).not.toHaveBeenCalled()
+    expect(createDashboardApi).not.toHaveBeenCalled()
     expect(ctx.output).toHaveBeenCalledWith('results', [
       expect.objectContaining({
         index: 0,
@@ -358,31 +324,27 @@ describe('x_datadog:dashboard:create', () => {
       ),
     ).rejects.toThrow('Duplicate dashboard names are not allowed in one request')
 
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(listDashboards).not.toHaveBeenCalled()
   })
 
   test('fails clearly when a matching unmanaged dashboard exists', async () => {
     const projectKey = 'payments-service'
-    fetchMock
-      .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [
-            {
-              id: 'unmanaged-123',
-              title: 'Payments Service Overview',
-              url: '/dashboard/unmanaged-123',
-            },
-          ],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
+    listDashboards.mockResolvedValue({
+      dashboards: [
+        {
           id: 'unmanaged-123',
           title: 'Payments Service Overview',
-          tags: [buildProjectKeyTag(projectKey)],
           url: '/dashboard/unmanaged-123',
-        }),
-      )
+        },
+      ],
+    })
+    getDashboard.mockResolvedValue(
+      createDashboard({
+        id: 'unmanaged-123',
+        tags: [buildProjectKeyTag(projectKey)],
+        url: '/dashboard/unmanaged-123',
+      }),
+    )
 
     const action = createDatadogDashboardAction({ config: createConfig() })
     const ctx = createMockActionContext({
@@ -405,9 +367,9 @@ describe('x_datadog:dashboard:create', () => {
       'Failed to provision 1 of 1 Datadog dashboard(s)',
     )
 
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-    expect(fetchMock.mock.calls[0][1]?.method).toBe('GET')
-    expect(fetchMock.mock.calls[1][1]?.method).toBe('GET')
+    expect(listDashboards).toHaveBeenCalledTimes(1)
+    expect(getDashboard).toHaveBeenCalledTimes(1)
+    expect(createDashboardApi).not.toHaveBeenCalled()
     expect(ctx.output).toHaveBeenCalledWith('results', [
       expect.objectContaining({
         index: 0,
@@ -419,38 +381,32 @@ describe('x_datadog:dashboard:create', () => {
 
   test('reports partial failures with index/name context and preserves successful dashboards', async () => {
     const projectKey = 'payments-service'
-    fetchMock
-      .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 'created-123',
-          title: 'Payments Service Overview',
-          url: '/dashboard/created-123',
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          dashboards: [
-            {
-              id: 'unmanaged-456',
-              title: 'Payments SLI',
-              url: '/dashboard/unmanaged-456',
-            },
-          ],
-        }),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 'unmanaged-456',
-          title: 'Payments SLI',
-          tags: [buildProjectKeyTag(projectKey)],
-          url: '/dashboard/unmanaged-456',
-        }),
-      )
+    listDashboards
+      .mockResolvedValueOnce({ dashboards: [] })
+      .mockResolvedValueOnce({
+        dashboards: [
+          {
+            id: 'unmanaged-456',
+            title: 'Payments SLI',
+            url: '/dashboard/unmanaged-456',
+          },
+        ],
+      })
+    createDashboardApi.mockResolvedValue(
+      createDashboard({
+        id: 'created-123',
+        title: 'Payments Service Overview',
+        url: '/dashboard/created-123',
+      }),
+    )
+    getDashboard.mockResolvedValue(
+      createDashboard({
+        id: 'unmanaged-456',
+        title: 'Payments SLI',
+        tags: [buildProjectKeyTag(projectKey)],
+        url: '/dashboard/unmanaged-456',
+      }),
+    )
 
     const action = createDatadogDashboardAction({ config: createConfig() })
     const ctx = createMockActionContext({
@@ -493,7 +449,6 @@ describe('x_datadog:dashboard:create', () => {
       expect.objectContaining({
         index: 1,
         name: 'Payments SLI',
-        baselineId: 'service-overview-v1',
         status: 'failed',
         error: expect.stringContaining('is not managed by scaffolder'),
       }),

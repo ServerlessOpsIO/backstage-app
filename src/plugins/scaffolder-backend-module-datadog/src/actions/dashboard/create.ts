@@ -1,6 +1,7 @@
 import { Config } from '@backstage/config'
 import { createHash } from 'node:crypto'
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
+import { client, v1 } from '@datadog/datadog-api-client'
 
 import { resolveDashboardBaseline } from './baselines'
 
@@ -39,29 +40,12 @@ type DatadogAccountConfig = {
   site: string
 }
 
-type DatadogDashboardSummary = {
-  id?: string | number
-  title?: string
-  url?: string
-}
-
-type DatadogDashboardResponse = {
-  id?: string | number
-  title?: string
-  description?: string
-  layout_type?: string
-  url?: string
-  tags?: string[]
-  widgets?: unknown[]
-}
-
-type DatadogDashboardPayload = {
-  title: string
-  description?: string
-  layout_type: string
-  widgets: unknown[]
-  tags: string[]
-}
+type DatadogDashboardSummary = v1.DashboardSummaryDefinition
+type DatadogDashboardResponse = v1.Dashboard
+type DatadogDashboardPayload = Pick<
+  v1.Dashboard,
+  'title' | 'description' | 'layoutType' | 'widgets' | 'tags'
+>
 
 type DatadogDashboardApiClient = {
   listDashboards: () => Promise<DatadogDashboardSummary[]>
@@ -114,31 +98,6 @@ function toErrorMessage(error: unknown): string {
     return error.message
   }
   return String(error)
-}
-
-function extractDatadogError(responseBody: unknown): string {
-  if (typeof responseBody !== 'object' || responseBody === null) {
-    return 'Unknown Datadog API error'
-  }
-
-  const body = responseBody as {
-    errors?: unknown
-    error?: unknown
-    message?: unknown
-  }
-  if (Array.isArray(body.errors) && body.errors.length > 0) {
-    return body.errors
-      .map(item => (typeof item === 'string' ? item : JSON.stringify(item)))
-      .join('; ')
-  }
-  if (typeof body.error === 'string') {
-    return body.error
-  }
-  if (typeof body.message === 'string') {
-    return body.message
-  }
-
-  return JSON.stringify(body)
 }
 
 function parseDashboardId(
@@ -204,95 +163,37 @@ function getDatadogAccountConfig(config: Config): DatadogAccountConfig {
 function createDatadogDashboardApiClient(
   accountConfig: DatadogAccountConfig,
 ): DatadogDashboardApiClient {
-  const baseUrl = `https://api.${accountConfig.site}`
-  const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    'DD-API-KEY': accountConfig.apiKey,
-    'DD-APPLICATION-KEY': accountConfig.appKey,
-  }
-
-  async function request<T>(
-    path: string,
-    init: RequestInit,
-    expectedKind: string,
-  ): Promise<T> {
-    const response = await fetch(`${baseUrl}${path}`, {
-      ...init,
-      headers: {
-        ...headers,
-        ...init.headers,
-      },
-    })
-
-    const rawBody = await response.text()
-    let parsedBody: unknown
-    if (rawBody.trim().length > 0) {
-      try {
-        parsedBody = JSON.parse(rawBody)
-      } catch {
-        parsedBody = rawBody
-      }
-    }
-
-    if (!response.ok) {
-      const detail = extractDatadogError(parsedBody)
-      throw new Error(
-        `Datadog API ${init.method ?? 'GET'} ${path} failed (${response.status}): ${detail}`,
-      )
-    }
-
-    if (typeof parsedBody === 'undefined') {
-      throw new Error(
-        `Datadog API ${init.method ?? 'GET'} ${path} returned an empty ${expectedKind} response`,
-      )
-    }
-
-    return parsedBody as T
-  }
+  const configuration = client.createConfiguration({
+    authMethods: {
+      apiKeyAuth: accountConfig.apiKey,
+      appKeyAuth: accountConfig.appKey,
+    },
+  })
+  configuration.setServerVariables({ site: accountConfig.site })
+  const dashboardsApi = new v1.DashboardsApi(configuration)
 
   return {
     async listDashboards() {
-      const responseBody = await request<unknown>(
-        '/api/v1/dashboard',
-        { method: 'GET' },
-        'dashboard list',
-      )
-      if (
-        typeof responseBody !== 'object' ||
-        responseBody === null ||
-        !Array.isArray((responseBody as { dashboards?: unknown }).dashboards)
-      ) {
+      const response = await dashboardsApi.listDashboards()
+      if (!Array.isArray(response.dashboards)) {
         throw new Error(
           'Datadog API returned a non-array dashboard list while searching by dashboard name',
         )
       }
 
-      return (responseBody as { dashboards: DatadogDashboardSummary[] }).dashboards
+      return response.dashboards
     },
     async getDashboard(dashboardId: string) {
-      return request<DatadogDashboardResponse>(
-        `/api/v1/dashboard/${encodeURIComponent(dashboardId)}`,
-        { method: 'GET' },
-        'dashboard',
-      )
+      return dashboardsApi.getDashboard({ dashboardId })
     },
     async createDashboard(payload: DatadogDashboardPayload) {
-      return request<DatadogDashboardResponse>(
-        '/api/v1/dashboard',
-        { method: 'POST', body: JSON.stringify(payload) },
-        'dashboard',
-      )
+      return dashboardsApi.createDashboard({ body: payload })
     },
     async updateDashboard(
       dashboardId: string,
       payload: DatadogDashboardPayload,
     ) {
-      return request<DatadogDashboardResponse>(
-        `/api/v1/dashboard/${encodeURIComponent(dashboardId)}`,
-        { method: 'PUT', body: JSON.stringify(payload) },
-        'dashboard',
-      )
+      return dashboardsApi.updateDashboard({ dashboardId, body: payload })
     },
   }
 }
@@ -382,8 +283,8 @@ function buildDashboardPayload(
       selection.description.trim().length > 0
         ? selection.description.trim()
         : baseline.descriptionTemplate,
-    layout_type: baseline.layoutType,
-    widgets: baseline.widgets,
+    layoutType: baseline.layoutType as v1.DashboardLayoutType,
+    widgets: baseline.widgets as v1.Widget[],
     tags: Array.from(tags),
   }
 }
