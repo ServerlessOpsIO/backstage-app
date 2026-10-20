@@ -22,9 +22,9 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Purpose**: Establish dashboard action file layout and module wiring points.
 
-- [ ] T001 Create dashboard action scaffolding in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T002 Add dashboard action exports in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and registration hook points in `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
-- [ ] T003 Extend module registration coverage in `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts` for the dashboard action
+- [X] T001 Create dashboard action scaffolding in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T002 Add dashboard action exports in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and registration hook points in `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
+- [X] T003 Extend module registration coverage in `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts` for the dashboard action
 
 ---
 

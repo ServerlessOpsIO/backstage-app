@@ -11,6 +11,7 @@ jest.mock('@backstage/plugin-scaffolder-node', () => ({
 
 jest.mock('./actions', () => ({
   createDatadogAlarmAction: jest.fn(),
+  createDatadogDashboardAction: jest.fn(),
 }))
 
 import {
@@ -18,11 +19,11 @@ import {
   createBackendModule,
 } from '@backstage/backend-plugin-api'
 import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node'
-import { createDatadogAlarmAction } from './actions'
+import { createDatadogAlarmAction, createDatadogDashboardAction } from './actions'
 import { scaffolderModuleDatadog } from './module'
 
 describe('scaffolderModuleDatadog', () => {
-  test('registers the Datadog alarm action with scaffolder extension point', async () => {
+  test('registers Datadog actions with scaffolder extension point', async () => {
     expect(createBackendModule).toHaveBeenCalledWith(
       expect.objectContaining({
         pluginId: 'scaffolder',
@@ -30,8 +31,12 @@ describe('scaffolderModuleDatadog', () => {
       }),
     )
 
-    const action = { id: 'x_datadog:alarm:create' }
-    ;(createDatadogAlarmAction as jest.Mock).mockReturnValue(action)
+    const alarmAction = { id: 'x_datadog:alarm:create' }
+    const dashboardAction = { id: 'x_datadog:dashboard:create' }
+    ;(createDatadogAlarmAction as jest.Mock).mockReturnValue(alarmAction)
+    ;(createDatadogDashboardAction as jest.Mock).mockReturnValue(
+      dashboardAction,
+    )
 
     const moduleDefinition = scaffolderModuleDatadog as any
     const registerInit = jest.fn()
@@ -56,6 +61,9 @@ describe('scaffolderModuleDatadog', () => {
     })
 
     expect(createDatadogAlarmAction).toHaveBeenCalledWith({ config: rootConfig })
-    expect(addActions).toHaveBeenCalledWith(action)
+    expect(createDatadogDashboardAction).toHaveBeenCalledWith({
+      config: rootConfig,
+    })
+    expect(addActions).toHaveBeenCalledWith(alarmAction, dashboardAction)
   })
 })
