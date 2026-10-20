@@ -65,10 +65,10 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Independent Test**: Execute one scaffold request containing multiple dashboard selections with different `baselineId` and `templateVariables`; confirm all selections are processed and payloads reflect template-provided display values.
 
-- [ ] T013 [US2] Add multi-dashboard baseline-selection tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T014 [US2] Implement baseline-to-dashboard composition (merge baseline content with `name`, `description`, `tags`, and `templateVariables`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T015 [P] [US2] Update action contract examples for baseline selection in `specs/004-datadog-dashboard-scaffolding/contracts/scaffolder-action.md`
-- [ ] T016 [P] [US2] Replace “planned” dashboard action README content with implemented usage/configuration in `src/plugins/scaffolder-backend-module-datadog/README.md`
+- [X] T013 [US2] Add multi-dashboard baseline-selection tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T014 [US2] Implement baseline-to-dashboard composition (merge baseline content with `name`, `description`, `tags`, and `templateVariables`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T015 [P] [US2] Update action contract examples for baseline selection in `specs/004-datadog-dashboard-scaffolding/contracts/scaffolder-action.md`
+- [X] T016 [P] [US2] Replace “planned” dashboard action README content with implemented usage/configuration in `src/plugins/scaffolder-backend-module-datadog/README.md`
 
 **Checkpoint**: User Stories 1 and 2 are independently functional.
 
