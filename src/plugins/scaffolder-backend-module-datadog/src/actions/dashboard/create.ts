@@ -538,18 +538,21 @@ export function createDatadogDashboardAction(options: { config: Config }) {
             projectKeyTag,
           )
 
-          const status: 'created' | 'updated' =
-            typeof existingDashboard === 'undefined' ? 'created' : 'updated'
-          const response =
-            status === 'created'
-              ? await datadogApi.createDashboard(payload)
-              : await datadogApi.updateDashboard(
-                  parseDashboardId(
-                    existingDashboard,
-                    `Managed dashboard "${dashboardName}" is missing an id`,
-                  ),
-                  payload,
-                )
+          let status: 'created' | 'updated'
+          let response: DatadogDashboardResponse
+          if (typeof existingDashboard === 'undefined') {
+            status = 'created'
+            response = await datadogApi.createDashboard(payload)
+          } else {
+            status = 'updated'
+            response = await datadogApi.updateDashboard(
+              parseDashboardId(
+                existingDashboard,
+                `Managed dashboard "${dashboardName}" is missing an id`,
+              ),
+              payload,
+            )
+          }
 
           const dashboardId = parseDashboardId(
             response,

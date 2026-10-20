@@ -95,9 +95,9 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Purpose**: Final consistency, validation, and documentation alignment across the feature.
 
-- [ ] T023 [P] Reconcile final action exports/registration assertions for both Datadog actions in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts`
-- [ ] T024 [P] Align verification guidance and expected outcomes in `specs/004-datadog-dashboard-scaffolding/quickstart.md`
-- [ ] T025 Run package and repository validation commands and capture any command/document corrections in `src/plugins/scaffolder-backend-module-datadog/README.md`
+- [X] T023 [P] Reconcile final action exports/registration assertions for both Datadog actions in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts`
+- [X] T024 [P] Align verification guidance and expected outcomes in `specs/004-datadog-dashboard-scaffolding/quickstart.md`
+- [X] T025 Run package and repository validation commands and capture any command/document corrections in `src/plugins/scaffolder-backend-module-datadog/README.md`
 
 ---
 

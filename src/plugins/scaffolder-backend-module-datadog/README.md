@@ -92,3 +92,14 @@ backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-datadog
 ```
 
 This registration is already present in `src/packages/backend/src/index.ts`.
+
+## Validation
+
+Recommended validation commands after changes in this module:
+
+```sh
+cd src
+yarn workspace @internal/backstage-plugin-scaffolder-backend-module-datadog test
+yarn workspace @internal/backstage-plugin-scaffolder-backend-module-datadog lint
+yarn tsc
+```
