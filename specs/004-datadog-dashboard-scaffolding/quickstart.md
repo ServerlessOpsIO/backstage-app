@@ -30,15 +30,16 @@
    yarn lint:all
    ```
 
-3. Add a scaffolder template step with a stable `projectKey` and at least one
-   dashboard selection (see
+3. Add a scaffolder template step with a stable `projectKey` and one or more
+   dashboard selections (see
    [contract example](./contracts/scaffolder-action.md#template-usage-example))
    and run a scaffold.
 4. Confirm scaffold outputs include one result per requested dashboard and
-   include Datadog dashboard identifiers for successful creates/updates.
+   include `status` (`created` or `updated`), `dashboardId`, and
+   `dashboardUrl` for successful items.
 5. Run with one intentionally invalid dashboard selection and confirm the step
    fails with a dashboard-specific error that identifies index/name.
 6. Retry the same scaffold input and verify managed dashboards are updated
-   rather than duplicated.
+   rather than duplicated (`created` on first run, `updated` on retry).
 7. Verify unmanaged dashboards with matching project identity are not modified
    and produce explicit ownership errors.
