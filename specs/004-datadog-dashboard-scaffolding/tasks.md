@@ -34,11 +34,11 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **⚠️ CRITICAL**: No user story work starts until this phase is complete.
 
-- [ ] T004 Define action-domain types and constants in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (`DashboardSelection`, `DatadogDashboardCreateRequest`, `DashboardProvisioningResult`, managed identity tag keys)
-- [ ] T005 Implement Datadog runtime config loading and fail-closed checks for `scaffolder.datadog.apiKey`, `scaffolder.datadog.appKey`, and `scaffolder.datadog.site` in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T006 Implement Datadog dashboard API client helpers (lookup/create/update) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T007 [P] Implement baseline catalog and baseline resolver in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/baselines.ts`
-- [ ] T008 Integrate baseline resolver + payload builder flow in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T004 Define action-domain types and constants in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (`DashboardSelection`, `DatadogDashboardCreateRequest`, `DashboardProvisioningResult`, managed identity tag keys)
+- [X] T005 Implement Datadog runtime config loading and fail-closed checks for `scaffolder.datadog.apiKey`, `scaffolder.datadog.appKey`, and `scaffolder.datadog.site` in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T006 Implement Datadog dashboard API client helpers (lookup/create/update) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T007 [P] Implement baseline catalog and baseline resolver in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/baselines.ts`
+- [X] T008 Integrate baseline resolver + payload builder flow in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
 
 **Checkpoint**: Foundation ready — user story implementation can proceed.
 
