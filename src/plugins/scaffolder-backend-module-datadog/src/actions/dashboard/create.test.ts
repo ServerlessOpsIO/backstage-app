@@ -305,4 +305,198 @@ describe('x_datadog:dashboard:create', () => {
       }),
     ])
   })
+
+  test('fails with explicit validation error when required dashboard fields are missing', async () => {
+    const action = createDatadogDashboardAction({ config: createConfig() })
+    const ctx = createMockActionContext({
+      input: {
+        projectKey: 'payments-service',
+        dashboards: [
+          {
+            name: '',
+            baselineId: '',
+          },
+        ],
+      } as any,
+    })
+
+    await expect(action.handler(ctx)).rejects.toThrow(
+      'Failed to provision 1 of 1 Datadog dashboard(s)',
+    )
+
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(ctx.output).toHaveBeenCalledWith('results', [
+      expect.objectContaining({
+        index: 0,
+        status: 'failed',
+        error: expect.stringContaining(
+          'dashboards[0].name must be a non-empty dashboard display name',
+        ),
+      }),
+    ])
+  })
+
+  test('rejects duplicate dashboard names before provisioning starts', async () => {
+    const action = createDatadogDashboardAction({ config: createConfig() })
+    await expect(
+      action.handler(
+        createMockActionContext({
+          input: {
+            projectKey: 'payments-service',
+            dashboards: [
+              {
+                name: 'Same Dashboard',
+                baselineId: 'service-overview-v1',
+              },
+              {
+                name: 'same dashboard',
+                baselineId: 'service-overview-v1',
+              },
+            ],
+          } as any,
+        }),
+      ),
+    ).rejects.toThrow('Duplicate dashboard names are not allowed in one request')
+
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  test('fails clearly when a matching unmanaged dashboard exists', async () => {
+    const projectKey = 'payments-service'
+    fetchMock
+      .mockResolvedValueOnce(
+        createResponse({
+          dashboards: [
+            {
+              id: 'unmanaged-123',
+              title: 'Payments Service Overview',
+              url: '/dashboard/unmanaged-123',
+            },
+          ],
+        }),
+      )
+      .mockResolvedValueOnce(
+        createResponse({
+          id: 'unmanaged-123',
+          title: 'Payments Service Overview',
+          tags: [buildProjectKeyTag(projectKey)],
+          url: '/dashboard/unmanaged-123',
+        }),
+      )
+
+    const action = createDatadogDashboardAction({ config: createConfig() })
+    const ctx = createMockActionContext({
+      input: {
+        projectKey,
+        dashboards: [
+          {
+            name: 'Payments Service Overview',
+            baselineId: 'service-overview-v1',
+            templateVariables: {
+              service: 'payments',
+              environment: 'prod',
+            },
+          },
+        ],
+      } as any,
+    })
+
+    await expect(action.handler(ctx)).rejects.toThrow(
+      'Failed to provision 1 of 1 Datadog dashboard(s)',
+    )
+
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock.mock.calls[0][1]?.method).toBe('GET')
+    expect(fetchMock.mock.calls[1][1]?.method).toBe('GET')
+    expect(ctx.output).toHaveBeenCalledWith('results', [
+      expect.objectContaining({
+        index: 0,
+        status: 'failed',
+        error: expect.stringContaining('is not managed by scaffolder'),
+      }),
+    ])
+  })
+
+  test('reports partial failures with index/name context and preserves successful dashboards', async () => {
+    const projectKey = 'payments-service'
+    fetchMock
+      .mockResolvedValueOnce(
+        createResponse({
+          dashboards: [],
+        }),
+      )
+      .mockResolvedValueOnce(
+        createResponse({
+          id: 'created-123',
+          title: 'Payments Service Overview',
+          url: '/dashboard/created-123',
+        }),
+      )
+      .mockResolvedValueOnce(
+        createResponse({
+          dashboards: [
+            {
+              id: 'unmanaged-456',
+              title: 'Payments SLI',
+              url: '/dashboard/unmanaged-456',
+            },
+          ],
+        }),
+      )
+      .mockResolvedValueOnce(
+        createResponse({
+          id: 'unmanaged-456',
+          title: 'Payments SLI',
+          tags: [buildProjectKeyTag(projectKey)],
+          url: '/dashboard/unmanaged-456',
+        }),
+      )
+
+    const action = createDatadogDashboardAction({ config: createConfig() })
+    const ctx = createMockActionContext({
+      input: {
+        projectKey,
+        dashboards: [
+          {
+            name: 'Payments Service Overview',
+            baselineId: 'service-overview-v1',
+            templateVariables: {
+              service: 'payments',
+              environment: 'prod',
+            },
+          },
+          {
+            name: 'Payments SLI',
+            baselineId: 'service-overview-v1',
+            templateVariables: {
+              service: 'payments',
+              environment: 'prod',
+            },
+          },
+        ],
+      } as any,
+    })
+
+    await expect(action.handler(ctx)).rejects.toThrow(
+      'Failed to provision 1 of 2 Datadog dashboard(s)',
+    )
+
+    expect(ctx.output).toHaveBeenCalledWith('results', [
+      {
+        index: 0,
+        name: 'Payments Service Overview',
+        baselineId: 'service-overview-v1',
+        status: 'created',
+        dashboardId: 'created-123',
+        dashboardUrl: 'https://app.datadoghq.com/dashboard/created-123',
+      },
+      expect.objectContaining({
+        index: 1,
+        name: 'Payments SLI',
+        baselineId: 'service-overview-v1',
+        status: 'failed',
+        error: expect.stringContaining('is not managed by scaffolder'),
+      }),
+    ])
+  })
 })

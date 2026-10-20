@@ -76,6 +76,15 @@ steps:
 Full contract and response shape:
 `specs/004-datadog-dashboard-scaffolding/contracts/scaffolder-action.md`.
 
+Troubleshooting:
+
+- `projectKey` must be non-empty and dashboard names must be unique per request.
+- Every dashboard item must provide non-empty `name` and `baselineId`.
+- `baselineId` values must exist in the module baseline catalog.
+- If a dashboard already exists for the same project key/name but does not carry
+  the scaffolder managed tag, provisioning fails with an ownership collision
+  error and does not modify that dashboard.
+
 ## Registration
 
 The backend app loads this module with:

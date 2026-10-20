@@ -80,12 +80,12 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Independent Test**: Execute invalid requests (missing required fields, duplicate names, unmanaged ownership conflict) and verify the step fails with index/name-specific messages and reported partial successes.
 
-- [ ] T017 [US3] Add validation coverage for missing required fields and duplicate names in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T018 [US3] Add unmanaged-dashboard ownership collision coverage in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T019 [US3] Implement top-level request validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `projectKey` = "Non-empty stable project key used across retries", `dashboards` = "`minItems = 1`; duplicate `name` values rejected"
-- [ ] T020 [US3] Implement per-selection validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `name` = "Non-empty dashboard display name; unique per request for a given `projectKey`", `baselineId` = "Non-empty; must map to a known reusable baseline", `description` = "Optional non-empty display description override", `tags` = "Optional additional Datadog dashboard tags", `templateVariables` = "Optional substitutions for baseline-declared variables"
-- [ ] T021 [US3] Implement failure reporting semantics in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (per-dashboard `status` with index/name context and step-level failure summary)
-- [ ] T022 [US3] Document validation and ownership failure troubleshooting in `src/plugins/scaffolder-backend-module-datadog/README.md`
+- [X] T017 [US3] Add validation coverage for missing required fields and duplicate names in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T018 [US3] Add unmanaged-dashboard ownership collision coverage in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T019 [US3] Implement top-level request validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `projectKey` = "Non-empty stable project key used across retries", `dashboards` = "`minItems = 1`; duplicate `name` values rejected"
+- [X] T020 [US3] Implement per-selection validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `name` = "Non-empty dashboard display name; unique per request for a given `projectKey`", `baselineId` = "Non-empty; must map to a known reusable baseline", `description` = "Optional non-empty display description override", `tags` = "Optional additional Datadog dashboard tags", `templateVariables` = "Optional substitutions for baseline-declared variables"
+- [X] T021 [US3] Implement failure reporting semantics in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (per-dashboard `status` with index/name context and step-level failure summary)
+- [X] T022 [US3] Document validation and ownership failure troubleshooting in `src/plugins/scaffolder-backend-module-datadog/README.md`
 
 **Checkpoint**: All user stories are independently functional and failures are actionable.
 
