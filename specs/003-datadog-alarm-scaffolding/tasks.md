@@ -34,7 +34,7 @@ description: "Task list for implementing Datadog alarm scaffolder action"
 - [X] T005 Register Datadog scaffolder backend module import in `src/packages/backend/src/index.ts`
 - [X] T006 Implement scaffolder action registration in `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
 - [X] T007 [P] Add Datadog runtime configuration keys in `src/app-config.yaml`, `src/app-config.production.yaml`, and `src/app-config.home.yaml`
-- [X] T008 Implement Datadog account config loading (`apiKey`, `appKey`, `site`) with explicit missing-config failures in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
+- [X] T008 Implement Datadog account config loading (`integrations.datadog.server`, `integrations.datadog.authMethods.apiKeyAuth`, `integrations.datadog.authMethods.appKeyAuth`) with explicit missing-config failures in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 - [X] T009 Implement Datadog API client initialization and monitor create request helper in `src/plugins/scaffolder-backend-module-datadog/src/actions/alarm/create.ts`
 
 **Checkpoint**: Backend wiring and runtime configuration are ready for story implementation.

@@ -43,13 +43,14 @@ Per-monitor action outcome.
 
 ## Entity: DatadogAccountConfig
 
-Backend runtime configuration for one platform account.
+Backend runtime configuration for one platform account, read from
+`integrations.datadog`.
 
 | Field | Type | Required | Description |
 |---|---|---:|---|
-| `apiKey` | string | Yes | Datadog API key (secret) |
-| `appKey` | string | Yes | Datadog application key (secret) |
-| `site` | string | Yes | Datadog site (for example `datadoghq.com`) |
+| `authMethods.apiKeyAuth` | string | Yes | Datadog API key (secret) |
+| `authMethods.appKeyAuth` | string | Yes | Datadog application key (secret) |
+| `server` | string | Yes | Datadog site (for example `datadoghq.com`) |
 
 ## State and Failure Semantics
 

@@ -9,22 +9,24 @@ configuration.
 
 ## Configuration
 
-Set Datadog credentials and site in app config (environment-backed values are
-recommended):
+Set the Datadog site and credentials under `integrations.datadog` in app
+config (environment-backed values are recommended):
 
 ```yaml
-scaffolder:
+integrations:
   datadog:
-    site: ${DATADOG_SITE}
-    apiKey: ${DATADOG_API_KEY}
-    appKey: ${DATADOG_APP_KEY}
+    server: ${DATADOG_SITE}
+    authMethods:
+      apiKeyAuth: ${DATADOG_API_KEY}
+      appKeyAuth: ${DATADOG_APP_KEY}
 ```
 
 Required keys:
 
-- `scaffolder.datadog.site`
-- `scaffolder.datadog.apiKey`
-- `scaffolder.datadog.appKey`
+- `integrations.datadog.server`: the Datadog site, such as `datadoghq.com` or
+  `us5.datadoghq.com`
+- `integrations.datadog.authMethods.apiKeyAuth`
+- `integrations.datadog.authMethods.appKeyAuth`
 
 ## Actions
 

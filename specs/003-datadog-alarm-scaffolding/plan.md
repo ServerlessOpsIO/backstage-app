@@ -41,7 +41,8 @@ tests and configuration wiring guidance.
   repeat-execution behavior by updating a monitor with the same project identity
   and name instead of creating a duplicate.
 - **Environment-Driven Configuration**: Pass. Datadog credentials and site are
-  sourced from app configuration/environment variables, not template inputs.
+  sourced from app configuration (`integrations.datadog`) backed by
+  environment variables, not template inputs.
 - **Secrets and Least Privilege**: Pass. Secrets remain in runtime config and
   are never authored in templates or source.
 - **Validation and Deployment Integrity**: Pass. Plan includes focused unit

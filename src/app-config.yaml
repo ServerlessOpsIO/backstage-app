@@ -197,6 +197,11 @@ backend:
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
+  datadog:
+    server: ${DATADOG_SITE}
+    authMethods:
+      apiKeyAuth: ${DATADOG_API_KEY}
+      appKeyAuth: ${DATADOG_APP_KEY}
   github:
     - host: github.com
       # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
@@ -243,12 +248,8 @@ clientIdMetadataDocuments:
   #   - 'http://localhost:*'
   #   - 'https://*.example.com/*'
 
-scaffolder:
+# scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
-  datadog:
-    site: ${DATADOG_SITE}
-    apiKey: ${DATADOG_API_KEY}
-    appKey: ${DATADOG_APP_KEY}
 
 catalog:
   providers:

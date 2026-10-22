@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto'
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 import { client, v1 } from '@datadog/datadog-api-client'
 
-const DATADOG_CONFIG_PATH = 'scaffolder.datadog'
+const DATADOG_CONFIG_PATH = 'integrations.datadog'
 const IDENTITY_TAG_KEY = 'serverlessops_scaffolder_identity'
 const SUPPORTED_METRIC_MONITOR_TYPES = new Set(['query alert', 'metric alert'])
 
@@ -98,19 +98,19 @@ function buildMonitorUrl(site: string, monitorId: number): string {
 }
 
 function getDatadogAccountConfig(config: Config): DatadogAccountConfig {
-  const apiKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.apiKey`)
-  const appKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.appKey`)
-  const site = config.getOptionalString(`${DATADOG_CONFIG_PATH}.site`)
+  const apiKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`)
+  const appKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`)
+  const site = config.getOptionalString(`${DATADOG_CONFIG_PATH}.server`)
 
   const missingKeys: string[] = []
   if (!apiKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.apiKey`)
+    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`)
   }
   if (!appKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.appKey`)
+    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`)
   }
   if (!site) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.site`)
+    missingKeys.push(`${DATADOG_CONFIG_PATH}.server`)
   }
 
   if (missingKeys.length > 0) {

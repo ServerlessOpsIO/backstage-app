@@ -9,9 +9,9 @@ type TestConfig = {
 
 function createConfig(values: TestConfig = {}) {
   const defaults: TestConfig = {
-    'scaffolder.datadog.apiKey': 'dd-api-key',
-    'scaffolder.datadog.appKey': 'dd-app-key',
-    'scaffolder.datadog.site': 'datadoghq.com',
+    'integrations.datadog.authMethods.apiKeyAuth': 'dd-api-key',
+    'integrations.datadog.authMethods.appKeyAuth': 'dd-app-key',
+    'integrations.datadog.server': 'datadoghq.com',
   }
   const merged = { ...defaults, ...values }
   return {
@@ -329,7 +329,7 @@ describe('x_datadog:alarm:create', () => {
 
   test('fails clearly when required Datadog config is missing', async () => {
     const action = createDatadogAlarmAction({
-      config: createConfig({ 'scaffolder.datadog.appKey': undefined }),
+      config: createConfig({ 'integrations.datadog.authMethods.appKeyAuth': undefined }),
     })
 
     await expect(
@@ -349,7 +349,7 @@ describe('x_datadog:alarm:create', () => {
         }),
       ),
     ).rejects.toThrow(
-      'Missing required Datadog configuration key(s): scaffolder.datadog.appKey',
+      'Missing required Datadog configuration key(s): integrations.datadog.authMethods.appKeyAuth',
     )
   })
 })
