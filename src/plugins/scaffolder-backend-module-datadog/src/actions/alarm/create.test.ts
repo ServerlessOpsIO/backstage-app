@@ -1,4 +1,5 @@
 import { createMockActionContext } from '@backstage/plugin-scaffolder-node-test-utils'
+import { client, v1 } from '@datadog/datadog-api-client'
 
 import { createDatadogAlarmAction } from './create'
 
@@ -20,36 +21,24 @@ function createConfig(values: TestConfig = {}) {
   } as any
 }
 
-function createResponse(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json',
-    },
-  })
-}
-
 describe('x_datadog:alarm:create', () => {
-  const fetchMock = jest.fn()
+  let listMonitors: jest.SpyInstance
+  let createMonitor: jest.SpyInstance
+  let updateMonitor: jest.SpyInstance
 
   beforeEach(() => {
-    global.fetch = fetchMock as unknown as typeof fetch
+    listMonitors = jest.spyOn(v1.MonitorsApi.prototype, 'listMonitors')
+    createMonitor = jest.spyOn(v1.MonitorsApi.prototype, 'createMonitor')
+    updateMonitor = jest.spyOn(v1.MonitorsApi.prototype, 'updateMonitor')
   })
 
   afterEach(() => {
-    jest.resetAllMocks()
+    jest.restoreAllMocks()
   })
 
   test('creates a single monitor and emits created output', async () => {
-    fetchMock
-      .mockResolvedValueOnce(createResponse([]))
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 101,
-          name: 'API latency high',
-          overall_url: '/monitors/101',
-        }),
-      )
+    listMonitors.mockResolvedValueOnce([])
+    createMonitor.mockResolvedValueOnce({ id: 101, name: 'API latency high' })
 
     const action = createDatadogAlarmAction({ config: createConfig() })
     const ctx = createMockActionContext({
@@ -61,6 +50,7 @@ describe('x_datadog:alarm:create', () => {
             type: 'query alert',
             query: 'avg(last_5m):avg:trace.latency{service:payments} > 1',
             message: 'Latency above threshold @slack-platform-alerts',
+            options: { notify_no_data: true, thresholds: { critical: 1 } },
           },
         ],
       } as any,
@@ -68,15 +58,23 @@ describe('x_datadog:alarm:create', () => {
 
     await action.handler(ctx)
 
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-    const listCall = fetchMock.mock.calls[0]
-    expect(String(listCall[0])).toContain('/api/v1/monitor?monitor_tags=')
-
-    const createCall = fetchMock.mock.calls[1]
-    expect(createCall[1]?.method).toBe('POST')
-    const payload = JSON.parse(String(createCall[1]?.body))
-    expect(payload.tags).toEqual(
+    expect(listMonitors).toHaveBeenCalledWith({
+      monitorTags: expect.stringMatching(/^serverlessops_scaffolder_identity:/),
+    })
+    expect(updateMonitor).not.toHaveBeenCalled()
+    expect(createMonitor).toHaveBeenCalledTimes(1)
+    const { body } = createMonitor.mock.calls[0][0]
+    expect(body.tags).toEqual(
       expect.arrayContaining([expect.stringMatching(/^serverlessops_scaffolder_identity:/)]),
+    )
+    expect(v1.ObjectSerializer.serialize(body, 'Monitor', '')).toEqual(
+      expect.objectContaining({
+        type: 'query alert',
+        options: expect.objectContaining({
+          notify_no_data: true,
+          thresholds: { critical: 1 },
+        }),
+      }),
     )
 
     expect(ctx.output).toHaveBeenCalledWith('results', [
@@ -91,23 +89,8 @@ describe('x_datadog:alarm:create', () => {
   })
 
   test('updates an existing monitor instead of creating a duplicate on retry', async () => {
-    fetchMock
-      .mockResolvedValueOnce(
-        createResponse([
-          {
-            id: 999,
-            name: 'API latency high',
-            overall_url: '/monitors/999',
-          },
-        ]),
-      )
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 999,
-          name: 'API latency high',
-          overall_url: '/monitors/999',
-        }),
-      )
+    listMonitors.mockResolvedValueOnce([{ id: 999, name: 'API latency high' }])
+    updateMonitor.mockResolvedValueOnce({ id: 999, name: 'API latency high' })
 
     const action = createDatadogAlarmAction({ config: createConfig() })
     const ctx = createMockActionContext({
@@ -126,9 +109,11 @@ describe('x_datadog:alarm:create', () => {
 
     await action.handler(ctx)
 
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-    expect(fetchMock.mock.calls[1][1]?.method).toBe('PUT')
-    expect(String(fetchMock.mock.calls[1][0])).toContain('/api/v1/monitor/999')
+    expect(createMonitor).not.toHaveBeenCalled()
+    expect(updateMonitor).toHaveBeenCalledWith({
+      monitorId: 999,
+      body: expect.objectContaining({ name: 'API latency high' }),
+    })
     expect(ctx.output).toHaveBeenCalledWith('results', [
       {
         index: 0,
@@ -141,15 +126,10 @@ describe('x_datadog:alarm:create', () => {
   })
 
   test('processes multiple monitors in one action run', async () => {
-    fetchMock
-      .mockResolvedValueOnce(createResponse([]))
-      .mockResolvedValueOnce(
-        createResponse({ id: 1001, name: 'monitor-a', overall_url: '/monitors/1001' }),
-      )
-      .mockResolvedValueOnce(createResponse([]))
-      .mockResolvedValueOnce(
-        createResponse({ id: 1002, name: 'monitor-b', overall_url: '/monitors/1002' }),
-      )
+    listMonitors.mockResolvedValue([])
+    createMonitor
+      .mockResolvedValueOnce({ id: 1001, name: 'monitor-a' })
+      .mockResolvedValueOnce({ id: 1002, name: 'monitor-b' })
 
     const action = createDatadogAlarmAction({ config: createConfig() })
     const ctx = createMockActionContext({
@@ -174,7 +154,8 @@ describe('x_datadog:alarm:create', () => {
 
     await action.handler(ctx)
 
-    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(listMonitors).toHaveBeenCalledTimes(2)
+    expect(createMonitor).toHaveBeenCalledTimes(2)
     expect(ctx.output).toHaveBeenCalledWith(
       'results',
       expect.arrayContaining([
@@ -204,7 +185,7 @@ describe('x_datadog:alarm:create', () => {
       ),
     ).rejects.toThrow('projectIdentity must be a non-empty string')
 
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(listMonitors).not.toHaveBeenCalled()
   })
 
   test('fails with explicit message when duplicate monitor names are supplied', async () => {
@@ -233,7 +214,7 @@ describe('x_datadog:alarm:create', () => {
       ),
     ).rejects.toThrow('Duplicate monitor names are not allowed in one request')
 
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(listMonitors).not.toHaveBeenCalled()
   })
 
   test('returns monitor-specific validation failures for missing required fields', async () => {
@@ -256,7 +237,7 @@ describe('x_datadog:alarm:create', () => {
       action.handler(ctx),
     ).rejects.toThrow('Failed to provision 1 of 1 Datadog monitor(s)')
 
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(listMonitors).not.toHaveBeenCalled()
     expect(ctx.output).toHaveBeenCalledWith('results', [
       expect.objectContaining({
         index: 0,
@@ -267,15 +248,8 @@ describe('x_datadog:alarm:create', () => {
   })
 
   test('reports partial failures and preserves successful outcomes', async () => {
-    fetchMock
-      .mockResolvedValueOnce(createResponse([]))
-      .mockResolvedValueOnce(
-        createResponse({
-          id: 777,
-          name: 'valid-monitor',
-          overall_url: '/monitors/777',
-        }),
-      )
+    listMonitors.mockResolvedValueOnce([])
+    createMonitor.mockResolvedValueOnce({ id: 777, name: 'valid-monitor' })
 
     const action = createDatadogAlarmAction({ config: createConfig() })
     const ctx = createMockActionContext({
@@ -302,7 +276,7 @@ describe('x_datadog:alarm:create', () => {
       'Failed to provision 1 of 2 Datadog monitor(s)',
     )
 
-    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(createMonitor).toHaveBeenCalledTimes(1)
     expect(ctx.output).toHaveBeenCalledWith('results', [
       {
         index: 0,
@@ -316,6 +290,39 @@ describe('x_datadog:alarm:create', () => {
         name: 'invalid-monitor',
         status: 'failed',
         error: expect.stringContaining('monitors[1].query must be a non-empty Datadog query'),
+      }),
+    ])
+  })
+
+  test('reports Datadog API errors for the affected monitor', async () => {
+    listMonitors.mockResolvedValueOnce([])
+    createMonitor.mockRejectedValueOnce(
+      new client.ApiException(400, { errors: ['Invalid query'] }),
+    )
+
+    const action = createDatadogAlarmAction({ config: createConfig() })
+    const ctx = createMockActionContext({
+      input: {
+        projectIdentity: 'payments-service',
+        monitors: [
+          {
+            name: 'monitor-a',
+            type: 'query alert',
+            query: 'not a query',
+            message: 'Errors @slack-platform-alerts',
+          },
+        ],
+      } as any,
+    })
+
+    await expect(action.handler(ctx)).rejects.toThrow(
+      'Datadog API request failed (400): Invalid query',
+    )
+    expect(ctx.output).toHaveBeenCalledWith('results', [
+      expect.objectContaining({
+        index: 0,
+        status: 'failed',
+        error: 'Datadog API request failed (400): Invalid query',
       }),
     ])
   })
