@@ -5,4 +5,4 @@
  */
 
 export { scaffolderModuleDatadog as default } from './module'
-export { createDatadogAlarmAction } from './actions'
+export { createDatadogAlarmAction, createDatadogDashboardAction } from './actions'
