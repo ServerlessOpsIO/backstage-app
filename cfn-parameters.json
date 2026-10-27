@@ -17,7 +17,7 @@
 	"ContainerPort": "7007",
 	"ServiceScalingTimezone": "America/New_York",
 	"ServiceScaleOutCron": "",
-	"ServiceScaleInCron": "cron(0 22 ? * * *)",
+	"ServiceScaleInCron": "",
 	"AlbRulePriority": "1",
 	"AlbRulePath": "*",
 	"VpcId": "/org/networking/VpcId",
