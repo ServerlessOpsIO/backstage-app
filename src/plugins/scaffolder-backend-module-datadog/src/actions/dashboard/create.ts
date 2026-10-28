@@ -5,7 +5,7 @@ import { client, v1 } from '@datadog/datadog-api-client'
 
 import { resolveDashboardBaseline } from './baselines'
 
-const DATADOG_CONFIG_PATH = 'scaffolder.datadog'
+const DATADOG_CONFIG_PATH = 'integrations.datadog'
 const DASHBOARD_IDENTITY_TAG_KEY = 'serverlessops_scaffolder_dashboard_identity'
 const DASHBOARD_PROJECT_KEY_TAG_KEY = 'serverlessops_scaffolder_project_key'
 const DASHBOARD_MANAGED_TAG_KEY = 'serverlessops_scaffolder_managed'
@@ -132,19 +132,23 @@ function buildDashboardUrl(
 }
 
 function getDatadogAccountConfig(config: Config): DatadogAccountConfig {
-  const apiKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.apiKey`)
-  const appKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.appKey`)
-  const site = config.getOptionalString(`${DATADOG_CONFIG_PATH}.site`)
+  const apiKey = config.getOptionalString(
+    `${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`,
+  )
+  const appKey = config.getOptionalString(
+    `${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`,
+  )
+  const site = config.getOptionalString(`${DATADOG_CONFIG_PATH}.server`)
 
   const missingKeys: string[] = []
   if (!apiKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.apiKey`)
+    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`)
   }
   if (!appKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.appKey`)
+    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`)
   }
   if (!site) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.site`)
+    missingKeys.push(`${DATADOG_CONFIG_PATH}.server`)
   }
 
   if (missingKeys.length > 0) {

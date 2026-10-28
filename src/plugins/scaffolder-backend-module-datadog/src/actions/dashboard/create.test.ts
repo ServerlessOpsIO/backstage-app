@@ -10,9 +10,9 @@ type TestConfig = {
 
 function createConfig(values: TestConfig = {}) {
   const defaults: TestConfig = {
-    'scaffolder.datadog.apiKey': 'dd-api-key',
-    'scaffolder.datadog.appKey': 'dd-app-key',
-    'scaffolder.datadog.site': 'datadoghq.com',
+    'integrations.datadog.authMethods.apiKeyAuth': 'dd-api-key',
+    'integrations.datadog.authMethods.appKeyAuth': 'dd-app-key',
+    'integrations.datadog.server': 'datadoghq.com',
   }
   const merged = { ...defaults, ...values }
   return {
