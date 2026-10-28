@@ -12,7 +12,7 @@ dashboards:
   - name: string                           # required, display name
     baselineId: string                     # required, reusable baseline selection
     description: string                    # optional display description override
-    tags: [string]                         # optional extra tags
+    tags: [string]                         # optional team:<value> / ai:<value> tags
     templateVariables:                     # optional project-specific substitutions
       <key>: string
 ```
@@ -41,11 +41,12 @@ results:
 
 ## Behavior Contract
 
-- Uses one platform-configured Datadog account (`scaffolder.datadog.*`).
+- Uses one platform-configured Datadog account (`integrations.datadog.*`).
 - Resolves each requested `baselineId` to reusable dashboard content and
   combines it with template-provided project display values.
 - Persists a stable action-managed logical identity for each dashboard from
-  `projectKey + dashboard name`.
+  `projectKey + dashboard name` in the dashboard description.
+- Dashboard tags MUST use the account-allowed `team` or `ai` keys.
 - Updates an existing dashboard only when it is marked as scaffolder-managed.
 - If a matching unmanaged dashboard exists, the item fails explicitly and is not
   modified.
@@ -68,15 +69,15 @@ steps:
           baselineId: service-overview-v1
           description: 'Overview dashboard for {{ parameters.name }}'
           tags:
-            - service:{{ parameters.name }}
-            - env:{{ parameters.environment }}
+            - team:platform
+            - ai:{{ parameters.name }}
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'
         - name: '{{ parameters.name }} SLI'
           baselineId: service-overview-v1
           tags:
-            - dashboard:sli
+            - team:platform
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'

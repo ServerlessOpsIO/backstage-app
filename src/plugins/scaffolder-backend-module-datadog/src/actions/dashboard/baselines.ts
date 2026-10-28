@@ -5,7 +5,6 @@ export type DashboardBaselineDefinition = {
   widgets: unknown[]
   descriptionTemplate?: string
   templateVariableDefaults?: Record<string, string>
-  tags?: string[]
 }
 
 const DASHBOARD_BASELINES: Record<string, DashboardBaselineDefinition> = {
@@ -19,7 +18,6 @@ const DASHBOARD_BASELINES: Record<string, DashboardBaselineDefinition> = {
       service: 'service',
       environment: 'environment',
     },
-    tags: ['baseline:service-overview-v1'],
     widgets: [
       {
         definition: {
@@ -113,8 +111,5 @@ export function resolveDashboardBaseline(
           )
         : undefined,
     widgets: applyTemplateVariables(baseline.widgets, resolvedTemplateVariables),
-    tags: baseline.tags?.map(tag =>
-      applyTemplateVariables(tag, resolvedTemplateVariables),
-    ),
   }
 }

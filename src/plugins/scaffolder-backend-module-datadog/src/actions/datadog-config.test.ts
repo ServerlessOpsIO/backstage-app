@@ -8,7 +8,10 @@ describe('getDatadogAccountConfig', () => {
   }
 
   function createConfig(overrides: Record<string, string | undefined> = {}) {
-    const configValues = { ...values, ...overrides }
+    const configValues: Record<string, string | undefined> = {
+      ...values,
+      ...overrides,
+    }
     return {
       getOptionalString(path: string) {
         return configValues[path]

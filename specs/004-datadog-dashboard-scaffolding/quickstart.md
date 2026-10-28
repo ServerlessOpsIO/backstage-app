@@ -4,9 +4,9 @@
 
 - Backend includes `@internal/backstage-plugin-scaffolder-backend-module-datadog`.
 - Datadog runtime credentials are configured in app config:
-  - `scaffolder.datadog.site`
-  - `scaffolder.datadog.apiKey`
-  - `scaffolder.datadog.appKey`
+  - `integrations.datadog.server`
+  - `integrations.datadog.authMethods.apiKeyAuth`
+  - `integrations.datadog.authMethods.appKeyAuth`
 - Module README exists at
   `src/plugins/scaffolder-backend-module-datadog/README.md` and documents
   Datadog scaffolder actions and configuration.

@@ -10,10 +10,13 @@ import {
 } from '../datadog-config'
 import { resolveDashboardBaseline } from './baselines'
 
-const DASHBOARD_IDENTITY_TAG_KEY = 'serverlessops_scaffolder_dashboard_identity'
-const DASHBOARD_PROJECT_KEY_TAG_KEY = 'serverlessops_scaffolder_project_key'
-const DASHBOARD_MANAGED_TAG_KEY = 'serverlessops_scaffolder_managed'
-const DASHBOARD_MANAGED_TAG_VALUE = 'true'
+const DASHBOARD_IDENTITY_MARKER_PREFIX = '<!-- serverlessops-scaffolder-dashboard:'
+const LEGACY_DASHBOARD_IDENTITY_TAG_KEY =
+  'serverlessops_scaffolder_dashboard_identity'
+const LEGACY_DASHBOARD_PROJECT_KEY_TAG_KEY =
+  'serverlessops_scaffolder_project_key'
+const LEGACY_DASHBOARD_MANAGED_TAG = 'serverlessops_scaffolder_managed:true'
+const ALLOWED_DASHBOARD_TAG_KEYS = new Set(['team', 'ai'])
 
 export type DashboardSelection = {
   name: string
@@ -71,20 +74,60 @@ function normalizeDashboardName(value: string): string {
 }
 
 function buildDashboardIdentityTag(projectKey: string, dashboardName: string): string {
+  const digest = buildDashboardIdentityDigest(projectKey, dashboardName)
+  return `${LEGACY_DASHBOARD_IDENTITY_TAG_KEY}:${digest}`
+}
+
+function buildDashboardIdentityDigest(
+  projectKey: string,
+  dashboardName: string,
+): string {
   const normalizedProjectKey = normalizeTagPart(projectKey)
   const normalizedName = normalizeTagPart(dashboardName)
-  const digest = createHash('sha256')
+  return createHash('sha256')
     .update(`${normalizedProjectKey}:${normalizedName}`)
     .digest('hex')
-  return `${DASHBOARD_IDENTITY_TAG_KEY}:${digest}`
 }
 
 function buildProjectKeyTag(projectKey: string): string {
-  return `${DASHBOARD_PROJECT_KEY_TAG_KEY}:${normalizeTagPart(projectKey)}`
+  return `${LEGACY_DASHBOARD_PROJECT_KEY_TAG_KEY}:${normalizeTagPart(projectKey)}`
 }
 
-function buildManagedTag(): string {
-  return `${DASHBOARD_MANAGED_TAG_KEY}:${DASHBOARD_MANAGED_TAG_VALUE}`
+function buildDashboardIdentityMarker(
+  projectKey: string,
+  dashboardName: string,
+): string {
+  return `${DASHBOARD_IDENTITY_MARKER_PREFIX}${buildDashboardIdentityDigest(
+    projectKey,
+    dashboardName,
+  )} -->`
+}
+
+function buildManagedDescription(
+  description: string | undefined,
+  identityMarker: string,
+): string {
+  const previousMetadata = new RegExp(
+    `\\s*${DASHBOARD_IDENTITY_MARKER_PREFIX}[a-f0-9]{64} -->`,
+    'g',
+  )
+  const visibleDescription = description?.replace(previousMetadata, '').trim()
+  return visibleDescription
+    ? `${visibleDescription}\n\n${identityMarker}`
+    : identityMarker
+}
+
+function normalizeDashboardTag(tag: string): string | undefined {
+  const separator = tag.indexOf(':')
+  if (separator <= 0) {
+    return undefined
+  }
+  const key = tag.slice(0, separator).trim().toLowerCase()
+  const value = tag.slice(separator + 1).trim()
+  if (!ALLOWED_DASHBOARD_TAG_KEYS.has(key) || !value) {
+    return undefined
+  }
+  return `${key}:${value}`
 }
 
 function hasTag(tags: string[], expectedTag: string): boolean {
@@ -212,6 +255,16 @@ function getSelectionValidationErrors(
       `dashboards[${index}].description must be a non-empty string when provided`,
     )
   }
+  for (const [tagIndex, tag] of (selection.tags ?? []).entries()) {
+    if (
+      typeof tag !== 'string' ||
+      typeof normalizeDashboardTag(tag) === 'undefined'
+    ) {
+      errors.push(
+        `dashboards[${index}].tags[${tagIndex}] (${JSON.stringify(tag)}) must use an allowed Datadog tag key (team or ai) in key:value format`,
+      )
+    }
+  }
 
   return errors
 }
@@ -224,29 +277,23 @@ function buildDashboardPayload(
     selection.baselineId,
     selection.templateVariables,
   )
-  const identityTag = buildDashboardIdentityTag(projectKey, selection.name)
-  const projectKeyTag = buildProjectKeyTag(projectKey)
-  const managedTag = buildManagedTag()
-
-  const tags = new Set<string>([identityTag, projectKeyTag, managedTag])
-  for (const tag of baseline.tags ?? []) {
-    if (tag.trim().length > 0) {
-      tags.add(tag.trim())
-    }
-  }
-  for (const tag of selection.tags ?? []) {
-    if (tag.trim().length > 0) {
-      tags.add(tag.trim())
-    }
-  }
+  const identityMarker = buildDashboardIdentityMarker(
+    projectKey,
+    selection.name,
+  )
+  const tags = (selection.tags ?? [])
+    .map(normalizeDashboardTag)
+    .filter((tag): tag is string => typeof tag === 'string')
 
   return {
     title: selection.name.trim(),
-    description:
+    description: buildManagedDescription(
       typeof selection.description === 'string' &&
-      selection.description.trim().length > 0
+        selection.description.trim().length > 0
         ? selection.description.trim()
         : baseline.descriptionTemplate,
+      identityMarker,
+    ),
     layoutType: baseline.layoutType as v1.DashboardLayoutType,
     widgets: baseline.widgets as v1.Widget[],
     tags: Array.from(tags),
@@ -258,6 +305,7 @@ async function findExistingManagedDashboard(
   dashboardName: string,
   identityTag: string,
   projectKeyTag: string,
+  identityMarker: string,
 ): Promise<DatadogDashboardResponse | undefined> {
   const summaries = await datadogApi.listDashboards()
   const normalizedName = normalizeDashboardName(dashboardName)
@@ -278,10 +326,13 @@ async function findExistingManagedDashboard(
     const tags = details.tags ?? []
     const hasIdentityTag = hasTag(tags, identityTag)
     const hasProjectTag = hasTag(tags, projectKeyTag)
-    const hasManagedTag = hasTag(tags, buildManagedTag())
+    const hasManagedMarker =
+      typeof details.description === 'string' &&
+      details.description.includes(identityMarker)
+    const hasLegacyManagedTag = hasTag(tags, LEGACY_DASHBOARD_MANAGED_TAG)
 
-    if (hasIdentityTag || hasProjectTag) {
-      if (hasManagedTag) {
+    if (hasManagedMarker || hasIdentityTag || hasProjectTag) {
+      if (hasManagedMarker || hasLegacyManagedTag) {
         managedMatches.push(details)
       } else {
         unmanagedMatches.push(details)
@@ -336,7 +387,12 @@ export function createDatadogDashboardAction(options: { config: Config }) {
                   })
                   .optional(),
                 tags: z
-                  .array(z.string({ description: 'Optional Datadog dashboard tag' }))
+                  .array(
+                    z.string({
+                      description:
+                        'Optional Datadog dashboard tag using the team or ai key',
+                    }),
+                  )
                   .optional(),
                 templateVariables: z
                   .record(
@@ -396,11 +452,16 @@ export function createDatadogDashboardAction(options: { config: Config }) {
             dashboard.name,
           )
           const projectKeyTag = buildProjectKeyTag(input.projectKey)
+          const identityMarker = buildDashboardIdentityMarker(
+            input.projectKey,
+            dashboard.name,
+          )
           const existingDashboard = await findExistingManagedDashboard(
             datadogApi,
             dashboard.name,
             identityTag,
             projectKeyTag,
+            identityMarker,
           )
 
           let status: 'created' | 'updated'

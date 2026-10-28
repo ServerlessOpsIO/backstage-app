@@ -31,13 +31,16 @@ function normalizeTagPart(value: string): string {
     .replace(/^_+|_+$/g, '')
 }
 
-function buildDashboardIdentityTag(projectKey: string, dashboardName: string): string {
+function buildDashboardIdentityMarker(
+  projectKey: string,
+  dashboardName: string,
+): string {
   const normalizedProjectKey = normalizeTagPart(projectKey)
   const normalizedName = normalizeTagPart(dashboardName)
   const digest = createHash('sha256')
     .update(`${normalizedProjectKey}:${normalizedName}`)
     .digest('hex')
-  return `serverlessops_scaffolder_dashboard_identity:${digest}`
+  return `<!-- serverlessops-scaffolder-dashboard:${digest} -->`
 }
 
 function buildProjectKeyTag(projectKey: string): string {
@@ -86,6 +89,7 @@ describe('x_datadog:dashboard:create', () => {
           {
             name: 'Payments Service Overview',
             baselineId: 'service-overview-v1',
+            tags: ['team:payments', 'AI:assistant'],
             templateVariables: {
               service: 'payments',
               environment: 'prod',
@@ -101,13 +105,9 @@ describe('x_datadog:dashboard:create', () => {
     expect(createDashboardApi).toHaveBeenCalledTimes(1)
     const createPayload = createDashboardApi.mock.calls[0][0].body
     expect(createPayload.title).toBe('Payments Service Overview')
-    expect(createPayload.tags).toEqual(
-      expect.arrayContaining([
-        expect.stringMatching(/^serverlessops_scaffolder_dashboard_identity:/),
-        'serverlessops_scaffolder_project_key:payments-service',
-        'serverlessops_scaffolder_managed:true',
-        'baseline:service-overview-v1',
-      ]),
+    expect(createPayload.tags).toEqual(['team:payments', 'ai:assistant'])
+    expect(createPayload.description).toContain(
+      buildDashboardIdentityMarker('payments-service', 'Payments Service Overview'),
     )
 
     expect(ctx.output).toHaveBeenCalledWith('results', [
@@ -125,8 +125,7 @@ describe('x_datadog:dashboard:create', () => {
   test('updates an existing managed dashboard instead of creating a duplicate on retry', async () => {
     const projectKey = 'payments-service'
     const dashboardName = 'Payments Service Overview'
-    const identityTag = buildDashboardIdentityTag(projectKey, dashboardName)
-    const projectKeyTag = buildProjectKeyTag(projectKey)
+    const identityMarker = buildDashboardIdentityMarker(projectKey, dashboardName)
 
     listDashboards
       .mockResolvedValueOnce({ dashboards: [] })
@@ -136,11 +135,7 @@ describe('x_datadog:dashboard:create', () => {
     createDashboardApi.mockResolvedValue(createDashboard())
     getDashboard.mockResolvedValue(
       createDashboard({
-        tags: [
-          identityTag,
-          projectKeyTag,
-          'serverlessops_scaffolder_managed:true',
-        ],
+        description: identityMarker,
       }),
     )
     updateDashboard.mockResolvedValue(createDashboard())
@@ -252,10 +247,14 @@ describe('x_datadog:dashboard:create', () => {
     expect(JSON.stringify(firstPayload.widgets)).toContain('env:prod')
 
     const secondPayload = createDashboardApi.mock.calls[1][0].body
-    expect(secondPayload.description).toBe('Checkout service SLI view')
-    expect(secondPayload.tags).toEqual(
-      expect.arrayContaining(['baseline:service-overview-v1', 'team:payments']),
+    expect(secondPayload.description).toContain('Checkout service SLI view')
+    expect(secondPayload.description).toContain(
+      buildDashboardIdentityMarker(
+        'checkout-service',
+        'Checkout SLI Dashboard',
+      ),
     )
+    expect(secondPayload.tags).toEqual(['team:payments'])
 
     expect(ctx.output).toHaveBeenCalledWith('results', [
       expect.objectContaining({
@@ -325,6 +324,40 @@ describe('x_datadog:dashboard:create', () => {
     ).rejects.toThrow('Duplicate dashboard names are not allowed in one request')
 
     expect(listDashboards).not.toHaveBeenCalled()
+  })
+
+  test('rejects dashboard tags with keys not permitted by the Datadog account', async () => {
+    const action = createDatadogDashboardAction({ config: createConfig() })
+    const ctx = createMockActionContext({
+      input: {
+        projectKey: 'payments-service',
+        dashboards: [
+          {
+            name: 'Payments Service Overview',
+            baselineId: 'service-overview-v1',
+            tags: ['env:prod'],
+          },
+        ],
+      } as any,
+    })
+
+    await expect(action.handler(ctx)).rejects.toThrow(
+      'Failed to provision 1 of 1 Datadog dashboard(s)',
+    )
+
+    expect(listDashboards).not.toHaveBeenCalled()
+    expect(createDashboardApi).not.toHaveBeenCalled()
+    expect(ctx.output).toHaveBeenCalledWith(
+      'results',
+      expect.arrayContaining([
+        expect.objectContaining({
+          status: 'failed',
+          error: expect.stringContaining(
+            'must use an allowed Datadog tag key (team or ai)',
+          ),
+        }),
+      ]),
+    )
   })
 
   test('fails clearly when a matching unmanaged dashboard exists', async () => {

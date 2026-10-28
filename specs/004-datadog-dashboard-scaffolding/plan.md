@@ -49,7 +49,7 @@ plugin README documentation
 - **Catalog Integrity**: Pass. The action defines deterministic idempotent
   behavior, explicit failure semantics, and per-dashboard traceable outcomes.
 - **Environment-Driven Configuration**: Pass. Datadog credentials/account
-  context remain runtime-configured (`scaffolder.datadog.*`); templates do not
+  context remain runtime-configured (`integrations.datadog.*`); templates do not
   choose accounts.
 - **Secrets and Least Privilege**: Pass. No secrets in template input or source
   docs; Datadog credentials remain environment-backed.
