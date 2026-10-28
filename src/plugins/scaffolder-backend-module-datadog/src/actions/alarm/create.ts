@@ -3,15 +3,14 @@ import { createHash } from 'node:crypto'
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
 import { client, v1 } from '@datadog/datadog-api-client'
 
-const DATADOG_CONFIG_PATH = 'integrations.datadog'
+import {
+  createDatadogClientConfiguration,
+  getDatadogAccountConfig,
+  type DatadogAccountConfig,
+} from '../datadog-config'
+
 const IDENTITY_TAG_KEY = 'serverlessops_scaffolder_identity'
 const SUPPORTED_METRIC_MONITOR_TYPES = new Set(['query alert', 'metric alert'])
-
-type DatadogAccountConfig = {
-  apiKey: string
-  appKey: string
-  site: string
-}
 
 type DatadogMonitorDefinition = {
   name: string
@@ -95,35 +94,6 @@ function buildIdentityTag(projectIdentity: string, monitorName: string): string 
 
 function buildMonitorUrl(site: string, monitorId: number): string {
   return `https://app.${site}/monitors/${monitorId}`
-}
-
-function getDatadogAccountConfig(config: Config): DatadogAccountConfig {
-  const apiKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`)
-  const appKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`)
-  const site = config.getOptionalString(`${DATADOG_CONFIG_PATH}.server`)
-
-  const missingKeys: string[] = []
-  if (!apiKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`)
-  }
-  if (!appKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`)
-  }
-  if (!site) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.server`)
-  }
-
-  if (missingKeys.length > 0) {
-    throw new Error(
-      `Missing required Datadog configuration key(s): ${missingKeys.join(', ')}`,
-    )
-  }
-
-  return {
-    apiKey: apiKey as string,
-    appKey: appKey as string,
-    site: site as string,
-  }
 }
 
 function getMonitorValidationErrors(
@@ -225,14 +195,7 @@ function buildMonitorPayload(
 function createDatadogMonitorsApi(
   accountConfig: DatadogAccountConfig,
 ): v1.MonitorsApi {
-  const configuration = client.createConfiguration({
-    authMethods: {
-      apiKeyAuth: accountConfig.apiKey,
-      appKeyAuth: accountConfig.appKey,
-    },
-  })
-  configuration.setServerVariables({ site: accountConfig.site })
-  return new v1.MonitorsApi(configuration)
+  return new v1.MonitorsApi(createDatadogClientConfiguration(accountConfig))
 }
 
 export function createDatadogAlarmAction(options: { config: Config }) {

@@ -1,11 +1,15 @@
 import { Config } from '@backstage/config'
 import { createHash } from 'node:crypto'
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
-import { client, v1 } from '@datadog/datadog-api-client'
+import { v1 } from '@datadog/datadog-api-client'
 
+import {
+  createDatadogClientConfiguration,
+  getDatadogAccountConfig,
+  type DatadogAccountConfig,
+} from '../datadog-config'
 import { resolveDashboardBaseline } from './baselines'
 
-const DATADOG_CONFIG_PATH = 'integrations.datadog'
 const DASHBOARD_IDENTITY_TAG_KEY = 'serverlessops_scaffolder_dashboard_identity'
 const DASHBOARD_PROJECT_KEY_TAG_KEY = 'serverlessops_scaffolder_project_key'
 const DASHBOARD_MANAGED_TAG_KEY = 'serverlessops_scaffolder_managed'
@@ -32,12 +36,6 @@ export type DashboardProvisioningResult = {
   dashboardId?: string
   dashboardUrl?: string
   error?: string
-}
-
-type DatadogAccountConfig = {
-  apiKey: string
-  appKey: string
-  site: string
 }
 
 type DatadogDashboardSummary = v1.DashboardSummaryDefinition
@@ -131,50 +129,12 @@ function buildDashboardUrl(
   return `https://app.${site}/dashboard/${dashboardId}`
 }
 
-function getDatadogAccountConfig(config: Config): DatadogAccountConfig {
-  const apiKey = config.getOptionalString(
-    `${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`,
-  )
-  const appKey = config.getOptionalString(
-    `${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`,
-  )
-  const site = config.getOptionalString(`${DATADOG_CONFIG_PATH}.server`)
-
-  const missingKeys: string[] = []
-  if (!apiKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.apiKeyAuth`)
-  }
-  if (!appKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.authMethods.appKeyAuth`)
-  }
-  if (!site) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.server`)
-  }
-
-  if (missingKeys.length > 0) {
-    throw new Error(
-      `Missing required Datadog configuration key(s): ${missingKeys.join(', ')}`,
-    )
-  }
-
-  return {
-    apiKey: apiKey as string,
-    appKey: appKey as string,
-    site: site as string,
-  }
-}
-
 function createDatadogDashboardApiClient(
   accountConfig: DatadogAccountConfig,
 ): DatadogDashboardApiClient {
-  const configuration = client.createConfiguration({
-    authMethods: {
-      apiKeyAuth: accountConfig.apiKey,
-      appKeyAuth: accountConfig.appKey,
-    },
-  })
-  configuration.setServerVariables({ site: accountConfig.site })
-  const dashboardsApi = new v1.DashboardsApi(configuration)
+  const dashboardsApi = new v1.DashboardsApi(
+    createDatadogClientConfiguration(accountConfig),
+  )
 
   return {
     async listDashboards() {
