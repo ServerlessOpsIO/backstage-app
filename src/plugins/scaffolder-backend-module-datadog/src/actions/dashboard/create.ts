@@ -16,7 +16,6 @@ const LEGACY_DASHBOARD_IDENTITY_TAG_KEY =
 const LEGACY_DASHBOARD_PROJECT_KEY_TAG_KEY =
   'serverlessops_scaffolder_project_key'
 const LEGACY_DASHBOARD_MANAGED_TAG = 'serverlessops_scaffolder_managed:true'
-const ALLOWED_DASHBOARD_TAG_KEYS = new Set(['team', 'ai'])
 
 export type DashboardSelection = {
   name: string
@@ -115,19 +114,6 @@ function buildManagedDescription(
   return visibleDescription
     ? `${visibleDescription}\n\n${identityMarker}`
     : identityMarker
-}
-
-function normalizeDashboardTag(tag: string): string | undefined {
-  const separator = tag.indexOf(':')
-  if (separator <= 0) {
-    return undefined
-  }
-  const key = tag.slice(0, separator).trim().toLowerCase()
-  const value = tag.slice(separator + 1).trim()
-  if (!ALLOWED_DASHBOARD_TAG_KEYS.has(key) || !value) {
-    return undefined
-  }
-  return `${key}:${value}`
 }
 
 function hasTag(tags: string[], expectedTag: string): boolean {
@@ -255,17 +241,6 @@ function getSelectionValidationErrors(
       `dashboards[${index}].description must be a non-empty string when provided`,
     )
   }
-  for (const [tagIndex, tag] of (selection.tags ?? []).entries()) {
-    if (
-      typeof tag !== 'string' ||
-      typeof normalizeDashboardTag(tag) === 'undefined'
-    ) {
-      errors.push(
-        `dashboards[${index}].tags[${tagIndex}] (${JSON.stringify(tag)}) must use an allowed Datadog tag key (team or ai) in key:value format`,
-      )
-    }
-  }
-
   return errors
 }
 
@@ -281,9 +256,9 @@ function buildDashboardPayload(
     projectKey,
     selection.name,
   )
-  const tags = (selection.tags ?? [])
-    .map(normalizeDashboardTag)
-    .filter((tag): tag is string => typeof tag === 'string')
+  const tags = selection.tags
+    ?.map(tag => tag.trim())
+    .filter(tag => tag.length > 0)
 
   return {
     title: selection.name.trim(),
@@ -296,7 +271,7 @@ function buildDashboardPayload(
     ),
     layoutType: baseline.layoutType as v1.DashboardLayoutType,
     widgets: baseline.widgets as v1.Widget[],
-    tags: Array.from(tags),
+    ...(typeof tags === 'undefined' ? {} : { tags }),
   }
 }
 
@@ -390,7 +365,7 @@ export function createDatadogDashboardAction(options: { config: Config }) {
                   .array(
                     z.string({
                       description:
-                        'Optional Datadog dashboard tag using the team or ai key',
+                        'Optional Datadog dashboard tags supplied by the workflow',
                     }),
                   )
                   .optional(),

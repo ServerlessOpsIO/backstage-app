@@ -89,7 +89,13 @@ describe('x_datadog:dashboard:create', () => {
           {
             name: 'Payments Service Overview',
             baselineId: 'service-overview-v1',
-            tags: ['team:payments', 'AI:assistant'],
+            tags: [
+              ' service:payments ',
+              'env:prod',
+              'team:payments',
+              'ai:assistant',
+              ' ',
+            ],
             templateVariables: {
               service: 'payments',
               environment: 'prod',
@@ -105,7 +111,12 @@ describe('x_datadog:dashboard:create', () => {
     expect(createDashboardApi).toHaveBeenCalledTimes(1)
     const createPayload = createDashboardApi.mock.calls[0][0].body
     expect(createPayload.title).toBe('Payments Service Overview')
-    expect(createPayload.tags).toEqual(['team:payments', 'ai:assistant'])
+    expect(createPayload.tags).toEqual([
+      'service:payments',
+      'env:prod',
+      'team:payments',
+      'ai:assistant',
+    ])
     expect(createPayload.description).toContain(
       buildDashboardIdentityMarker('payments-service', 'Payments Service Overview'),
     )
@@ -185,6 +196,7 @@ describe('x_datadog:dashboard:create', () => {
         body: expect.objectContaining({ title: dashboardName }),
       }),
     )
+    expect(updateDashboard.mock.calls[0][0].body).not.toHaveProperty('tags')
     expect(secondCtx.output).toHaveBeenCalledWith('results', [
       {
         index: 0,
@@ -243,6 +255,7 @@ describe('x_datadog:dashboard:create', () => {
     expect(createDashboardApi).toHaveBeenCalledTimes(2)
     const firstPayload = createDashboardApi.mock.calls[0][0].body
     expect(firstPayload.description).toContain('checkout in prod')
+    expect(firstPayload.tags).toBeUndefined()
     expect(JSON.stringify(firstPayload.widgets)).toContain('service:checkout')
     expect(JSON.stringify(firstPayload.widgets)).toContain('env:prod')
 
@@ -324,40 +337,6 @@ describe('x_datadog:dashboard:create', () => {
     ).rejects.toThrow('Duplicate dashboard names are not allowed in one request')
 
     expect(listDashboards).not.toHaveBeenCalled()
-  })
-
-  test('rejects dashboard tags with keys not permitted by the Datadog account', async () => {
-    const action = createDatadogDashboardAction({ config: createConfig() })
-    const ctx = createMockActionContext({
-      input: {
-        projectKey: 'payments-service',
-        dashboards: [
-          {
-            name: 'Payments Service Overview',
-            baselineId: 'service-overview-v1',
-            tags: ['env:prod'],
-          },
-        ],
-      } as any,
-    })
-
-    await expect(action.handler(ctx)).rejects.toThrow(
-      'Failed to provision 1 of 1 Datadog dashboard(s)',
-    )
-
-    expect(listDashboards).not.toHaveBeenCalled()
-    expect(createDashboardApi).not.toHaveBeenCalled()
-    expect(ctx.output).toHaveBeenCalledWith(
-      'results',
-      expect.arrayContaining([
-        expect.objectContaining({
-          status: 'failed',
-          error: expect.stringContaining(
-            'must use an allowed Datadog tag key (team or ai)',
-          ),
-        }),
-      ]),
-    )
   })
 
   test('fails clearly when a matching unmanaged dashboard exists', async () => {

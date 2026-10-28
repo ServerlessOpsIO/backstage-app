@@ -15,7 +15,7 @@ project-specific display values.
 | `name` | string | Yes | Non-empty dashboard display name; unique per request for a given `projectKey` |
 | `baselineId` | string | Yes | Non-empty; must map to a known reusable baseline |
 | `description` | string | No | Optional non-empty display description override |
-| `tags` | string[] | No | Optional tags using the Datadog account-allowed `team:<value>` or `ai:<value>` keys |
+| `tags` | string[] | No | Optional Datadog dashboard tags provided by the workflow |
 | `templateVariables` | Record<string, string> | No | Optional substitutions for baseline-declared variables |
 
 ## Entity: DatadogDashboardCreateRequest

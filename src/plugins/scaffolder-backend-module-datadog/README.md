@@ -48,9 +48,10 @@ Key behavior:
 - Uses a baseline catalog (`baselineId`) plus template-provided display values
   (`name`, optional `description`, optional `tags`, optional
   `templateVariables`).
-- Dashboard tags are limited to the account-allowed `team:<value>` and
-  `ai:<value>` formats. The scaffolder's ownership marker is stored in the
-  dashboard description so it does not require additional Datadog tag keys.
+- No dashboard tags are generated automatically. Workflows may provide Datadog
+  tags through the optional `tags` input; omitted tags are left unset (and are
+  not overwritten during updates). The scaffolder's ownership marker is stored
+  in the dashboard description.
 - Is idempotent by logical identity (`projectKey + dashboard name`) and updates
   existing scaffolder-managed dashboards on retry.
 - Emits one result per requested dashboard and fails the step when any required
@@ -69,8 +70,8 @@ steps:
         - name: '{{ parameters.name }} Service Overview'
           baselineId: service-overview-v1
           tags:
-            - team:platform
-            - ai:{{ parameters.name }}
+            - service:{{ parameters.name }}
+            - env:{{ parameters.environment }}
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'
@@ -84,8 +85,6 @@ Troubleshooting:
 - `projectKey` must be non-empty and dashboard names must be unique per request.
 - Every dashboard item must provide non-empty `name` and `baselineId`.
 - `baselineId` values must exist in the module baseline catalog.
-- Dashboard `tags` must use the allowed `team` or `ai` keys; other keys are
-  rejected before contacting Datadog.
 - If a dashboard already exists for the same project key/name but is not marked
   as scaffolder-managed in its description (or legacy tags), provisioning fails
   with an ownership collision error and does not modify that dashboard.

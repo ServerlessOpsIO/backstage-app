@@ -12,7 +12,7 @@ dashboards:
   - name: string                           # required, display name
     baselineId: string                     # required, reusable baseline selection
     description: string                    # optional display description override
-    tags: [string]                         # optional team:<value> / ai:<value> tags
+    tags: [string]                         # optional workflow-provided Datadog tags
     templateVariables:                     # optional project-specific substitutions
       <key>: string
 ```
@@ -46,7 +46,8 @@ results:
   combines it with template-provided project display values.
 - Persists a stable action-managed logical identity for each dashboard from
   `projectKey + dashboard name` in the dashboard description.
-- Dashboard tags MUST use the account-allowed `team` or `ai` keys.
+- Dashboard tags are passed through from workflow input; no tags are generated
+  automatically. When omitted, tags are left unset, including on updates.
 - Updates an existing dashboard only when it is marked as scaffolder-managed.
 - If a matching unmanaged dashboard exists, the item fails explicitly and is not
   modified.
@@ -69,8 +70,8 @@ steps:
           baselineId: service-overview-v1
           description: 'Overview dashboard for {{ parameters.name }}'
           tags:
-            - team:platform
-            - ai:{{ parameters.name }}
+            - service:{{ parameters.name }}
+            - env:{{ parameters.environment }}
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'
