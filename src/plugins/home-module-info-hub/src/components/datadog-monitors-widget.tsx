@@ -36,7 +36,7 @@ interface DatadogMonitor {
 }
 
 function MonitorStatusChip({ status }: { status: string }) {
-  let backgroundColor = grey[600];
+  let backgroundColor: string = grey[600];
   if (status === 'Alert') {
     backgroundColor = red[700];
   } else if (status === 'OK') {
