@@ -38,6 +38,12 @@ Its heading shows the selected local weekday, month, and day. Previous and Next
 controls at the bottom load the adjacent day's events; Today returns to the
 current local day.
 
+## Google Calendar
+
+Enable the Google Calendar API in the Google Cloud project used by Backstage's
+Google OAuth client. The homepage calendar widget requires this API to read the
+signed-in user's calendar; otherwise, requests can fail with HTTP 403.
+
 ## Datadog monitors
 
 The Datadog widget sits in the upper-left corner beside Toolkit and lists five monitors per page
