@@ -4,9 +4,11 @@ This frontend module extends the Backstage `home` plugin with the homepage infor
 
 The module owns custom homepage cards for:
 
-- ServerlessOps branding, using a bundled logo to the left of Toolkit
+- A locally bundled ServerlessOps logo, centered in a full-width row between
+  search and the top row of widgets
 - Local + UTC clock visibility
 - GitHub personal work summaries
+- Datadog monitors matching the configured alert query
 - Today's Google Calendar events
 
 All four GitHub widgets use the standard Backstage Table component with
@@ -35,3 +37,24 @@ timezone; all-day events show "All day".
 Its heading shows the selected local weekday, month, and day. Previous and Next
 controls at the bottom load the adjacent day's events; Today returns to the
 current local day.
+
+## Datadog monitors
+
+The Datadog widget sits in the upper-left corner beside Toolkit and lists five monitors per page
+in Priority, Status, and Name columns. Names link to Datadog. Pagination loads
+additional results from the backend; missing priorities display "Not set".
+Status chips are red for Alert, green for OK, gray for No Data, and amber for Warn.
+
+The authenticated `/api/datadog/monitors` backend endpoint uses the existing
+`integrations.datadog.server`, `integrations.datadog.authMethods.apiKeyAuth`, and
+`integrations.datadog.authMethods.appKeyAuth` settings. Keep both keys on the
+backend. The application key needs monitor read access (`monitors_read`).
+
+The backend implementation and its colocated tests live in the separate
+[`datadog-backend` plugin](../datadog-backend/README.md).
+
+Set the backend's `home.datadog.query` to a Datadog monitor search query. The
+default is `status:Alert`; to include warnings, use
+`status:(Alert OR Warn)`, optionally combined with tags such as `tag:env:production`.
+Results are always restricted to Alert and Warn states. Restore the homepage's
+default layout if a saved layout hides the new widget.

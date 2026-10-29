@@ -11,10 +11,16 @@ function readAppConfig(): string {
   return fs.readFileSync(appConfigPath, 'utf8');
 }
 
-function readSection(config: string, startToken: string, endToken: string): string {
+function readSection(
+  config: string,
+  startToken: string,
+  endToken: string,
+): string {
   const start = config.indexOf(startToken);
   if (start < 0) {
-    throw new Error(`Unable to locate config section start token: ${startToken}`);
+    throw new Error(
+      `Unable to locate config section start token: ${startToken}`,
+    );
   }
 
   const end = config.indexOf(endToken, start);
@@ -82,27 +88,35 @@ describe('Homepage layout config', () => {
     const expectedPositions: Record<string, WidgetPosition> = {
       HomePageSearchBar: { column: 0, row: 0 },
       HomePageServerlessOpsLogo: { column: 0, row: 2 },
-      HomePageToolkit: { column: 4, row: 2 },
-      HomePageLocalAndUtcClock: { column: 8, row: 2 },
-      HomePageGitHubOpenedIssues: { column: 0, row: 6 },
-      HomePageGitHubAssignedIssues: { column: 0, row: 12 },
-      HomePageGitHubOpenedPrs: { column: 0, row: 18 },
-      HomePageGitHubReviewRequestedPrs: { column: 0, row: 24 },
-      HomePageGoogleCalendarToday: { column: 9, row: 6 },
+      HomePageDatadogMonitors: { column: 0, row: 4 },
+      HomePageToolkit: { column: 4, row: 4 },
+      HomePageLocalAndUtcClock: { column: 8, row: 4 },
+      HomePageGitHubOpenedIssues: { column: 0, row: 12 },
+      HomePageGitHubAssignedIssues: { column: 0, row: 18 },
+      HomePageGitHubOpenedPrs: { column: 0, row: 24 },
+      HomePageGitHubReviewRequestedPrs: { column: 0, row: 30 },
+      HomePageGoogleCalendarToday: { column: 9, row: 12 },
     };
 
     for (const [widgetId, expected] of Object.entries(expectedPositions)) {
       expect(positions.get(widgetId)).toEqual(expected);
+      if (expected.row === 4) {
+        expect(config).toMatch(
+          new RegExp(
+            `component: ${widgetId}\\n\\s+column: ${expected.column}\\n\\s+row: 4\\n\\s+width: 4\\n\\s+height: 5\\n`,
+          ),
+        );
+      }
       if (widgetId.startsWith('HomePageGitHub')) {
         expect(config).toMatch(
           new RegExp(
-            `component: ${widgetId}\\n\\s+column: 0\\n\\s+row: ${expected.row}\\n\\s+width: 9\\n\\s+height: 6\\n`,
+            `component: ${widgetId}\\n\\s+column: 0\\n\\s+row: ${expected.row}\\n\\s+width: 9\\n\\s+height: 5\\n`,
           ),
         );
       }
     }
     expect(config).toMatch(
-      /component: HomePageGoogleCalendarToday\n\s+column: 9\n\s+row: 6\n\s+width: 3\n\s+height: 24\n/,
+      /component: HomePageGoogleCalendarToday\n\s+column: 9\n\s+row: 12\n\s+width: 3\n\s+height: 20\n/,
     );
   });
 

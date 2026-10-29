@@ -22,14 +22,19 @@ export function ServerlessOpsLogoWidget() {
       style={{
         height: '100%',
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <img
         src={logo}
         alt="ServerlessOps"
-        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        style={{
+          maxWidth: '100%',
+          maxHeight: '100%',
+          width: 'auto',
+          height: 'auto',
+        }}
       />
     </div>
   );

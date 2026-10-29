@@ -10,6 +10,21 @@ import {
 } from './components/google-calendar-widget';
 import { LocalUtcClockWidget } from './components/local-utc-clock-widget';
 import { ServerlessOpsLogoWidget } from './components/serverlessops-logo-widget';
+import {
+  DatadogMonitorsWidget,
+  DatadogMonitorsWidgetRenderer,
+} from './components/datadog-monitors-widget';
+
+const datadogMonitorsWidget = HomePageWidgetBlueprint.make({
+  name: 'datadog-monitors',
+  params: {
+    name: 'HomePageDatadogMonitors',
+    title: 'Datadog Monitors',
+    description: 'Datadog monitors matching the configured alert query',
+    componentProps: { Renderer: DatadogMonitorsWidgetRenderer },
+    components: async () => ({ Content: DatadogMonitorsWidget }),
+  },
+});
 
 const serverlessOpsLogoWidget = HomePageWidgetBlueprint.make({
   name: 'serverlessops-logo',
@@ -103,6 +118,7 @@ export const homeModuleInfoHub = createFrontendModule({
   pluginId: 'home',
   extensions: [
     serverlessOpsLogoWidget,
+    datadogMonitorsWidget,
     localUtcClockWidget,
     githubOpenedIssuesWidget,
     githubAssignedIssuesWidget,
