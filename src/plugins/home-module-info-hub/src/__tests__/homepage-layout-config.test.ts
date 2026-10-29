@@ -79,6 +79,10 @@ describe('Homepage layout config', () => {
       HomePageLocalAndUtcClock: { column: 8, row: 6 },
       HomePageMostVisited: { column: 4, row: 9 },
       HomePageRecentlyVisited: { column: 8, row: 9 },
+      HomePageGitHubOpenedIssues: { column: 0, row: 13 },
+      HomePageGitHubAssignedIssues: { column: 6, row: 13 },
+      HomePageGitHubOpenedPrs: { column: 0, row: 17 },
+      HomePageGitHubReviewRequestedPrs: { column: 6, row: 17 },
     };
 
     for (const [widgetId, expected] of Object.entries(expectedPositions)) {

@@ -72,17 +72,17 @@ description: "Task list for implementing homepage useful information hub"
 
 ### Tests for User Story 2
 
-- [ ] T016 [P] [US2] Add category query and normalization tests in src/plugins/home-module-info-hub/src/__tests__/github-work-client.test.ts for all four categories
-- [ ] T017 [P] [US2] Add rendering-state tests in src/plugins/home-module-info-hub/src/__tests__/github-work-widget.test.tsx validating loading, ready, empty, and unavailable states
+- [X] T016 [P] [US2] Add category query and normalization tests in src/plugins/home-module-info-hub/src/__tests__/github-work-client.test.ts for all four categories
+- [X] T017 [P] [US2] Add rendering-state tests in src/plugins/home-module-info-hub/src/__tests__/github-work-widget.test.tsx validating loading, ready, empty, and unavailable states
 
 ### Implementation for User Story 2
 
-- [ ] T018 [US2] Implement GitHub data client in src/plugins/home-module-info-hub/src/api/github-work-client.ts using `@octokit/rest` and enforce constraints verbatim: "Exactly one category per widget.", "`maxItems` must be positive and bounded for rendering consistency.", and "`url` must be valid HTTPS GitHub URL."
-- [ ] T019 [US2] Implement GitHub auth token acquisition via Backstage auth APIs in src/plugins/home-module-info-hub/src/api/github-work-client.ts so queries run with the signed-in user’s linked account
-- [ ] T020 [US2] Implement reusable list widget in src/plugins/home-module-info-hub/src/components/github-work-widget.tsx honoring shared state rules: "`ready` requires data payload present." and "`empty` and `unavailable` must provide explicit message text."
-- [ ] T021 [US2] Register four GitHub widget blueprints with stable IDs and titles in src/plugins/home-module-info-hub/src/module.tsx
-- [ ] T022 [US2] Add all four GitHub widgets to homepage default layout in src/app-config.yaml `page:home.defaultConfig` while preserving existing required baseline widgets
-- [ ] T023 [US2] Document GitHub widget empty/unavailable UX copy in specs/005-homepage-info-hub/contracts/homepage-info-hub-ui-contracts.md to keep behavior contract-backed
+- [X] T018 [US2] Implement GitHub data client in src/plugins/home-module-info-hub/src/api/github-work-client.ts using `@octokit/rest` and enforce constraints verbatim: "Exactly one category per widget.", "`maxItems` must be positive and bounded for rendering consistency.", and "`url` must be valid HTTPS GitHub URL."
+- [X] T019 [US2] Implement GitHub auth token acquisition via Backstage auth APIs in src/plugins/home-module-info-hub/src/api/github-work-client.ts so queries run with the signed-in user’s linked account
+- [X] T020 [US2] Implement reusable list widget in src/plugins/home-module-info-hub/src/components/github-work-widget.tsx honoring shared state rules: "`ready` requires data payload present." and "`empty` and `unavailable` must provide explicit message text."
+- [X] T021 [US2] Register four GitHub widget blueprints with stable IDs and titles in src/plugins/home-module-info-hub/src/module.tsx
+- [X] T022 [US2] Add all four GitHub widgets to homepage default layout in src/app-config.yaml `page:home.defaultConfig` while preserving existing required baseline widgets
+- [X] T023 [US2] Document GitHub widget empty/unavailable UX copy in specs/005-homepage-info-hub/contracts/homepage-info-hub-ui-contracts.md to keep behavior contract-backed
 
 **Checkpoint**: User Stories 1 and 2 are both independently functional.
 

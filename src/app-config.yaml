@@ -75,6 +75,26 @@ app:
               row: 9
               width: 4
               height: 4
+            - component: HomePageGitHubOpenedIssues
+              column: 0
+              row: 13
+              width: 6
+              height: 4
+            - component: HomePageGitHubAssignedIssues
+              column: 6
+              row: 13
+              width: 6
+              height: 4
+            - component: HomePageGitHubOpenedPrs
+              column: 0
+              row: 17
+              width: 6
+              height: 4
+            - component: HomePageGitHubReviewRequestedPrs
+              column: 6
+              row: 17
+              width: 6
+              height: 4
     # Catalog
     - page:catalog:
         config:
