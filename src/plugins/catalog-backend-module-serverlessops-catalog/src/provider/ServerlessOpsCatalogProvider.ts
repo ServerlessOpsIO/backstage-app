@@ -7,6 +7,7 @@ import {
     Entity
 } from '@backstage/catalog-model'
 import {
+    DeferredEntity,
     EntityProvider,
     EntityProviderConnection,
 } from '@backstage/plugin-catalog-node'
@@ -103,15 +104,17 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
             )
         }
 
-        const collectedEntities: Entity[] = []
+        const collectedEntities: DeferredEntity[] = []
         await Promise.all(this.providerConfig.entityKinds.map(async (kind) => {
             const entities = await this.getEntitiesByKind(kind, this.jwt as string)
 
             await Promise.all(entities.entities.map(async (entry) => {
                 const entity = await this.getEntityByPath(entry, this.jwt as string)
+                // entry is <namespace>/<kind>/<name>
+                const locationRef = `url:${this.providerConfig.baseUrl}/catalog/${entry}`
                 const locationAnnotations = {
-                    [ANNOTATION_LOCATION]: `url:${this.providerConfig.baseUrl}/catalog/${entry}`,
-                    [ANNOTATION_ORIGIN_LOCATION]: `url:${this.providerConfig.baseUrl}/catalog/${entry}`
+                    [ANNOTATION_LOCATION]: locationRef,
+                    [ANNOTATION_ORIGIN_LOCATION]: locationRef
                 }
 
                 entity.metadata.annotations = {
@@ -119,7 +122,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
                     ...locationAnnotations
                 }
 
-                collectedEntities.push(entity)
+                collectedEntities.push({ entity, locationKey: locationRef })
             }))
         }))
 
@@ -128,10 +131,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
         )
         await this.connection?.applyMutation({
             type: 'full',
-            entities: collectedEntities.map(entity => ({
-                entity,
-                locationKey: this.providerConfig.baseUrl
-            }))
+            entities: collectedEntities
         })
     }
 

@@ -95,7 +95,7 @@ describe('ServerlessOpsCatalogProvider', () => {
             test('runs successfully', async () => {
                 mockedAxios.get
                     .mockResolvedValueOnce( // getEntitiesByKind
-                        {data: { entities: ['entity1'] }}
+                        {data: { entities: ['default/component/test-component'] }}
                     )
                     .mockResolvedValueOnce( // getEntityByPath
                         {
@@ -109,7 +109,24 @@ describe('ServerlessOpsCatalogProvider', () => {
 
                 await provider.connect(mockConnection)
                 await provider.run()
-                expect(mockConnection.applyMutation).toHaveBeenCalled()
+
+                const locationRef = 'url:http://api.example.com/catalog/default/component/test-component'
+                expect(mockConnection.applyMutation).toHaveBeenCalledWith({
+                    type: 'full',
+                    entities: [
+                        {
+                            locationKey: locationRef,
+                            entity: expect.objectContaining({
+                                metadata: expect.objectContaining({
+                                    annotations: {
+                                        'backstage.io/managed-by-location': locationRef,
+                                        'backstage.io/managed-by-origin-location': locationRef
+                                    }
+                                })
+                            })
+                        }
+                    ]
+                })
             })
         })
 
