@@ -72,6 +72,7 @@ backend.add(import('@backstage/plugin-signals-backend'));
 backend.add(import('@backstage/plugin-mcp-actions-backend'));
 
 // local
+backend.add(import('@internal/backstage-plugin-datadog-backend'));
 backend.add(import('@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-serverlessops'));
 backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-github-copilot'));

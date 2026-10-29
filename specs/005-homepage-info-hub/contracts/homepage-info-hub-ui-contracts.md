@@ -56,7 +56,7 @@ interface GitHubWorkItem {
 }
 
 type GitHubWorkResult =
-  | { status: 'ready'; items: GitHubWorkItem[] }
+  | { status: 'ready'; data: GitHubWorkItem[] }
   | { status: 'empty'; message: string }
   | { status: 'unavailable'; message: string }
 ```
@@ -66,6 +66,14 @@ type GitHubWorkResult =
 - `status: ready` only when at least one normalized item exists.
 - `status: empty` when request succeeds and result set is empty.
 - `status: unavailable` for token acquisition failures, permission failures, or API errors.
+- Empty-state UX copy MUST be explicit per widget category:
+  - Opened Issues: `No open issues created by you were found.`
+  - Assigned Issues: `No open issues assigned to you were found.`
+  - Opened Pull Requests: `No open pull requests created by you were found.`
+  - Review Requested Pull Requests: `No open pull requests requesting your review were found.`
+- Unavailable-state UX copy MUST be explicit and actionable:
+  - Missing account link: `GitHub account is not linked for the current user.`
+  - API/runtime failures: `GitHub data is currently unavailable: <error message>`
 
 ## 3) Google Calendar Today Client Contract
 
@@ -94,7 +102,7 @@ interface CalendarEventSummary {
 }
 
 type CalendarTodayResult =
-  | { status: 'ready'; events: CalendarEventSummary[] }
+  | { status: 'ready'; data: CalendarEventSummary[] }
   | { status: 'empty'; message: string }
   | { status: 'unavailable'; message: string }
 ```

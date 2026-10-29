@@ -1,0 +1,54 @@
+{
+  "name": "@internal/backstage-plugin-home-module-info-hub",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "private": true,
+  "description": "The info hub frontend module for the home plugin.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts"
+  },
+  "backstage": {
+    "role": "frontend-plugin-module",
+    "pluginId": "home",
+    "pluginPackage": "@backstage/plugin-home"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "backstage-cli package build",
+    "lint": "backstage-cli package lint",
+    "test": "backstage-cli package test",
+    "clean": "backstage-cli package clean",
+    "prepack": "backstage-cli package prepack",
+    "postpack": "backstage-cli package postpack"
+  },
+  "dependencies": {
+    "@backstage/core-components": "backstage:^",
+    "@backstage/core-plugin-api": "backstage:^",
+    "@backstage/frontend-plugin-api": "backstage:^",
+    "@backstage/plugin-home-react": "backstage:^",
+    "@material-ui/core": "^4.12.2",
+    "@octokit/rest": "^22.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.2",
+    "react-dom": "^18.0.2"
+  },
+  "devDependencies": {
+    "@backstage/cli": "backstage:^",
+    "@backstage/frontend-test-utils": "backstage:^",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^14.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

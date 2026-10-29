@@ -32,3 +32,6 @@
 ## Notes
 
 - Specification passes quality validation and is ready for planning.
+- Revalidated on 2026-10-29 after adding Datadog monitor scenarios, requirements,
+  entities, success criteria, and integration assumptions. Coverage includes
+  pagination, status chips, missing priorities, authentication, and failure states.
