@@ -130,8 +130,38 @@ describe('ServerlessOpsCatalogProvider', () => {
                     })
                 )
             })
+
+            test('fetches all pages', async () => {
+                mockedAxios.get
+                    .mockResolvedValueOnce({ data: { entities: ['entity1', 'entity2'], nextToken: 'token1' } })
+                    .mockResolvedValueOnce({ data: { entities: [], nextToken: 'token2' } })
+                    .mockResolvedValueOnce({ data: { entities: ['entity3'] } })
+
+                const result = await provider.getEntitiesByKind('Component', 'test-token')
+                expect(result).toEqual({ entities: ['entity1', 'entity2', 'entity3'] })
+                expect(mockedAxios.get).toHaveBeenCalledTimes(3)
+                expect(mockedAxios.get.mock.calls[0][1]).not.toHaveProperty('params')
+                expect(mockedAxios.get).toHaveBeenNthCalledWith(
+                    2,
+                    'http://api.example.com/catalog/default/component',
+                    expect.objectContaining({ params: { nextToken: 'token1' } })
+                )
+                expect(mockedAxios.get).toHaveBeenNthCalledWith(
+                    3,
+                    'http://api.example.com/catalog/default/component',
+                    expect.objectContaining({ params: { nextToken: 'token2' } })
+                )
+            })
         })
         describe('should fail when', () => {
+            test('API repeats nextToken', async () => {
+                mockedAxios.get.mockResolvedValue({ data: { entities: ['entity1'], nextToken: 'token1' } })
+
+                await expect(
+                    provider.getEntitiesByKind('Component', 'test-token')
+                ).rejects.toThrow('API returned the same nextToken twice')
+            })
+
             test('fetch fails', async () => {
                 mockedAxios.get.mockRejectedValue(new Error('Network error'))
 
