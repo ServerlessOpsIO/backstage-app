@@ -166,6 +166,20 @@ Parameters:
     Description: ServerlessOps auth client secret
     NoEcho: true
 
+  DatadogSite:
+    Type: String
+    Description: Datadog site
+
+  DatadogApiKey:
+    Type: String
+    Description: Datadog API key
+    NoEcho: true
+
+  DatadogAppKey:
+    Type: String
+    Description: Datadog application key
+    NoEcho: true
+
 Conditions:
   ServiceScalingEnabled: !Or [
     !Not [!Equals [ !Ref ServiceScaleOutCron, '' ]],
@@ -225,6 +239,12 @@ Resources:
               Value: !Ref ServerlessOpsAuthClientId
             - Name: SERVERLESSOPS_AUTH_CLIENT_SECRET
               Value: !Ref ServerlessOpsAuthClientSecret
+            - Name: DATADOG_SITE
+              Value: !Ref DatadogSite
+            - Name: DATADOG_API_KEY
+              Value: !Ref DatadogApiKey
+            - Name: DATADOG_APP_KEY
+              Value: !Ref DatadogAppKey
           LogConfiguration:
             LogDriver: awslogs
             Options:
