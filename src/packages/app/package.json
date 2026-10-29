@@ -46,6 +46,7 @@
     "@internal/backstage-plugin-api-docs-module-serverlessops": "workspace:^",
     "@internal/backstage-plugin-app-module-nav": "workspace:^",
     "@internal/backstage-plugin-catalog-module-serverlessops": "workspace:^",
+    "@internal/backstage-plugin-home-module-info-hub": "workspace:^",
     "@internal/backstage-plugin-scaffolder-entity-pickers": "workspace:^",
     "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.9.1",

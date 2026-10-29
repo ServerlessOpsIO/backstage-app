@@ -14,6 +14,7 @@ import githubIssuesPlugin from '@backstage-community/plugin-github-issues/alpha'
 import serverlessOpsCatalogModule from '@internal/backstage-plugin-catalog-module-serverlessops';
 import serverlessOpsApiDocsModule from '@internal/backstage-plugin-api-docs-module-serverlessops';
 import appModuleNav from '@internal/backstage-plugin-app-module-nav';
+import homeModuleInfoHub from '@internal/backstage-plugin-home-module-info-hub';
 import soContextualEntityPickerModule from '@internal/backstage-plugin-scaffolder-entity-pickers';
 
 import { homeModule } from './modules/home';
@@ -59,6 +60,7 @@ export default createApp({
   features: [
     catalogPlugin,
     homeModule,
+    homeModuleInfoHub,
     scaffolderPlugin,
     githubActionsPlugin,
     githubDeploymentsPlugin,

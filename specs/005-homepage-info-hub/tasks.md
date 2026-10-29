@@ -19,9 +19,9 @@ description: "Task list for implementing homepage useful information hub"
 
 **Purpose**: Create the new home module package and baseline wiring points.
 
-- [ ] T001 Create plugin package skeleton for `@internal/backstage-plugin-home-module-info-hub` in src/plugins/home-module-info-hub/package.json, src/plugins/home-module-info-hub/README.md, src/plugins/home-module-info-hub/.eslintrc.js, src/plugins/home-module-info-hub/src/index.ts, and src/plugins/home-module-info-hub/src/module.tsx
-- [ ] T002 [P] Create feature folder structure and placeholder files in src/plugins/home-module-info-hub/src/api/github-work-client.ts, src/plugins/home-module-info-hub/src/api/google-calendar-client.ts, src/plugins/home-module-info-hub/src/components/github-work-widget.tsx, src/plugins/home-module-info-hub/src/components/google-calendar-widget.tsx, src/plugins/home-module-info-hub/src/components/widget-state-panel.tsx, and src/plugins/home-module-info-hub/src/__tests__/.gitkeep
-- [ ] T003 Add initial app integration import and feature registration placeholder in src/packages/app/src/App.tsx for @internal/backstage-plugin-home-module-info-hub
+- [X] T001 Create plugin package skeleton for `@internal/backstage-plugin-home-module-info-hub` in src/plugins/home-module-info-hub/package.json, src/plugins/home-module-info-hub/README.md, src/plugins/home-module-info-hub/.eslintrc.js, src/plugins/home-module-info-hub/src/index.ts, and src/plugins/home-module-info-hub/src/module.tsx
+- [X] T002 [P] Create feature folder structure and placeholder files in src/plugins/home-module-info-hub/src/api/github-work-client.ts, src/plugins/home-module-info-hub/src/api/google-calendar-client.ts, src/plugins/home-module-info-hub/src/components/github-work-widget.tsx, src/plugins/home-module-info-hub/src/components/google-calendar-widget.tsx, src/plugins/home-module-info-hub/src/components/widget-state-panel.tsx, and src/plugins/home-module-info-hub/src/__tests__/.gitkeep
+- [X] T003 Add initial app integration import and feature registration placeholder in src/packages/app/src/App.tsx for @internal/backstage-plugin-home-module-info-hub
 
 ---
 
