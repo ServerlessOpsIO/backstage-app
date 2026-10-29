@@ -50,7 +50,7 @@ description: "Task list for implementing homepage useful information hub"
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add homepage layout/config assertions in src/plugins/home-module-info-hub/src/__tests__/homepage-layout-config.test.ts for search-bar-first positioning and required widget presence
+- [ ] T010 [P] [US1] Add homepage layout/config assertions in src/plugins/home-module-info-hub/src/__tests__/homepage-layout-config.test.ts for required widget presence and current component grid positions from src/app-config.yaml (search 0/0, GettingStarted 0/1, starred entities 4/2, toolkit 4/6, world clock 8/6, most visited 4/9, recently visited 8/9; column/row); after layout selection, assert positions for all required widgets and update expected positions before the implementation commit
 
 ### Implementation for User Story 1
 
@@ -96,12 +96,12 @@ description: "Task list for implementing homepage useful information hub"
 
 ### Tests for User Story 3
 
-- [ ] T024 [P] [US3] Add query-window and state tests in src/plugins/home-module-info-hub/src/__tests__/google-calendar-client.test.ts for local-day boundaries and unavailable handling
+- [ ] T024 [P] [US3] Add query-window and state tests in src/plugins/home-module-info-hub/src/__tests__/google-calendar-client.test.ts for browser-local-day boundaries and unavailable handling
 - [ ] T025 [P] [US3] Add render-state tests in src/plugins/home-module-info-hub/src/__tests__/google-calendar-widget.test.tsx for ready/empty/unavailable outputs
 
 ### Implementation for User Story 3
 
-- [ ] T026 [US3] Implement Google Calendar today client in src/plugins/home-module-info-hub/src/api/google-calendar-client.ts using primary calendar and enforce constraints verbatim: "`timeMin < timeMax`." and "Query window must represent current local day for the signed-in user."
+- [ ] T026 [US3] Implement Google Calendar today client in src/plugins/home-module-info-hub/src/api/google-calendar-client.ts using primary calendar and enforce constraints verbatim: "`timeMin < timeMax`." and "Query window must represent the current day in the browser's local timezone."
 - [ ] T027 [US3] Implement today-events widget UI in src/plugins/home-module-info-hub/src/components/google-calendar-widget.tsx with explicit no-events and unavailable states
 - [ ] T028 [US3] Register `HomePageGoogleCalendarToday` widget in src/plugins/home-module-info-hub/src/module.tsx and add it to src/app-config.yaml `page:home.defaultConfig`
 - [ ] T029 [US3] Create two complete layout definitions in specs/005-homepage-info-hub/layout/variant-a.md and specs/005-homepage-info-hub/layout/variant-b.md ensuring each variant includes all required widgets and required toolkit links
@@ -117,7 +117,7 @@ description: "Task list for implementing homepage useful information hub"
 
 - [ ] T031 [P] Align environment-driven config notes for auth/provider prerequisites in src/app-config.home.yaml and src/app-config.production.yaml for GitHub + Google user flows
 - [ ] T032 [P] Update implementation notes and manual verification steps in specs/005-homepage-info-hub/quickstart.md for final widget IDs, no-data states, and variant review workflow
-- [ ] T033 Execute `yarn tsc:full`, `yarn lint:all`, and `yarn test:all` from src/ and record outcomes in specs/005-homepage-info-hub/artifacts/validation-report.md
+- [ ] T033 Execute `yarn tsc:full`, `yarn build:all`, `yarn lint:all`, and `yarn test:all` from src/ and record outcomes in specs/005-homepage-info-hub/artifacts/validation-report.md
 - [ ] T034 Perform final contract consistency pass across specs/005-homepage-info-hub/spec.md, specs/005-homepage-info-hub/plan.md, and specs/005-homepage-info-hub/contracts/homepage-info-hub-ui-contracts.md and document deltas in specs/005-homepage-info-hub/artifacts/consistency-notes.md
 
 ---
@@ -202,4 +202,3 @@ Task: "T025 [US3] Add google-calendar-widget tests in src/plugins/home-module-in
    - Engineer B: US2
    - Engineer C: US3
 3. Rejoin for Phase 6 validation and artifact consolidation.
-

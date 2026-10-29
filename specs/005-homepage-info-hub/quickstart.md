@@ -64,7 +64,7 @@ Expected outcome:
 ## Validation Scenario 3: Google Calendar today widget (P3)
 
 1. Confirm the "Today" calendar widget renders.
-2. Verify events are from the user’s primary calendar and limited to today.
+2. Verify events are from the user’s primary calendar and limited to today in the browser’s local timezone.
 3. Validate explicit empty state when user has no events.
 4. Validate explicit unavailable state by revoking Google access and reloading.
 

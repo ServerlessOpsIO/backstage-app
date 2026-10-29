@@ -101,7 +101,7 @@ type CalendarTodayResult =
 
 ### Behavior guarantees
 
-- Query window is local-day bounded (`timeMin` start-of-day, `timeMax` end-of-day).
+- Query window is bounded by the browser's local day (`timeMin` at local start-of-day, `timeMax` at local end-of-day).
 - Empty day is not treated as error.
 - Auth/API failures return explicit unavailable state.
 

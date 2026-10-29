@@ -31,6 +31,7 @@ The final layout for the widgets on the page is as of this moment undecided and 
 - Q: Which open issues and pull requests should count as a user's work? → A: Separate widgets for issues opened, issues assigned, pull requests opened, and pull requests requested for review.
 - Q: Which Google Calendar should each user see on the homepage? → A: Each user's primary calendar, using their own Google authorization.
 - Q: What time period should the Google Calendar widget display? → A: Today only.
+- Q: Which timezone defines today for the Google Calendar widget? → A: The browser's local timezone.
 - Q: How should stakeholders compare the alternative homepage layouts? → A: Screenshots or mockups.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -107,7 +108,7 @@ As a user, I can view today's events from my primary Google Calendar on the home
 - **FR-010**: The system MUST display a separate widget for open GitHub issues assigned to the signed-in user.
 - **FR-011**: The system MUST display a widget for open GitHub pull requests opened by the signed-in user.
 - **FR-012**: The system MUST display a widget for open pull requests where the signed-in user has been requested as a reviewer.
-- **FR-013**: The system MUST display a widget for today's events on the signed-in user's primary Google Calendar, using that user's Google authorization.
+- **FR-013**: The system MUST display a widget for today's events on the signed-in user's primary Google Calendar, using that user's Google authorization and the browser's local timezone to define today.
 - **FR-014**: If GitHub or Google Calendar data cannot be retrieved, the affected widget MUST show an explicit unavailable or no-data state without hiding other homepage widgets.
 - **FR-015**: At least two alternative widget layouts MUST be presented as screenshots or mockups for stakeholder review before finalizing a single arrangement.
 - **FR-016**: Every proposed layout variation MUST preserve the full required widget set and required toolkit links.

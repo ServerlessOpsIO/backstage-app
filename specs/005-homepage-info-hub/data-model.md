@@ -73,14 +73,14 @@ Defines retrieval for today’s events from primary Google Calendar.
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | calendarId | string | Yes | Fixed `primary` |
-| timeMin | string (ISO datetime) | Yes | Start of local day |
-| timeMax | string (ISO datetime) | Yes | End of local day |
+| timeMin | string (ISO datetime) | Yes | Start of day in the browser's local timezone |
+| timeMax | string (ISO datetime) | Yes | End of day in the browser's local timezone |
 | singleEvents | boolean | Yes | `true` |
 | orderBy | string | Yes | `startTime` |
 
 **Validation rules**:
 - `timeMin < timeMax`.
-- Query window must represent current local day for the signed-in user.
+- Query window must represent the current day in the browser's local timezone.
 
 ## 6. CalendarEventSummary
 

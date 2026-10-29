@@ -19,7 +19,7 @@ Deliver a homepage information hub by reusing existing Backstage Home components
 
 **Storage**: N/A (read-only aggregation of external user-scoped APIs; transient client-side state only)
 
-**Testing**: Jest + React Testing Library (unit/widget states), optional Playwright for homepage variant screenshot flow, existing `yarn tsc:full`, `yarn lint:all`, `yarn test:all`
+**Testing**: Jest + React Testing Library (unit/widget states), optional Playwright for homepage variant screenshot flow, existing `yarn tsc:full`, `yarn build:all`, `yarn test:all`, `yarn lint:all`
 
 **Target Platform**: Backstage web frontend (`src/packages/app`) running in modern browsers
 
@@ -32,6 +32,7 @@ Deliver a homepage information hub by reusing existing Backstage Home components
 **Constraints**:
 - Preserve search bar at top and required toolkit/world-clock visibility in all layouts
 - Use each signed-in user's linked GitHub and Google authorization
+- Define Google Calendar "today" using the browser's local timezone
 - Show explicit unavailable/no-data states per widget (no cascading failure)
 - Keep secrets in environment config only; no committed credentials
 
@@ -47,7 +48,7 @@ Deliver a homepage information hub by reusing existing Backstage Home components
 - **I. Architecture Boundaries — PASS**: New feature code stays in `src/plugins/*` (new home module plugin); `src/packages/app` only composes the module.
 - **III. Environment-Driven Configuration — PASS**: Homepage layout and link changes remain configuration-driven in `app-config.yaml` and environment overlays (`app-config.production.yaml`, `app-config.home.yaml` as needed for provider readiness).
 - **IV. Secrets and Least Privilege — PASS**: OAuth secrets remain environment variables; no hardcoded tokens. Access scopes limited to GitHub user read and Google Calendar read.
-- **V. Validation and Deployment Integrity — PASS**: Plan includes repo-standard typecheck, lint, tests, and focused homepage verification.
+- **V. Validation and Deployment Integrity — PASS**: Plan includes repo-standard typecheck, build, lint, tests, and focused homepage verification.
 
 **Post-Design Re-check**: PASS. Phase 1 artifacts keep plugin boundaries, config ownership, and explicit degraded-state behavior without constitutional violations.
 
