@@ -49,6 +49,7 @@ export interface ProviderOptions {
 
 export interface ApiEntityList {
     entities: string[]
+    nextToken?: string
 }
 
 export class ServerlessOpsCatalogProvider implements EntityProvider {
@@ -139,7 +140,8 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
     }
 
     /**
-     * Make a request to API to get a list of entities by kind
+     * Make requests to API to get a list of entities by kind, following
+     * nextToken until all pages have been fetched
      *
      * @param kind - The kind of entity to fetch
      * @param jwt - The JWT token to use for authentication
@@ -150,16 +152,30 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
         this.logger.info(`Getting entities by kind: ${kind}`)
         try {
             const url = `${this.providerConfig.baseUrl}/catalog/${this.providerConfig.namespace}/${kind.toLowerCase()}`
-            const response = await axios.get(
-                url,
-                {
-                    headers: {
-                        Authorization: `Bearer ${jwt}`
-                    }
-                }
-            )
+            const entities: string[] = []
+            let nextToken: string | undefined
 
-            return await response.data as ApiEntityList
+            do {
+                const response = await axios.get(
+                    url,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${jwt}`
+                        },
+                        ...(nextToken && { params: { nextToken } })
+                    }
+                )
+                const page = response.data as ApiEntityList
+
+                if (page.nextToken && page.nextToken === nextToken) {
+                    throw new Error(`API returned the same nextToken twice: ${nextToken}`)
+                }
+
+                entities.push(...page.entities)
+                nextToken = page.nextToken
+            } while (nextToken)
+
+            return { entities }
         } catch (error) {
             throw new Error(`Failed to get entities by kind: ${(error as Error).message}`)
         }
