@@ -36,7 +36,7 @@
 	"ServerlessOpsAuthClientId": $secrets.SERVERLESSOPS_AUTH_CLIENT_ID,
 	"ServerlessOpsAuthClientSecret": $secrets.SERVERLESSOPS_AUTH_CLIENT_SECRET,
 	"ServerlessOpsAuthEndpoint": $secrets.SERVERLESSOPS_AUTH_ENDPOINT,
-	"DatadogSite": $vars.DATADOG_SITE,
+	"DatadogSite": $secrets.DATADOG_SITE,
 	"DatadogApiKey": $secrets.DATADOG_API_KEY,
 	"DatadogAppKey": $secrets.DATADOG_APP_KEY
 }
