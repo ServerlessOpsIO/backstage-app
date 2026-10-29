@@ -20,8 +20,8 @@ configuration, and template usage.
 
 **Language/Version**: TypeScript 5.x, Node.js 24
 **Primary Dependencies**: `@backstage/backend-plugin-api`,
-`@backstage/plugin-scaffolder-node`, `@backstage/config`, Datadog Dashboard
-REST APIs via `fetch`
+`@backstage/plugin-scaffolder-node`, `@backstage/config`,
+`@datadog/datadog-api-client` for authenticated Datadog Dashboard API access
 **Storage**: N/A (runtime API integration only)
 **Testing**: Jest package tests in
 `src/plugins/scaffolder-backend-module-datadog`, plus repository validation
@@ -49,7 +49,7 @@ plugin README documentation
 - **Catalog Integrity**: Pass. The action defines deterministic idempotent
   behavior, explicit failure semantics, and per-dashboard traceable outcomes.
 - **Environment-Driven Configuration**: Pass. Datadog credentials/account
-  context remain runtime-configured (`scaffolder.datadog.*`); templates do not
+  context remain runtime-configured (`integrations.datadog.*`); templates do not
   choose accounts.
 - **Secrets and Least Privilege**: Pass. No secrets in template input or source
   docs; Datadog credentials remain environment-backed.
@@ -103,7 +103,9 @@ src/app-config.home.yaml
 action in the same package so Datadog credentials, API integration patterns,
 and module registration remain centralized. Add/update module-level README
 documentation in that package rather than scattering action usage details across
-unrelated docs.
+unrelated docs. Use the official `@datadog/datadog-api-client` SDK for dashboard
+API requests, configured with the platform API key, application key, and site;
+do not implement direct HTTP requests with `fetch`.
 
 ## Complexity Tracking
 

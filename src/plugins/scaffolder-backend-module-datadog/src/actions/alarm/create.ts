@@ -1,16 +1,16 @@
 import { Config } from '@backstage/config'
 import { createHash } from 'node:crypto'
 import { createTemplateAction } from '@backstage/plugin-scaffolder-node'
+import { client, v1 } from '@datadog/datadog-api-client'
 
-const DATADOG_CONFIG_PATH = 'scaffolder.datadog'
+import {
+  createDatadogClientConfiguration,
+  getDatadogAccountConfig,
+  type DatadogAccountConfig,
+} from '../datadog-config'
+
 const IDENTITY_TAG_KEY = 'serverlessops_scaffolder_identity'
 const SUPPORTED_METRIC_MONITOR_TYPES = new Set(['query alert', 'metric alert'])
-
-type DatadogAccountConfig = {
-  apiKey: string
-  appKey: string
-  site: string
-}
 
 type DatadogMonitorDefinition = {
   name: string
@@ -36,25 +36,10 @@ type AlarmProvisioningResult = {
   error?: string
 }
 
-type DatadogMonitorResponse = {
-  id?: number | string
-  name?: string
-  overall_url?: string
-  tags?: string[]
-}
-
-type DatadogApiClient = {
-  listMonitorsByTag: (tag: string) => Promise<DatadogMonitorResponse[]>
-  createMonitor: (
-    payload: Record<string, unknown>,
-  ) => Promise<DatadogMonitorResponse>
-  updateMonitor: (
-    monitorId: number,
-    payload: Record<string, unknown>,
-  ) => Promise<DatadogMonitorResponse>
-}
-
 function toErrorMessage(error: unknown): string {
+  if (error instanceof client.ApiException) {
+    return `Datadog API request failed (${error.code}): ${extractDatadogError(error.body)}`
+  }
   if (error instanceof Error) {
     return error.message
   }
@@ -62,6 +47,9 @@ function toErrorMessage(error: unknown): string {
 }
 
 function extractDatadogError(responseBody: unknown): string {
+  if (typeof responseBody === 'string' && responseBody.trim().length > 0) {
+    return responseBody
+  }
   if (typeof responseBody !== 'object' || responseBody === null) {
     return 'Unknown Datadog API error'
   }
@@ -104,61 +92,8 @@ function buildIdentityTag(projectIdentity: string, monitorName: string): string 
   return `${IDENTITY_TAG_KEY}:${digest}`
 }
 
-function getMonitorId(monitor: DatadogMonitorResponse): number | undefined {
-  if (typeof monitor.id === 'number') {
-    return monitor.id
-  }
-  if (typeof monitor.id === 'string') {
-    const parsed = Number.parseInt(monitor.id, 10)
-    if (Number.isFinite(parsed)) {
-      return parsed
-    }
-  }
-  return undefined
-}
-
-function buildMonitorUrl(site: string, monitor: DatadogMonitorResponse): string {
-  if (typeof monitor.overall_url === 'string' && monitor.overall_url.length > 0) {
-    if (monitor.overall_url.startsWith('http://') || monitor.overall_url.startsWith('https://')) {
-      return monitor.overall_url
-    }
-    return `https://app.${site}${monitor.overall_url}`
-  }
-
-  const monitorId = getMonitorId(monitor)
-  if (typeof monitorId === 'number') {
-    return `https://app.${site}/monitors/${monitorId}`
-  }
-  throw new Error('Datadog monitor response did not include an id or URL')
-}
-
-function getDatadogAccountConfig(config: Config): DatadogAccountConfig {
-  const apiKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.apiKey`)
-  const appKey = config.getOptionalString(`${DATADOG_CONFIG_PATH}.appKey`)
-  const site = config.getOptionalString(`${DATADOG_CONFIG_PATH}.site`)
-
-  const missingKeys: string[] = []
-  if (!apiKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.apiKey`)
-  }
-  if (!appKey) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.appKey`)
-  }
-  if (!site) {
-    missingKeys.push(`${DATADOG_CONFIG_PATH}.site`)
-  }
-
-  if (missingKeys.length > 0) {
-    throw new Error(
-      `Missing required Datadog configuration key(s): ${missingKeys.join(', ')}`,
-    )
-  }
-
-  return {
-    apiKey: apiKey as string,
-    appKey: appKey as string,
-    site: site as string,
-  }
+function buildMonitorUrl(site: string, monitorId: number): string {
+  return `https://app.${site}/monitors/${monitorId}`
 }
 
 function getMonitorValidationErrors(
@@ -226,7 +161,7 @@ function validateTopLevelRequest(input: DatadogAlarmCreateRequest): void {
 function buildMonitorPayload(
   monitor: DatadogMonitorDefinition,
   identityTag: string,
-): Record<string, unknown> {
+): v1.Monitor {
   const tags = new Set<string>([identityTag])
   for (const tag of monitor.tags ?? []) {
     if (typeof tag === 'string' && tag.trim().length > 0) {
@@ -234,16 +169,21 @@ function buildMonitorPayload(
     }
   }
 
-  const payload: Record<string, unknown> = {
+  const payload: v1.Monitor = {
     name: monitor.name.trim(),
-    type: monitor.type.trim(),
+    type: monitor.type.trim().toLowerCase() as v1.MonitorType,
     query: monitor.query.trim(),
     message: monitor.message.trim(),
     tags: Array.from(tags),
   }
 
   if (monitor.options) {
-    payload.options = monitor.options
+    // Template inputs use the Datadog API's snake_case option names, so convert
+    // them into the client's model before it serializes the request.
+    payload.options = v1.ObjectSerializer.deserialize(
+      monitor.options,
+      'MonitorOptions',
+    ) as v1.MonitorOptions
   }
   if (typeof monitor.priority === 'number') {
     payload.priority = monitor.priority
@@ -252,84 +192,10 @@ function buildMonitorPayload(
   return payload
 }
 
-function createDatadogApiClient(accountConfig: DatadogAccountConfig): DatadogApiClient {
-  const baseUrl = `https://api.${accountConfig.site}`
-  const headers = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    'DD-API-KEY': accountConfig.apiKey,
-    'DD-APPLICATION-KEY': accountConfig.appKey,
-  }
-
-  async function request<T>(
-    path: string,
-    init: RequestInit,
-    expectedKind: string,
-  ): Promise<T> {
-    const response = await fetch(`${baseUrl}${path}`, {
-      ...init,
-      headers: {
-        ...headers,
-        ...init.headers,
-      },
-    })
-
-    const rawBody = await response.text()
-    let parsedBody: unknown
-    if (rawBody.trim().length > 0) {
-      try {
-        parsedBody = JSON.parse(rawBody)
-      } catch {
-        parsedBody = rawBody
-      }
-    }
-
-    if (!response.ok) {
-      const detail = extractDatadogError(parsedBody)
-      throw new Error(
-        `Datadog API ${init.method ?? 'GET'} ${path} failed (${response.status}): ${detail}`,
-      )
-    }
-
-    if (typeof parsedBody === 'undefined') {
-      throw new Error(
-        `Datadog API ${init.method ?? 'GET'} ${path} returned an empty ${expectedKind} response`,
-      )
-    }
-
-    return parsedBody as T
-  }
-
-  return {
-    async listMonitorsByTag(tag: string) {
-      const query = new URLSearchParams({ monitor_tags: tag })
-      const monitors = await request<unknown>(
-        `/api/v1/monitor?${query.toString()}`,
-        { method: 'GET' },
-        'monitor list',
-      )
-      if (!Array.isArray(monitors)) {
-        throw new Error(
-          'Datadog API returned a non-array monitor list while searching by logical identity',
-        )
-      }
-      return monitors as DatadogMonitorResponse[]
-    },
-    async createMonitor(payload: Record<string, unknown>) {
-      return request<DatadogMonitorResponse>(
-        '/api/v1/monitor',
-        { method: 'POST', body: JSON.stringify(payload) },
-        'monitor',
-      )
-    },
-    async updateMonitor(monitorId: number, payload: Record<string, unknown>) {
-      return request<DatadogMonitorResponse>(
-        `/api/v1/monitor/${monitorId}`,
-        { method: 'PUT', body: JSON.stringify(payload) },
-        'monitor',
-      )
-    },
-  }
+function createDatadogMonitorsApi(
+  accountConfig: DatadogAccountConfig,
+): v1.MonitorsApi {
+  return new v1.MonitorsApi(createDatadogClientConfiguration(accountConfig))
 }
 
 export function createDatadogAlarmAction(options: { config: Config }) {
@@ -386,7 +252,7 @@ export function createDatadogAlarmAction(options: { config: Config }) {
       validateTopLevelRequest(input)
 
       const accountConfig = getDatadogAccountConfig(options.config)
-      const datadogApi = createDatadogApiClient(accountConfig)
+      const monitorsApi = createDatadogMonitorsApi(accountConfig)
       const results: AlarmProvisioningResult[] = []
 
       for (const [index, monitor] of input.monitors.entries()) {
@@ -406,7 +272,9 @@ export function createDatadogAlarmAction(options: { config: Config }) {
         const payload = buildMonitorPayload(monitor, identityTag)
 
         try {
-          const existingMonitors = await datadogApi.listMonitorsByTag(identityTag)
+          const existingMonitors = await monitorsApi.listMonitors({
+            monitorTags: identityTag,
+          })
 
           if (existingMonitors.length > 1) {
             throw new Error(
@@ -417,26 +285,22 @@ export function createDatadogAlarmAction(options: { config: Config }) {
           const existingMonitor = existingMonitors[0]
           const status: 'created' | 'updated' =
             typeof existingMonitor === 'undefined' ? 'created' : 'updated'
-          const existingMonitorId =
-            typeof existingMonitor === 'undefined'
-              ? undefined
-              : getMonitorId(existingMonitor)
-          const response =
-            status === 'created'
-              ? await datadogApi.createMonitor(payload)
-              : await datadogApi.updateMonitor(
-                  (() => {
-                    if (typeof existingMonitorId !== 'number') {
-                      throw new Error(
-                        `Existing monitor for identity tag ${identityTag} is missing a valid numeric id`,
-                      )
-                    }
-                    return existingMonitorId
-                  })(),
-                  payload,
-                )
+          let response: v1.Monitor
+          if (typeof existingMonitor === 'undefined') {
+            response = await monitorsApi.createMonitor({ body: payload })
+          } else {
+            if (typeof existingMonitor.id !== 'number') {
+              throw new Error(
+                `Existing monitor for identity tag ${identityTag} is missing a valid numeric id`,
+              )
+            }
+            response = await monitorsApi.updateMonitor({
+              monitorId: existingMonitor.id,
+              body: payload,
+            })
+          }
 
-          const monitorId = getMonitorId(response)
+          const monitorId = response.id
           if (typeof monitorId !== 'number') {
             throw new Error(
               'Datadog API response did not include a numeric monitor identifier',
@@ -448,7 +312,7 @@ export function createDatadogAlarmAction(options: { config: Config }) {
             name: monitorName,
             status,
             monitorId: String(monitorId),
-            monitorUrl: buildMonitorUrl(accountConfig.site, response),
+            monitorUrl: buildMonitorUrl(accountConfig.site, monitorId),
           })
         } catch (error: unknown) {
           results.push({

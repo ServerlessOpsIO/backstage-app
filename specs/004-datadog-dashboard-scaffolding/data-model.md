@@ -15,7 +15,7 @@ project-specific display values.
 | `name` | string | Yes | Non-empty dashboard display name; unique per request for a given `projectKey` |
 | `baselineId` | string | Yes | Non-empty; must map to a known reusable baseline |
 | `description` | string | No | Optional non-empty display description override |
-| `tags` | string[] | No | Optional additional Datadog dashboard tags |
+| `team` | string[] | No | Optional Datadog team names, serialized as `team:<value>` tags |
 | `templateVariables` | Record<string, string> | No | Optional substitutions for baseline-declared variables |
 
 ## Entity: DatadogDashboardCreateRequest
@@ -39,7 +39,6 @@ Platform-managed reusable dashboard baseline resolved by `baselineId`.
 | `widgets` | object[] | Yes | Full baseline widget configuration |
 | `descriptionTemplate` | string | No | Optional baseline description template |
 | `templateVariableDefaults` | Record<string, string> | No | Optional default substitutions |
-| `tags` | string[] | No | Optional baseline tags |
 
 ## Entity: DashboardProvisioningResult
 
@@ -70,7 +69,8 @@ Backend runtime configuration for the platform Datadog account.
 - The action processes each dashboard request in-order and records one
   `DashboardProvisioningResult` per attempted dashboard.
 - The action computes logical identity from `projectKey + name` and persists it
-  in action-managed tags.
+  as metadata in the dashboard description. Existing dashboards with legacy
+  scaffolder identity tags remain recognized.
 - If a matching logical dashboard is managed by the action, retries update it
   in place.
 - If a matching logical dashboard exists but is unmanaged, the specific item

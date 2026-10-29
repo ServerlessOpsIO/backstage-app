@@ -22,9 +22,9 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Purpose**: Establish dashboard action file layout and module wiring points.
 
-- [ ] T001 Create dashboard action scaffolding in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T002 Add dashboard action exports in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and registration hook points in `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
-- [ ] T003 Extend module registration coverage in `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts` for the dashboard action
+- [X] T001 Create dashboard action scaffolding in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` and `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T002 Add dashboard action exports in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and registration hook points in `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
+- [X] T003 Extend module registration coverage in `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts` for the dashboard action
 
 ---
 
@@ -34,11 +34,11 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **⚠️ CRITICAL**: No user story work starts until this phase is complete.
 
-- [ ] T004 Define action-domain types and constants in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (`DashboardSelection`, `DatadogDashboardCreateRequest`, `DashboardProvisioningResult`, managed identity tag keys)
-- [ ] T005 Implement Datadog runtime config loading and fail-closed checks for `scaffolder.datadog.apiKey`, `scaffolder.datadog.appKey`, and `scaffolder.datadog.site` in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T006 Implement Datadog dashboard API client helpers (lookup/create/update) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T007 [P] Implement baseline catalog and baseline resolver in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/baselines.ts`
-- [ ] T008 Integrate baseline resolver + payload builder flow in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T004 Define action-domain types and constants in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (`DashboardSelection`, `DatadogDashboardCreateRequest`, `DashboardProvisioningResult`, managed identity tag keys)
+- [X] T005 Implement Datadog runtime config loading and fail-closed checks for `integrations.datadog.authMethods.apiKeyAuth`, `integrations.datadog.authMethods.appKeyAuth`, and `integrations.datadog.server` in the shared Datadog config helper
+- [X] T006 Implement Datadog dashboard API client helpers (lookup/create/update) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T007 [P] Implement baseline catalog and baseline resolver in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/baselines.ts`
+- [X] T008 Integrate baseline resolver + payload builder flow in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
 
 **Checkpoint**: Foundation ready — user story implementation can proceed.
 
@@ -50,10 +50,10 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Independent Test**: Execute one scaffold request with a valid `projectKey` and one dashboard selection, then rerun the same request and verify first-run `created`, retry `updated`, and no duplicate dashboard creation.
 
-- [ ] T009 [US1] Add create/update idempotency tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts` for first-run create and retry update outcomes
-- [ ] T010 [US1] Implement `x_datadog:dashboard:create` action schema and handler input/output contract in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T011 [US1] Implement per-dashboard provisioning loop (create or update by logical identity, retain successful outcomes) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T012 [US1] Finalize action registration/export wiring in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
+- [X] T009 [US1] Add create/update idempotency tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts` for first-run create and retry update outcomes
+- [X] T010 [US1] Implement `x_datadog:dashboard:create` action schema and handler input/output contract in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T011 [US1] Implement per-dashboard provisioning loop (create or update by logical identity, retain successful outcomes) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T012 [US1] Finalize action registration/export wiring in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.ts`
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 
@@ -65,10 +65,10 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Independent Test**: Execute one scaffold request containing multiple dashboard selections with different `baselineId` and `templateVariables`; confirm all selections are processed and payloads reflect template-provided display values.
 
-- [ ] T013 [US2] Add multi-dashboard baseline-selection tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T014 [US2] Implement baseline-to-dashboard composition (merge baseline content with `name`, `description`, `tags`, and `templateVariables`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
-- [ ] T015 [P] [US2] Update action contract examples for baseline selection in `specs/004-datadog-dashboard-scaffolding/contracts/scaffolder-action.md`
-- [ ] T016 [P] [US2] Replace “planned” dashboard action README content with implemented usage/configuration in `src/plugins/scaffolder-backend-module-datadog/README.md`
+- [X] T013 [US2] Add multi-dashboard baseline-selection tests in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T014 [US2] Implement baseline-to-dashboard composition (merge baseline content with `name`, `description`, `team`, and `templateVariables`) in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts`
+- [X] T015 [P] [US2] Update action contract examples for baseline selection in `specs/004-datadog-dashboard-scaffolding/contracts/scaffolder-action.md`
+- [X] T016 [P] [US2] Replace “planned” dashboard action README content with implemented usage/configuration in `src/plugins/scaffolder-backend-module-datadog/README.md`
 
 **Checkpoint**: User Stories 1 and 2 are independently functional.
 
@@ -80,12 +80,12 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Independent Test**: Execute invalid requests (missing required fields, duplicate names, unmanaged ownership conflict) and verify the step fails with index/name-specific messages and reported partial successes.
 
-- [ ] T017 [US3] Add validation coverage for missing required fields and duplicate names in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T018 [US3] Add unmanaged-dashboard ownership collision coverage in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
-- [ ] T019 [US3] Implement top-level request validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `projectKey` = "Non-empty stable project key used across retries", `dashboards` = "`minItems = 1`; duplicate `name` values rejected"
-- [ ] T020 [US3] Implement per-selection validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `name` = "Non-empty dashboard display name; unique per request for a given `projectKey`", `baselineId` = "Non-empty; must map to a known reusable baseline", `description` = "Optional non-empty display description override", `tags` = "Optional additional Datadog dashboard tags", `templateVariables` = "Optional substitutions for baseline-declared variables"
-- [ ] T021 [US3] Implement failure reporting semantics in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (per-dashboard `status` with index/name context and step-level failure summary)
-- [ ] T022 [US3] Document validation and ownership failure troubleshooting in `src/plugins/scaffolder-backend-module-datadog/README.md`
+- [X] T017 [US3] Add validation coverage for missing required fields and duplicate names in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T018 [US3] Add unmanaged-dashboard ownership collision coverage in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.test.ts`
+- [X] T019 [US3] Implement top-level request validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `projectKey` = "Non-empty stable project key used across retries", `dashboards` = "`minItems = 1`; duplicate `name` values rejected"
+- [X] T020 [US3] Implement per-selection validation in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` with quoted constraints: `name` = "Non-empty dashboard display name; unique per request for a given `projectKey`", `baselineId` = "Non-empty; must map to a known reusable baseline", `description` = "Optional non-empty display description override", `team` = "Optional Datadog team names", `templateVariables` = "Optional substitutions for baseline-declared variables"
+- [X] T021 [US3] Implement failure reporting semantics in `src/plugins/scaffolder-backend-module-datadog/src/actions/dashboard/create.ts` (per-dashboard `status` with index/name context and step-level failure summary)
+- [X] T022 [US3] Document validation and ownership failure troubleshooting in `src/plugins/scaffolder-backend-module-datadog/README.md`
 
 **Checkpoint**: All user stories are independently functional and failures are actionable.
 
@@ -95,9 +95,9 @@ description: "Task list for Scaffolder Datadog Dashboard Baseline implementation
 
 **Purpose**: Final consistency, validation, and documentation alignment across the feature.
 
-- [ ] T023 [P] Reconcile final action exports/registration assertions for both Datadog actions in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts`
-- [ ] T024 [P] Align verification guidance and expected outcomes in `specs/004-datadog-dashboard-scaffolding/quickstart.md`
-- [ ] T025 Run package and repository validation commands and capture any command/document corrections in `src/plugins/scaffolder-backend-module-datadog/README.md`
+- [X] T023 [P] Reconcile final action exports/registration assertions for both Datadog actions in `src/plugins/scaffolder-backend-module-datadog/src/actions/index.ts` and `src/plugins/scaffolder-backend-module-datadog/src/module.test.ts`
+- [X] T024 [P] Align verification guidance and expected outcomes in `specs/004-datadog-dashboard-scaffolding/quickstart.md`
+- [X] T025 Run package and repository validation commands and capture any command/document corrections in `src/plugins/scaffolder-backend-module-datadog/README.md`
 
 ---
 

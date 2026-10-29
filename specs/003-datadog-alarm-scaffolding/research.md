@@ -27,7 +27,10 @@
 ## Decision 3: Use platform configuration for one Datadog account
 
 - **Decision**: Read Datadog credentials/site from backend runtime
-  configuration and do not allow templates to choose account credentials.
+  configuration under `integrations.datadog` and do not allow templates to
+  choose account credentials. The `server` and `authMethods` keys mirror the
+  configuration parameters of the official Datadog API client
+  (`@datadog/datadog-api-client`), which the action uses to call Datadog.
 - **Rationale**: FR-009 requires one platform-configured account and the
   constitution requires environment-driven configuration and secret handling.
 - **Alternatives considered**: User-scoped request secrets or account selection

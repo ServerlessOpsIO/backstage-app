@@ -9,22 +9,24 @@ configuration.
 
 ## Configuration
 
-Set Datadog credentials and site in app config (environment-backed values are
-recommended):
+Set the Datadog site and credentials under `integrations.datadog` in app
+config (environment-backed values are recommended):
 
 ```yaml
-scaffolder:
+integrations:
   datadog:
-    site: ${DATADOG_SITE}
-    apiKey: ${DATADOG_API_KEY}
-    appKey: ${DATADOG_APP_KEY}
+    server: ${DATADOG_SITE}
+    authMethods:
+      apiKeyAuth: ${DATADOG_API_KEY}
+      appKeyAuth: ${DATADOG_APP_KEY}
 ```
 
 Required keys:
 
-- `scaffolder.datadog.site`
-- `scaffolder.datadog.apiKey`
-- `scaffolder.datadog.appKey`
+- `integrations.datadog.server`: the Datadog site, such as `datadoghq.com` or
+  `us5.datadoghq.com`
+- `integrations.datadog.authMethods.apiKeyAuth`
+- `integrations.datadog.authMethods.appKeyAuth`
 
 ## Actions
 
@@ -35,13 +37,56 @@ action is idempotent by logical identity and emits per-monitor outcomes.
 
 See source: `src/actions/alarm/create.ts`.
 
-### `x_datadog:dashboard:create` (planned in spec 004)
+### `x_datadog:dashboard:create` (available)
 
-The dashboard baseline provisioning action contract is defined in
+Creates or updates one or more Datadog dashboards from reusable baseline
+definitions in a single scaffolder step.
+
+Key behavior:
+
+- Requires a non-empty stable `projectKey` and at least one dashboard entry.
+- Uses a baseline catalog (`baselineId`) plus template-provided display values
+  (`name`, optional `description`, optional `team`, optional
+  `templateVariables`).
+- Dashboard `team` input values are sent as Datadog `team:<value>` tags. No tags
+  are generated when `team` is omitted, and existing tags are not overwritten
+  during updates in that case. The scaffolder's ownership marker is stored in
+  the dashboard description.
+- Is idempotent by logical identity (`projectKey + dashboard name`) and updates
+  existing scaffolder-managed dashboards on retry.
+- Emits one result per requested dashboard and fails the step when any required
+  dashboard fails, while retaining successful dashboards.
+
+Template step example:
+
+```yaml
+steps:
+  - id: createDatadogDashboards
+    name: Create Datadog dashboards
+    action: x_datadog:dashboard:create
+    input:
+      projectKey: '{{ parameters.projectKey }}'
+      dashboards:
+        - name: '{{ parameters.name }} Service Overview'
+          baselineId: service-overview-v1
+          team:
+            - '{{ parameters.team }}'
+          templateVariables:
+            service: '{{ parameters.name }}'
+            environment: '{{ parameters.environment }}'
+```
+
+Full contract and response shape:
 `specs/004-datadog-dashboard-scaffolding/contracts/scaffolder-action.md`.
 
-This action identifier is reserved for dashboard provisioning and will be
-implemented in this module as part of spec 004.
+Troubleshooting:
+
+- `projectKey` must be non-empty and dashboard names must be unique per request.
+- Every dashboard item must provide non-empty `name` and `baselineId`.
+- `baselineId` values must exist in the module baseline catalog.
+- If a dashboard already exists for the same project key/name but is not marked
+  as scaffolder-managed in its description (or legacy tags), provisioning fails
+  with an ownership collision error and does not modify that dashboard.
 
 ## Registration
 
@@ -52,3 +97,14 @@ backend.add(import('@internal/backstage-plugin-scaffolder-backend-module-datadog
 ```
 
 This registration is already present in `src/packages/backend/src/index.ts`.
+
+## Validation
+
+Recommended validation commands after changes in this module:
+
+```sh
+cd src
+yarn workspace @internal/backstage-plugin-scaffolder-backend-module-datadog test
+yarn workspace @internal/backstage-plugin-scaffolder-backend-module-datadog lint
+yarn tsc
+```

@@ -19,9 +19,3 @@ auth:
         signIn:
           resolvers:
             - resolver: emailMatchingUserEntityProfileEmail
-
-scaffolder:
-  datadog:
-    site: ${DATADOG_SITE}
-    apiKey: ${DATADOG_API_KEY}
-    appKey: ${DATADOG_APP_KEY}

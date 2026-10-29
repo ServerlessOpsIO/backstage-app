@@ -33,7 +33,7 @@
 ## Decision 4: Enforce idempotency and managed-only updates
 
 - **Decision**: Treat `projectKey + dashboard name` as logical identity, persist
-  identity tags on scaffolder-created dashboards, update matching managed
+  identity metadata in the dashboard description, update matching managed
   dashboards on retry, and fail clearly when a matching unmanaged dashboard is
   found.
 - **Rationale**: FR-007 and edge cases require deterministic repeat execution

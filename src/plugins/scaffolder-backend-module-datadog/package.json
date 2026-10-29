@@ -26,7 +26,8 @@
   "dependencies": {
     "@backstage/backend-plugin-api": "backstage:^",
     "@backstage/config": "backstage:^",
-    "@backstage/plugin-scaffolder-node": "backstage:^"
+    "@backstage/plugin-scaffolder-node": "backstage:^",
+    "@datadog/datadog-api-client": "^1.64.0"
   },
   "devDependencies": {
     "@backstage/cli": "backstage:^",

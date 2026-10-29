@@ -1,7 +1,7 @@
 import { coreServices, createBackendModule } from '@backstage/backend-plugin-api'
 import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node'
 
-import { createDatadogAlarmAction } from './actions'
+import { createDatadogAlarmAction, createDatadogDashboardAction } from './actions'
 
 export const scaffolderModuleDatadog = createBackendModule({
   pluginId: 'scaffolder',
@@ -15,6 +15,7 @@ export const scaffolderModuleDatadog = createBackendModule({
       async init({ scaffolderActions, rootConfig }) {
         scaffolderActions.addActions(
           createDatadogAlarmAction({ config: rootConfig }),
+          createDatadogDashboardAction({ config: rootConfig }),
         )
       },
     })
