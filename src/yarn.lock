@@ -28992,6 +28992,7 @@ __metadata:
     "@backstage/e2e-test-utils": "backstage:^"
     "@jest/environment-jsdom-abstract": "npm:~30.2.0"
     "@playwright/test": "npm:^1.32.3"
+    "@swc/jest": "npm:^0.2.39"
     "@types/jest": "npm:^30.0.0"
     jest: "npm:~30.2.0"
     jsdom: "npm:^27.1.0"

@@ -7,7 +7,7 @@ interface WidgetPosition {
 }
 
 function readAppConfig(): string {
-  const appConfigPath = path.resolve(__dirname, '../../../../app-config.yaml');
+  const appConfigPath = path.resolve(__dirname, 'app-config.yaml');
   return fs.readFileSync(appConfigPath, 'utf8');
 }
 

@@ -2,7 +2,7 @@ import { OAuthApi } from '@backstage/core-plugin-api';
 import {
   GoogleCalendarClient,
   buildLocalDayWindow,
-} from '../api/google-calendar-client';
+} from './google-calendar-client';
 
 function createAuthApiMock(): OAuthApi {
   return {
