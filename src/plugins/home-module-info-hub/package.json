@@ -35,8 +35,11 @@
     "@backstage/core-plugin-api": "backstage:^",
     "@backstage/frontend-plugin-api": "backstage:^",
     "@backstage/plugin-home-react": "backstage:^",
-    "@octokit/rest": "^22.0.0",
-    "react": "^18.0.2"
+    "@octokit/rest": "^22.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.2",
+    "react-dom": "^18.0.2"
   },
   "devDependencies": {
     "@backstage/cli": "backstage:^",

@@ -7,10 +7,6 @@ import {
 function createAuthApiMock(): OAuthApi {
   return {
     getAccessToken: jest.fn().mockResolvedValue('google-token-123'),
-    getIdToken: jest.fn(),
-    getProfile: jest.fn(),
-    getBackstageIdentity: jest.fn(),
-    signOut: jest.fn(),
   };
 }
 
@@ -59,9 +55,9 @@ describe('GoogleCalendarClient', () => {
       now: new Date('2026-10-28T14:15:30.000Z'),
     });
 
-    expect(result.status).toBe('unavailable');
-    if (result.status === 'unavailable') {
-      expect(result.message).toContain('HTTP 503');
-    }
+    expect(result).toMatchObject({
+      status: 'unavailable',
+      message: expect.stringContaining('HTTP 503'),
+    });
   });
 });

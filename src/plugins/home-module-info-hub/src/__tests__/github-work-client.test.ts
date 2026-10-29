@@ -21,10 +21,6 @@ type MockOctokitResponseItem = {
 function createAuthApiMock(): OAuthApi {
   return {
     getAccessToken: jest.fn().mockResolvedValue('token-123'),
-    getIdToken: jest.fn(),
-    getProfile: jest.fn(),
-    getBackstageIdentity: jest.fn(),
-    signOut: jest.fn(),
   };
 }
 

@@ -21,9 +21,10 @@ export interface GoogleCalendarWidgetProps {
 }
 
 export function GoogleCalendarWidget(props: GoogleCalendarWidgetProps): JSX.Element {
-  const { title, loadTodayEvents, now = new Date() } = props;
+  const { title, loadTodayEvents, now } = props;
   const authApi = useApi(googleAuthApiRef);
   const client = useMemo(() => new GoogleCalendarClient(authApi), [authApi]);
+  const requestNow = useMemo(() => now ?? new Date(), [now]);
   const [state, setState] = useState<WidgetDataState<CalendarEventSummary[]>>(
     createLoadingState(),
   );
@@ -38,7 +39,7 @@ export function GoogleCalendarWidget(props: GoogleCalendarWidgetProps): JSX.Elem
 
     setState(createLoadingState());
 
-    loader({ calendarId: 'primary', now })
+    loader({ calendarId: 'primary', now: requestNow })
       .then(result => {
         if (cancelled) {
           return;
@@ -60,7 +61,7 @@ export function GoogleCalendarWidget(props: GoogleCalendarWidgetProps): JSX.Elem
     return () => {
       cancelled = true;
     };
-  }, [client, loadTodayEvents, now]);
+  }, [client, loadTodayEvents, requestNow]);
 
   if (state.status === 'ready') {
     return (

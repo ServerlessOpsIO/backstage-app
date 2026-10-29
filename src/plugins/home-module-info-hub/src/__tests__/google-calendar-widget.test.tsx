@@ -1,11 +1,27 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { GoogleCalendarWidget } from '../components/google-calendar-widget';
 
+const mockGoogleAuthApi = {
+  getAccessToken: jest.fn(),
+};
+
 jest.mock('@backstage/core-plugin-api', () => ({
   googleAuthApiRef: {},
-  useApi: () => ({
-    getAccessToken: jest.fn(),
-  }),
+  useApi: () => mockGoogleAuthApi,
+}));
+
+jest.mock('../components/widget-state-panel', () => ({
+  WidgetStatePanel: ({
+    state,
+    loadingMessage,
+  }: {
+    state: { status: string; message?: string };
+    loadingMessage?: string;
+  }) => (
+    <div>
+      {state.status === 'loading' ? loadingMessage : state.message}
+    </div>
+  ),
 }));
 
 describe('GoogleCalendarWidget', () => {

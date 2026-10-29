@@ -115,10 +115,10 @@ description: "Task list for implementing homepage useful information hub"
 
 **Purpose**: Final consistency, validation, and delivery readiness across stories.
 
-- [ ] T031 [P] Align environment-driven config notes for auth/provider prerequisites in src/app-config.home.yaml and src/app-config.production.yaml for GitHub + Google user flows
-- [ ] T032 [P] Update implementation notes and manual verification steps in specs/005-homepage-info-hub/quickstart.md for final widget IDs, no-data states, and variant review workflow
-- [ ] T033 Execute `yarn tsc:full`, `yarn build:all`, `yarn lint:all`, and `yarn test:all` from src/ and record outcomes in specs/005-homepage-info-hub/artifacts/validation-report.md
-- [ ] T034 Perform final contract consistency pass across specs/005-homepage-info-hub/spec.md, specs/005-homepage-info-hub/plan.md, and specs/005-homepage-info-hub/contracts/homepage-info-hub-ui-contracts.md and document deltas in specs/005-homepage-info-hub/artifacts/consistency-notes.md
+- [X] T031 [P] Align environment-driven config notes for auth/provider prerequisites in src/app-config.home.yaml and src/app-config.production.yaml for GitHub + Google user flows
+- [X] T032 [P] Update implementation notes and manual verification steps in specs/005-homepage-info-hub/quickstart.md for final widget IDs, no-data states, and variant review workflow
+- [X] T033 Execute `yarn tsc:full`, `yarn build:all`, `yarn lint:all`, and `yarn test:all` from src/ and record outcomes in specs/005-homepage-info-hub/artifacts/validation-report.md
+- [X] T034 Perform final contract consistency pass across specs/005-homepage-info-hub/spec.md, specs/005-homepage-info-hub/plan.md, and specs/005-homepage-info-hub/contracts/homepage-info-hub-ui-contracts.md and document deltas in specs/005-homepage-info-hub/artifacts/consistency-notes.md
 
 ---
 

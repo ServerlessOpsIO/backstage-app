@@ -35,6 +35,9 @@ backend:
 
 auth:
   environment: production
+  # Homepage info hub prerequisites:
+  # - Google provider powers user sign-in and today's calendar widget data.
+  # - GitHub provider powers personalized issues and pull request widgets.
   providers:
     guest: null
     google:

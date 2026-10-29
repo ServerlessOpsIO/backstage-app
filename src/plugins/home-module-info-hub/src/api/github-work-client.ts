@@ -44,7 +44,7 @@ interface OctokitSearchItem {
   pull_request?: object;
   user?: {
     login?: string;
-  };
+  } | null;
 }
 
 interface OctokitLike {

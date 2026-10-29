@@ -56,7 +56,7 @@ interface GitHubWorkItem {
 }
 
 type GitHubWorkResult =
-  | { status: 'ready'; items: GitHubWorkItem[] }
+  | { status: 'ready'; data: GitHubWorkItem[] }
   | { status: 'empty'; message: string }
   | { status: 'unavailable'; message: string }
 ```
@@ -102,7 +102,7 @@ interface CalendarEventSummary {
 }
 
 type CalendarTodayResult =
-  | { status: 'ready'; events: CalendarEventSummary[] }
+  | { status: 'ready'; data: CalendarEventSummary[] }
   | { status: 'empty'; message: string }
   | { status: 'unavailable'; message: string }
 ```

@@ -10,8 +10,18 @@ backend:
 
 auth:
   environment: home
+  # Homepage info hub prerequisites:
+  # - Google provider is required for sign-in and the "Today's Calendar" widget.
+  # - GitHub provider is required for personal GitHub work widgets.
   providers:
     guest: null
+    google:
+      home:
+        clientId: ${AUTH_GOOGLE_CLIENT_ID}
+        clientSecret: ${AUTH_GOOGLE_CLIENT_SECRET}
+        signIn:
+          resolvers:
+            - resolver: emailMatchingUserEntityProfileEmail
     github:
       home:
         clientId: ${GITHUB_AUTH_CLIENT_ID}

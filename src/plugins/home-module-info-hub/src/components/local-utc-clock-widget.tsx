@@ -14,7 +14,7 @@ function formatClockTime(date: Date, timeZone?: string): string {
 }
 
 function resolveLocalTimeZone(): string | undefined {
-  const resolved = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const resolved = new Intl.DateTimeFormat().resolvedOptions().timeZone;
   if (!resolved || resolved.trim().length === 0) {
     return undefined;
   }

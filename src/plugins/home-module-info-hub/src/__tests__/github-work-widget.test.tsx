@@ -1,16 +1,33 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { GitHubWorkResult } from '../api/github-work-client';
 import { GitHubWorkWidget } from '../components/github-work-widget';
+
+const mockGitHubAuthApi = {
+  getAccessToken: jest.fn(),
+};
 
 jest.mock('@backstage/core-plugin-api', () => ({
   githubAuthApiRef: {},
-  useApi: () => ({
-    getAccessToken: jest.fn(),
-  }),
+  useApi: () => mockGitHubAuthApi,
+}));
+
+jest.mock('../components/widget-state-panel', () => ({
+  WidgetStatePanel: ({
+    state,
+    loadingMessage,
+  }: {
+    state: { status: string; message?: string };
+    loadingMessage?: string;
+  }) => (
+    <div>
+      {state.status === 'loading' ? loadingMessage : state.message}
+    </div>
+  ),
 }));
 
 describe('GitHubWorkWidget', () => {
   test('shows loading state while data is being fetched', () => {
-    const unresolved = new Promise(() => {});
+    const unresolved = new Promise<GitHubWorkResult>(() => {});
 
     render(
       <GitHubWorkWidget

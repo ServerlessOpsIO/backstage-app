@@ -4,6 +4,25 @@ This guide validates the feature end-to-end in development.
 Data contracts: `contracts/homepage-info-hub-ui-contracts.md`  
 Entity/state model: `data-model.md`
 
+## Final Widget IDs
+
+- `HomePageLocalAndUtcClock`
+- `HomePageGitHubOpenedIssues`
+- `HomePageGitHubAssignedIssues`
+- `HomePageGitHubOpenedPrs`
+- `HomePageGitHubReviewRequestedPrs`
+- `HomePageGoogleCalendarToday`
+
+## No-Data / Unavailable State Copy
+
+- GitHub opened issues empty: `No open issues created by you were found.`
+- GitHub assigned issues empty: `No open issues assigned to you were found.`
+- GitHub opened PRs empty: `No open pull requests created by you were found.`
+- GitHub review-requested PRs empty: `No open pull requests requesting your review were found.`
+- GitHub unavailable (no link): `GitHub account is not linked for the current user.`
+- Calendar empty: `No events are scheduled for today.`
+- Calendar unavailable (no link): `Google Calendar account is not linked for the current user.`
+
 ## Prerequisites
 
 - Node.js `v24.16.0`
@@ -76,11 +95,13 @@ Expected outcome:
 1. Configure/render Variant A and Variant B layouts.
 2. Capture screenshots/mockups for both variants.
 3. Verify each variant preserves full required widget set and toolkit links.
+4. Review both artifacts with stakeholders and select the preferred layout for final rollout.
 
 Current review artifacts:
 
 - [Variant A screenshot](./artifacts/variant-a.png)
 - [Variant B screenshot](./artifacts/variant-b.png)
+- [Current homepage screenshot](./artifacts/homepage-final.png)
 
 Expected outcome:
 - Meets FR-015..FR-016 and SC-005.
