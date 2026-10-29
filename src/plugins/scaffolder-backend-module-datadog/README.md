@@ -46,12 +46,12 @@ Key behavior:
 
 - Requires a non-empty stable `projectKey` and at least one dashboard entry.
 - Uses a baseline catalog (`baselineId`) plus template-provided display values
-  (`name`, optional `description`, optional `tags`, optional
+  (`name`, optional `description`, optional `team`, optional
   `templateVariables`).
-- No dashboard tags are generated automatically. Workflows may provide Datadog
-  tags through the optional `tags` input; omitted tags are left unset (and are
-  not overwritten during updates). The scaffolder's ownership marker is stored
-  in the dashboard description.
+- Dashboard `team` input values are sent as Datadog `team:<value>` tags. No tags
+  are generated when `team` is omitted, and existing tags are not overwritten
+  during updates in that case. The scaffolder's ownership marker is stored in
+  the dashboard description.
 - Is idempotent by logical identity (`projectKey + dashboard name`) and updates
   existing scaffolder-managed dashboards on retry.
 - Emits one result per requested dashboard and fails the step when any required
@@ -69,9 +69,8 @@ steps:
       dashboards:
         - name: '{{ parameters.name }} Service Overview'
           baselineId: service-overview-v1
-          tags:
-            - service:{{ parameters.name }}
-            - env:{{ parameters.environment }}
+          team:
+            - '{{ parameters.team }}'
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'

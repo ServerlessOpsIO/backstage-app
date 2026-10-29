@@ -12,7 +12,7 @@ dashboards:
   - name: string                           # required, display name
     baselineId: string                     # required, reusable baseline selection
     description: string                    # optional display description override
-    tags: [string]                         # optional workflow-provided Datadog tags
+    team: [string]                         # optional Datadog team names
     templateVariables:                     # optional project-specific substitutions
       <key>: string
 ```
@@ -46,8 +46,9 @@ results:
   combines it with template-provided project display values.
 - Persists a stable action-managed logical identity for each dashboard from
   `projectKey + dashboard name` in the dashboard description.
-- Dashboard tags are passed through from workflow input; no tags are generated
-  automatically. When omitted, tags are left unset, including on updates.
+- Dashboard `team` values are sent as `team:<value>` Datadog tags. No tags are
+  generated when `team` is omitted; on updates, existing tags are left
+  untouched.
 - Updates an existing dashboard only when it is marked as scaffolder-managed.
 - If a matching unmanaged dashboard exists, the item fails explicitly and is not
   modified.
@@ -69,16 +70,15 @@ steps:
         - name: '{{ parameters.name }} Service Overview'
           baselineId: service-overview-v1
           description: 'Overview dashboard for {{ parameters.name }}'
-          tags:
-            - service:{{ parameters.name }}
-            - env:{{ parameters.environment }}
+          team:
+            - '{{ parameters.team }}'
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'
         - name: '{{ parameters.name }} SLI'
           baselineId: service-overview-v1
-          tags:
-            - team:platform
+          team:
+            - platform
           templateVariables:
             service: '{{ parameters.name }}'
             environment: '{{ parameters.environment }}'

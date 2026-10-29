@@ -89,13 +89,7 @@ describe('x_datadog:dashboard:create', () => {
           {
             name: 'Payments Service Overview',
             baselineId: 'service-overview-v1',
-            tags: [
-              ' service:payments ',
-              'env:prod',
-              'team:payments',
-              'ai:assistant',
-              ' ',
-            ],
+            team: ['payments', ' platform ', ' '],
             templateVariables: {
               service: 'payments',
               environment: 'prod',
@@ -111,12 +105,7 @@ describe('x_datadog:dashboard:create', () => {
     expect(createDashboardApi).toHaveBeenCalledTimes(1)
     const createPayload = createDashboardApi.mock.calls[0][0].body
     expect(createPayload.title).toBe('Payments Service Overview')
-    expect(createPayload.tags).toEqual([
-      'service:payments',
-      'env:prod',
-      'team:payments',
-      'ai:assistant',
-    ])
+    expect(createPayload.tags).toEqual(['team:payments', 'team:platform'])
     expect(createPayload.description).toContain(
       buildDashboardIdentityMarker('payments-service', 'Payments Service Overview'),
     )
@@ -240,7 +229,7 @@ describe('x_datadog:dashboard:create', () => {
             name: 'Checkout SLI Dashboard',
             baselineId: 'service-overview-v1',
             description: 'Checkout service SLI view',
-            tags: ['team:payments'],
+            team: ['payments'],
             templateVariables: {
               service: 'checkout',
               environment: 'staging',

@@ -21,7 +21,7 @@ export type DashboardSelection = {
   name: string
   baselineId: string
   description?: string
-  tags?: string[]
+  team?: string[]
   templateVariables?: Record<string, string>
 }
 
@@ -256,9 +256,10 @@ function buildDashboardPayload(
     projectKey,
     selection.name,
   )
-  const tags = selection.tags
-    ?.map(tag => tag.trim())
-    .filter(tag => tag.length > 0)
+  const teams = selection.team
+    ?.map(team => team.trim())
+    .filter(team => team.length > 0)
+  const tags = teams?.map(team => `team:${team}`)
 
   return {
     title: selection.name.trim(),
@@ -361,11 +362,11 @@ export function createDatadogDashboardAction(options: { config: Config }) {
                     description: 'Optional dashboard description override',
                   })
                   .optional(),
-                tags: z
+                team: z
                   .array(
                     z.string({
                       description:
-                        'Optional Datadog dashboard tags supplied by the workflow',
+                        'Optional Datadog team names to associate with the dashboard',
                     }),
                   )
                   .optional(),
