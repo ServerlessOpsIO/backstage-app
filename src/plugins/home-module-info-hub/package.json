@@ -6,6 +6,10 @@
   "description": "The info hub frontend module for the home plugin.",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "main": "dist/index.cjs.js",

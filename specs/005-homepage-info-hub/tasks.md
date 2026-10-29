@@ -31,12 +31,12 @@ description: "Task list for implementing homepage useful information hub"
 
 **⚠️ CRITICAL**: No user story work begins until this phase is complete.
 
-- [ ] T004 Implement shared type contracts and runtime guards in src/plugins/home-module-info-hub/src/models/homepage-info-hub.ts with these rules quoted in code-level validation: "`id` must be unique within one layout variant.", "URL must be `https://`.", "All required widgets from FR-001..FR-013 must be present in every published layout variant."
-- [ ] T005 [P] Implement shared widget state model helpers in src/plugins/home-module-info-hub/src/models/widget-data-state.ts enforcing: "`ready` requires data payload present." and "`empty` and `unavailable` must provide explicit message text."
-- [ ] T006 [P] Implement reusable UI state renderer for loading/empty/unavailable messaging in src/plugins/home-module-info-hub/src/components/widget-state-panel.tsx
-- [ ] T007 Register stable widget IDs from contracts in src/plugins/home-module-info-hub/src/module.tsx (`HomePageGitHubOpenedIssues`, `HomePageGitHubAssignedIssues`, `HomePageGitHubOpenedPrs`, `HomePageGitHubReviewRequestedPrs`, `HomePageGoogleCalendarToday`)
-- [ ] T008 Export module entrypoints in src/plugins/home-module-info-hub/src/index.ts and ensure package export map in src/plugins/home-module-info-hub/package.json is valid for workspace builds
-- [ ] T009 Wire finalized module registration into src/packages/app/src/App.tsx and keep composition-only behavior in src/packages/app/src/modules/home/homeModule.tsx
+- [X] T004 Implement shared type contracts and runtime guards in src/plugins/home-module-info-hub/src/models/homepage-info-hub.ts with these rules quoted in code-level validation: "`id` must be unique within one layout variant.", "URL must be `https://`.", "All required widgets from FR-001..FR-013 must be present in every published layout variant."
+- [X] T005 [P] Implement shared widget state model helpers in src/plugins/home-module-info-hub/src/models/widget-data-state.ts enforcing: "`ready` requires data payload present." and "`empty` and `unavailable` must provide explicit message text."
+- [X] T006 [P] Implement reusable UI state renderer for loading/empty/unavailable messaging in src/plugins/home-module-info-hub/src/components/widget-state-panel.tsx
+- [X] T007 Register stable widget IDs from contracts in src/plugins/home-module-info-hub/src/module.tsx (`HomePageGitHubOpenedIssues`, `HomePageGitHubAssignedIssues`, `HomePageGitHubOpenedPrs`, `HomePageGitHubReviewRequestedPrs`, `HomePageGoogleCalendarToday`)
+- [X] T008 Export module entrypoints in src/plugins/home-module-info-hub/src/index.ts and ensure package export map in src/plugins/home-module-info-hub/package.json is valid for workspace builds
+- [X] T009 Wire finalized module registration into src/packages/app/src/App.tsx and keep composition-only behavior in src/packages/app/src/modules/home/homeModule.tsx
 
 **Checkpoint**: Foundation ready for independent user story implementation.
 
