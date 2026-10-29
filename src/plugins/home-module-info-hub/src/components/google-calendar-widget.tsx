@@ -153,7 +153,9 @@ export function GoogleCalendarWidget(
   if (state.status === 'ready') {
     return (
       <Table
-        components={{ Container: props => <div {...props} /> }}
+        components={{
+          Container: containerProps => <div {...containerProps} />,
+        }}
         columns={columns}
         data={state.data}
         options={{
