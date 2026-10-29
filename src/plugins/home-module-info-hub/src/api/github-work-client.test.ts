@@ -3,7 +3,7 @@ import {
   GitHubWorkCategory,
   GitHubWorkClient,
   GitHubWorkItem,
-} from '../api/github-work-client';
+} from './github-work-client';
 
 type MockOctokitResponseItem = {
   id: number;
@@ -30,7 +30,7 @@ function createClientWithMocks(items: MockOctokitResponseItem[]) {
     data: { login: 'portal-user' },
   });
   const issuesAndPullRequests = jest.fn().mockResolvedValue({
-    data: { items },
+    data: { items, total_count: items.length },
   });
 
   const client = new GitHubWorkClient(authApi, () => ({
@@ -41,7 +41,9 @@ function createClientWithMocks(items: MockOctokitResponseItem[]) {
   return { client, issuesAndPullRequests };
 }
 
-function expectReadyResult(result: unknown): asserts result is { status: 'ready'; data: GitHubWorkItem[] } {
+function expectReadyResult(
+  result: unknown,
+): asserts result is { status: 'ready'; data: GitHubWorkItem[] } {
   if (
     typeof result !== 'object' ||
     result === null ||
@@ -56,7 +58,12 @@ function expectReadyResult(result: unknown): asserts result is { status: 'ready'
 
 describe('GitHubWorkClient', () => {
   test.each<
-    [GitHubWorkCategory, string, MockOctokitResponseItem, GitHubWorkItem['kind']]
+    [
+      GitHubWorkCategory,
+      string,
+      MockOctokitResponseItem,
+      GitHubWorkItem['kind'],
+    ]
   >([
     [
       'issues-opened',
@@ -67,7 +74,8 @@ describe('GitHubWorkClient', () => {
         number: 11,
         html_url: 'https://github.com/ServerlessOpsIO/backstage-app/issues/11',
         updated_at: '2026-10-28T10:00:00.000Z',
-        repository_url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
+        repository_url:
+          'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
         user: { login: 'portal-user' },
       },
       'issue',
@@ -81,7 +89,8 @@ describe('GitHubWorkClient', () => {
         number: 12,
         html_url: 'https://github.com/ServerlessOpsIO/backstage-app/issues/12',
         updated_at: '2026-10-28T10:05:00.000Z',
-        repository_url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
+        repository_url:
+          'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
         user: { login: 'teammate' },
       },
       'issue',
@@ -95,8 +104,11 @@ describe('GitHubWorkClient', () => {
         number: 13,
         html_url: 'https://github.com/ServerlessOpsIO/backstage-app/pull/13',
         updated_at: '2026-10-28T10:10:00.000Z',
-        repository_url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
-        pull_request: { url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app/pulls/13' },
+        repository_url:
+          'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
+        pull_request: {
+          url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app/pulls/13',
+        },
         user: { login: 'portal-user' },
       },
       'pull_request',
@@ -110,8 +122,11 @@ describe('GitHubWorkClient', () => {
         number: 14,
         html_url: 'https://github.com/ServerlessOpsIO/backstage-app/pull/14',
         updated_at: '2026-10-28T10:15:00.000Z',
-        repository_url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
-        pull_request: { url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app/pulls/14' },
+        repository_url:
+          'https://api.github.com/repos/ServerlessOpsIO/backstage-app',
+        pull_request: {
+          url: 'https://api.github.com/repos/ServerlessOpsIO/backstage-app/pulls/14',
+        },
         user: { login: 'teammate' },
       },
       'pull_request',
@@ -126,6 +141,7 @@ describe('GitHubWorkClient', () => {
       expect(issuesAndPullRequests).toHaveBeenCalledWith({
         q: expectedQuery,
         per_page: 5,
+        page: 1,
         sort: 'updated',
         order: 'desc',
       });
@@ -140,8 +156,23 @@ describe('GitHubWorkClient', () => {
 
   test('returns empty state when no work items are found', async () => {
     const { client } = createClientWithMocks([]);
-    const result = await client.getWorkItems({ category: 'issues-opened', maxItems: 5 });
+    const result = await client.getWorkItems({
+      category: 'issues-opened',
+      maxItems: 5,
+    });
 
     expect(result.status).toBe('empty');
+  });
+
+  test('converts zero-based pages to GitHub pages', async () => {
+    const { client, issuesAndPullRequests } = createClientWithMocks([]);
+    await client.getWorkItems({
+      category: 'issues-opened',
+      maxItems: 5,
+      page: 2,
+    });
+    expect(issuesAndPullRequests).toHaveBeenCalledWith(
+      expect.objectContaining({ per_page: 5, page: 3 }),
+    );
   });
 });

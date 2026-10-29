@@ -67,7 +67,7 @@ function assertCalendarQueryWindow(now: Date, queryWindow: CalendarQueryWindow):
     queryWindow.timeMax.getTime() !== expectedEnd
   ) {
     throw new Error(
-      "Query window must represent the current day in the browser's local timezone.",
+      "Query window must represent the selected day in the browser's local timezone.",
     );
   }
 }
@@ -144,7 +144,7 @@ export class GoogleCalendarClient {
         .filter((event): event is CalendarEventSummary => Boolean(event));
 
       if (events.length === 0) {
-        return createEmptyState('No events are scheduled for today.');
+        return createEmptyState('No events are scheduled for this day.');
       }
 
       return createReadyState(events);

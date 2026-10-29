@@ -16,6 +16,7 @@ export type GitHubWorkCategory =
 export interface GitHubWorkRequest {
   category: GitHubWorkCategory;
   maxItems: number;
+  page?: number;
 }
 
 export interface GitHubWorkItem {
@@ -29,10 +30,12 @@ export interface GitHubWorkItem {
   authorLogin: string;
 }
 
-export type GitHubWorkResult = Extract<
-  WidgetDataState<GitHubWorkItem[]>,
-  { status: 'ready' | 'empty' | 'unavailable' }
->;
+export type GitHubWorkResult =
+  | Extract<
+      WidgetDataState<GitHubWorkItem[]>,
+      { status: 'empty' | 'unavailable' }
+    >
+  | { status: 'ready'; data: GitHubWorkItem[]; totalCount: number };
 
 interface OctokitSearchItem {
   id: number;
@@ -59,11 +62,13 @@ interface OctokitLike {
     issuesAndPullRequests: (params: {
       q: string;
       per_page: number;
+      page: number;
       sort: 'updated';
       order: 'desc';
     }) => Promise<{
       data: {
         items: OctokitSearchItem[];
+        total_count: number;
       };
     }>;
   };
@@ -79,12 +84,22 @@ const CATEGORY_QUERY_PREFIX: Record<GitHubWorkCategory, string> = {
 };
 
 function assertGitHubRequest(request: GitHubWorkRequest): void {
-  if (!Object.prototype.hasOwnProperty.call(CATEGORY_QUERY_PREFIX, request.category)) {
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      CATEGORY_QUERY_PREFIX,
+      request.category,
+    )
+  ) {
     throw new Error('Exactly one category per widget.');
   }
 
   if (request.maxItems <= 0 || request.maxItems > MAX_ITEMS_LIMIT) {
-    throw new Error('`maxItems` must be positive and bounded for rendering consistency.');
+    throw new Error(
+      '`maxItems` must be positive and bounded for rendering consistency.',
+    );
+  }
+  if (!Number.isInteger(request.page ?? 0) || (request.page ?? 0) < 0) {
+    throw new Error('`page` must be a non-negative integer.');
   }
 }
 
@@ -101,7 +116,10 @@ function assertGitHubHttpsUrl(url: string): void {
   }
 }
 
-function isExpectedKind(item: OctokitSearchItem, category: GitHubWorkCategory): boolean {
+function isExpectedKind(
+  item: OctokitSearchItem,
+  category: GitHubWorkCategory,
+): boolean {
   if (category === 'issues-opened' || category === 'issues-assigned') {
     return !item.pull_request;
   }
@@ -128,7 +146,8 @@ function getEmptyMessage(category: GitHubWorkCategory): string {
     'issues-opened': 'No open issues created by you were found.',
     'issues-assigned': 'No open issues assigned to you were found.',
     'prs-opened': 'No open pull requests created by you were found.',
-    'prs-review-requested': 'No open pull requests requesting your review were found.',
+    'prs-review-requested':
+      'No open pull requests requesting your review were found.',
   };
   return messages[category];
 }
@@ -146,15 +165,20 @@ export class GitHubWorkClient {
 
       const token = await this.authApi.getAccessToken(['read:user']);
       if (!token) {
-        return createUnavailableState('GitHub account is not linked for the current user.');
+        return createUnavailableState(
+          'GitHub account is not linked for the current user.',
+        );
       }
 
       const octokit = this.createOctokit(token);
       const { data: profile } = await octokit.users.getAuthenticated();
-      const query = `${CATEGORY_QUERY_PREFIX[request.category]}${profile.login}`;
+      const query = `${CATEGORY_QUERY_PREFIX[request.category]}${
+        profile.login
+      }`;
       const { data } = await octokit.search.issuesAndPullRequests({
         q: query,
         per_page: request.maxItems,
+        page: (request.page ?? 0) + 1,
         sort: 'updated',
         order: 'desc',
       });
@@ -167,10 +191,16 @@ export class GitHubWorkClient {
         return createEmptyState(getEmptyMessage(request.category));
       }
 
-      return createReadyState(normalizedItems);
+      return {
+        ...createReadyState(normalizedItems),
+        totalCount: Math.min(data.total_count, 1000),
+      };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown GitHub API error.';
-      return createUnavailableState(`GitHub data is currently unavailable: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown GitHub API error.';
+      return createUnavailableState(
+        `GitHub data is currently unavailable: ${errorMessage}`,
+      );
     }
   }
 }

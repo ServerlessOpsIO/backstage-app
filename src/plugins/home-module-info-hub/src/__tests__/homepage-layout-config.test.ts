@@ -70,25 +70,40 @@ describe('Homepage layout config', () => {
     const { widgetOrder, positions } = parseLayoutPositions(config);
 
     expect(widgetOrder[0]).toBe('HomePageSearchBar');
+    expect(widgetOrder).not.toEqual(
+      expect.arrayContaining([
+        'GettingStarted',
+        'HomePageStarredEntities',
+        'HomePageMostVisited',
+        'HomePageRecentlyVisited',
+      ]),
+    );
 
     const expectedPositions: Record<string, WidgetPosition> = {
       HomePageSearchBar: { column: 0, row: 0 },
-      GettingStarted: { column: 0, row: 1 },
-      HomePageStarredEntities: { column: 4, row: 2 },
-      HomePageToolkit: { column: 4, row: 6 },
-      HomePageLocalAndUtcClock: { column: 8, row: 6 },
-      HomePageMostVisited: { column: 4, row: 9 },
-      HomePageRecentlyVisited: { column: 8, row: 9 },
-      HomePageGitHubOpenedIssues: { column: 0, row: 13 },
-      HomePageGitHubAssignedIssues: { column: 6, row: 13 },
-      HomePageGitHubOpenedPrs: { column: 0, row: 17 },
-      HomePageGitHubReviewRequestedPrs: { column: 6, row: 17 },
-      HomePageGoogleCalendarToday: { column: 0, row: 21 },
+      HomePageServerlessOpsLogo: { column: 0, row: 2 },
+      HomePageToolkit: { column: 4, row: 2 },
+      HomePageLocalAndUtcClock: { column: 8, row: 2 },
+      HomePageGitHubOpenedIssues: { column: 0, row: 6 },
+      HomePageGitHubAssignedIssues: { column: 0, row: 12 },
+      HomePageGitHubOpenedPrs: { column: 0, row: 18 },
+      HomePageGitHubReviewRequestedPrs: { column: 0, row: 24 },
+      HomePageGoogleCalendarToday: { column: 9, row: 6 },
     };
 
     for (const [widgetId, expected] of Object.entries(expectedPositions)) {
       expect(positions.get(widgetId)).toEqual(expected);
+      if (widgetId.startsWith('HomePageGitHub')) {
+        expect(config).toMatch(
+          new RegExp(
+            `component: ${widgetId}\\n\\s+column: 0\\n\\s+row: ${expected.row}\\n\\s+width: 9\\n\\s+height: 6\\n`,
+          ),
+        );
+      }
     }
+    expect(config).toMatch(
+      /component: HomePageGoogleCalendarToday\n\s+column: 9\n\s+row: 6\n\s+width: 3\n\s+height: 24\n/,
+    );
   });
 
   test('contains required toolkit destinations', () => {

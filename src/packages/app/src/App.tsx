@@ -2,9 +2,14 @@ import { createApp } from '@backstage/frontend-defaults';
 import catalogPlugin from '@backstage/plugin-catalog/alpha';
 import { configApiRef, googleAuthApiRef, useApi } from '@backstage/core-plugin-api';
 import { SignInPageBlueprint } from '@backstage/plugin-app-react';
-import { SignInPage } from '@backstage/core-components';
+import { InfoCard, SignInPage } from '@backstage/core-components';
 import { createFrontendModule } from '@backstage/frontend-plugin-api';
 import scaffolderPlugin from '@backstage/plugin-scaffolder/alpha';
+import homePlugin from '@backstage/plugin-home/alpha';
+import { homePageWidgetDataRef } from '@backstage/plugin-home-react/alpha';
+import { CardExtensionProps } from '@backstage/plugin-home-react';
+import { cloneElement, ReactElement } from 'react';
+import './toolkit.css';
 
 // external plugins
 import githubActionsPlugin from '@backstage-community/plugin-github-actions/alpha';
@@ -16,8 +21,6 @@ import serverlessOpsApiDocsModule from '@internal/backstage-plugin-api-docs-modu
 import appModuleNav from '@internal/backstage-plugin-app-module-nav';
 import homeModuleInfoHub from '@internal/backstage-plugin-home-module-info-hub';
 import soContextualEntityPickerModule from '@internal/backstage-plugin-scaffolder-entity-pickers';
-
-import { homeModule } from './modules/home';
 
 const signInPage = SignInPageBlueprint.make({
   params: {
@@ -59,7 +62,35 @@ const signInPage = SignInPageBlueprint.make({
 export default createApp({
   features: [
     catalogPlugin,
-    homeModule,
+    homePlugin.withOverrides({
+      extensions: [
+        homePlugin.getExtension('home-page-widget:home/toolkit').override({
+          factory(originalFactory) {
+            const widget = originalFactory().get(homePageWidgetDataRef);
+            return [
+              homePageWidgetDataRef({
+                ...widget,
+                component: cloneElement(
+                  widget.component as ReactElement<CardExtensionProps<{}>>,
+                  {
+                    Renderer: ({ title, Content, ContextProvider }) => {
+                      const content = <Content />;
+                      return (
+                        <InfoCard title={title} className="serverlessops-toolkit">
+                          {ContextProvider ? (
+                            <ContextProvider>{content}</ContextProvider>
+                          ) : content}
+                        </InfoCard>
+                      );
+                    },
+                  },
+                ),
+              }),
+            ];
+          },
+        }),
+      ],
+    }),
     homeModuleInfoHub,
     scaffolderPlugin,
     githubActionsPlugin,

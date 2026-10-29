@@ -1,8 +1,26 @@
 import { createFrontendModule } from '@backstage/frontend-plugin-api';
 import { HomePageWidgetBlueprint } from '@backstage/plugin-home-react/alpha';
-import { GitHubWorkWidget } from './components/github-work-widget';
-import { GoogleCalendarWidget } from './components/google-calendar-widget';
+import {
+  GitHubWorkWidget,
+  GitHubWorkWidgetRenderer,
+} from './components/github-work-widget';
+import {
+  GoogleCalendarWidget,
+  GoogleCalendarWidgetRenderer,
+} from './components/google-calendar-widget';
 import { LocalUtcClockWidget } from './components/local-utc-clock-widget';
+import { ServerlessOpsLogoWidget } from './components/serverlessops-logo-widget';
+
+const serverlessOpsLogoWidget = HomePageWidgetBlueprint.make({
+  name: 'serverlessops-logo',
+  params: {
+    name: 'HomePageServerlessOpsLogo',
+    title: 'ServerlessOps',
+    description: 'ServerlessOps logo',
+    componentProps: { Renderer: ServerlessOpsLogoWidget },
+    components: async () => ({ Content: ServerlessOpsLogoWidget }),
+  },
+});
 
 const localUtcClockWidget = HomePageWidgetBlueprint.make({
   name: 'local-utc-clock',
@@ -19,6 +37,7 @@ const localUtcClockWidget = HomePageWidgetBlueprint.make({
 const githubOpenedIssuesWidget = HomePageWidgetBlueprint.make({
   name: 'github-opened-issues',
   params: {
+    componentProps: { Renderer: GitHubWorkWidgetRenderer },
     name: 'HomePageGitHubOpenedIssues',
     title: 'Opened Issues',
     description: 'Open issues created by the signed-in user',
@@ -31,6 +50,7 @@ const githubOpenedIssuesWidget = HomePageWidgetBlueprint.make({
 const githubAssignedIssuesWidget = HomePageWidgetBlueprint.make({
   name: 'github-assigned-issues',
   params: {
+    componentProps: { Renderer: GitHubWorkWidgetRenderer },
     name: 'HomePageGitHubAssignedIssues',
     title: 'Assigned Issues',
     description: 'Open issues assigned to the signed-in user',
@@ -43,6 +63,7 @@ const githubAssignedIssuesWidget = HomePageWidgetBlueprint.make({
 const githubOpenedPrsWidget = HomePageWidgetBlueprint.make({
   name: 'github-opened-prs',
   params: {
+    componentProps: { Renderer: GitHubWorkWidgetRenderer },
     name: 'HomePageGitHubOpenedPrs',
     title: 'Opened Pull Requests',
     description: 'Open pull requests created by the signed-in user',
@@ -55,6 +76,7 @@ const githubOpenedPrsWidget = HomePageWidgetBlueprint.make({
 const githubReviewRequestedPrsWidget = HomePageWidgetBlueprint.make({
   name: 'github-review-requested-prs',
   params: {
+    componentProps: { Renderer: GitHubWorkWidgetRenderer },
     name: 'HomePageGitHubReviewRequestedPrs',
     title: 'Review Requested Pull Requests',
     description: 'Open pull requests requesting review from the signed-in user',
@@ -67,6 +89,7 @@ const githubReviewRequestedPrsWidget = HomePageWidgetBlueprint.make({
 const googleCalendarTodayWidget = HomePageWidgetBlueprint.make({
   name: 'google-calendar-today',
   params: {
+    componentProps: { Renderer: GoogleCalendarWidgetRenderer },
     name: 'HomePageGoogleCalendarToday',
     title: "Today's Calendar",
     description: "Today's events from the signed-in user's primary Google Calendar",
@@ -79,6 +102,7 @@ const googleCalendarTodayWidget = HomePageWidgetBlueprint.make({
 export const homeModuleInfoHub = createFrontendModule({
   pluginId: 'home',
   extensions: [
+    serverlessOpsLogoWidget,
     localUtcClockWidget,
     githubOpenedIssuesWidget,
     githubAssignedIssuesWidget,

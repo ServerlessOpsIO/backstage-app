@@ -45,61 +45,46 @@ app:
               width: 12
               height: 2
               deletable: false
-            - component: GettingStarted
+            - component: HomePageServerlessOpsLogo
               column: 0
-              row: 1
-              width: 4
-              height: 11
-            - component: HomePageStarredEntities
-              column: 4
               row: 2
               width: 4
-              height: 4
+              height: 3
             - component: HomePageToolkit
               column: 4
-              row: 6
+              row: 2
               width: 4
               height: 3
             - component: HomePageLocalAndUtcClock
               column: 8
-              row: 6
+              row: 2
               width: 4
               height: 3
-            - component: HomePageMostVisited
-              column: 4
-              row: 9
-              width: 4
-              height: 4
-            - component: HomePageRecentlyVisited
-              column: 8
-              row: 9
-              width: 4
-              height: 4
             - component: HomePageGitHubOpenedIssues
               column: 0
-              row: 13
-              width: 6
-              height: 4
+              row: 6
+              width: 9
+              height: 5
             - component: HomePageGitHubAssignedIssues
-              column: 6
-              row: 13
-              width: 6
-              height: 4
+              column: 0
+              row: 12
+              width: 9
+              height: 5
             - component: HomePageGitHubOpenedPrs
               column: 0
-              row: 17
-              width: 6
-              height: 4
+              row: 18
+              width: 9
+              height: 5
             - component: HomePageGitHubReviewRequestedPrs
-              column: 6
-              row: 17
-              width: 6
-              height: 4
-            - component: HomePageGoogleCalendarToday
               column: 0
-              row: 21
-              width: 12
-              height: 4
+              row: 24
+              width: 9
+              height: 5
+            - component: HomePageGoogleCalendarToday
+              column: 9
+              row: 6
+              width: 3
+              height: 20
     # Catalog
     - page:catalog:
         config:
