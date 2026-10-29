@@ -50,15 +50,15 @@ description: "Task list for implementing homepage useful information hub"
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add homepage layout/config assertions in src/plugins/home-module-info-hub/src/__tests__/homepage-layout-config.test.ts for required widget presence and current component grid positions from src/app-config.yaml (search 0/0, GettingStarted 0/1, starred entities 4/2, toolkit 4/6, world clock 8/6, most visited 4/9, recently visited 8/9; column/row); after layout selection, assert positions for all required widgets and update expected positions before the implementation commit
+- [X] T010 [P] [US1] Add homepage layout/config assertions in src/plugins/home-module-info-hub/src/__tests__/homepage-layout-config.test.ts for required widget presence and current component grid positions from src/app-config.yaml (search 0/0, GettingStarted 0/1, starred entities 4/2, toolkit 4/6, world clock 8/6, most visited 4/9, recently visited 8/9; column/row); after layout selection, assert positions for all required widgets and update expected positions before the implementation commit
 
 ### Implementation for User Story 1
 
-- [ ] T011 [P] [US1] Update toolkit links to required destinations in src/app-config.yaml under `home-page-widget:home/toolkit`
-- [ ] T012 [US1] Preserve `HomePageSearchBar` as first row entry and maintain required home layout slots in src/app-config.yaml `page:home.defaultConfig`
-- [ ] T013 [P] [US1] Implement local-and-UTC clock widget component in src/plugins/home-module-info-hub/src/components/local-utc-clock-widget.tsx showing browser-local timezone label and UTC simultaneously
-- [ ] T014 [US1] Register local+UTC clock widget in src/plugins/home-module-info-hub/src/module.tsx and update src/app-config.yaml world clock component mapping to use the new widget
-- [ ] T015 [US1] Add unavailable fallback behavior for unresolved timezone detection in src/plugins/home-module-info-hub/src/components/local-utc-clock-widget.tsx without impacting other widgets
+- [X] T011 [P] [US1] Update toolkit links to required destinations in src/app-config.yaml under `home-page-widget:home/toolkit`
+- [X] T012 [US1] Preserve `HomePageSearchBar` as first row entry and maintain required home layout slots in src/app-config.yaml `page:home.defaultConfig`
+- [X] T013 [P] [US1] Implement local-and-UTC clock widget component in src/plugins/home-module-info-hub/src/components/local-utc-clock-widget.tsx showing browser-local timezone label and UTC simultaneously
+- [X] T014 [US1] Register local+UTC clock widget in src/plugins/home-module-info-hub/src/module.tsx and update src/app-config.yaml world clock component mapping to use the new widget
+- [X] T015 [US1] Add unavailable fallback behavior for unresolved timezone detection in src/plugins/home-module-info-hub/src/components/local-utc-clock-widget.tsx without impacting other widgets
 
 **Checkpoint**: User Story 1 is functional and independently testable.
 

@@ -16,26 +16,23 @@ app:
     - home-page-widget:home/toolkit:
         config:
           tools:
-            - url: https://backstage.io/docs
-              label: Docs
-              icon: docs
-            - url: https://github.com/backstage/backstage
+            - url: https://serverlessops.awsapps.com/start/#/
+              label: AWS
+              icon: cloud
+            - url: https://github.com/ServerlessOpsIO
               label: GitHub
               icon: github
-            - url: https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md
-              label: Contributing
-              icon: docs
-            - url: https://backstage.io/plugins
-              label: Plugins Directory
-              icon: kind:component
-            - url: https://github.com/backstage/backstage/issues/new/choose
-              label: Submit New Issue
-              icon: github
+            - url: https://us5.datadoghq.com/account/login
+              label: Datadog
+              icon: dashboard
+            - url: https://admin.google.com
+              label: Google Workspace
+              icon: search
     - home-page-widget:home/world-clock:
         config:
           clockConfigs:
-            - label: NYC
-              timeZone: America/New_York
+            - label: Local
+              timeZone: UTC
             - label: UTC
               timeZone: UTC
     - page:home:
@@ -63,7 +60,7 @@ app:
               row: 6
               width: 4
               height: 3
-            - component: HomePageWorldClock
+            - component: HomePageLocalAndUtcClock
               column: 8
               row: 6
               width: 4

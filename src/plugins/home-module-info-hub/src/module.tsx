@@ -2,6 +2,19 @@ import { createFrontendModule } from '@backstage/frontend-plugin-api';
 import { HomePageWidgetBlueprint } from '@backstage/plugin-home-react/alpha';
 import { GitHubWorkWidget } from './components/github-work-widget';
 import { GoogleCalendarWidget } from './components/google-calendar-widget';
+import { LocalUtcClockWidget } from './components/local-utc-clock-widget';
+
+const localUtcClockWidget = HomePageWidgetBlueprint.make({
+  name: 'local-utc-clock',
+  params: {
+    name: 'HomePageLocalAndUtcClock',
+    title: 'World Clocks',
+    description: 'Current local time and UTC',
+    components: async () => ({
+      Content: () => <LocalUtcClockWidget />,
+    }),
+  },
+});
 
 const githubOpenedIssuesWidget = HomePageWidgetBlueprint.make({
   name: 'github-opened-issues',
@@ -66,6 +79,7 @@ const googleCalendarTodayWidget = HomePageWidgetBlueprint.make({
 export const homeModuleInfoHub = createFrontendModule({
   pluginId: 'home',
   extensions: [
+    localUtcClockWidget,
     githubOpenedIssuesWidget,
     githubAssignedIssuesWidget,
     githubOpenedPrsWidget,
