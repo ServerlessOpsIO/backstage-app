@@ -96,16 +96,16 @@ description: "Task list for implementing homepage useful information hub"
 
 ### Tests for User Story 3
 
-- [ ] T024 [P] [US3] Add query-window and state tests in src/plugins/home-module-info-hub/src/__tests__/google-calendar-client.test.ts for browser-local-day boundaries and unavailable handling
-- [ ] T025 [P] [US3] Add render-state tests in src/plugins/home-module-info-hub/src/__tests__/google-calendar-widget.test.tsx for ready/empty/unavailable outputs
+- [X] T024 [P] [US3] Add query-window and state tests in src/plugins/home-module-info-hub/src/__tests__/google-calendar-client.test.ts for browser-local-day boundaries and unavailable handling
+- [X] T025 [P] [US3] Add render-state tests in src/plugins/home-module-info-hub/src/__tests__/google-calendar-widget.test.tsx for ready/empty/unavailable outputs
 
 ### Implementation for User Story 3
 
-- [ ] T026 [US3] Implement Google Calendar today client in src/plugins/home-module-info-hub/src/api/google-calendar-client.ts using primary calendar and enforce constraints verbatim: "`timeMin < timeMax`." and "Query window must represent the current day in the browser's local timezone."
-- [ ] T027 [US3] Implement today-events widget UI in src/plugins/home-module-info-hub/src/components/google-calendar-widget.tsx with explicit no-events and unavailable states
-- [ ] T028 [US3] Register `HomePageGoogleCalendarToday` widget in src/plugins/home-module-info-hub/src/module.tsx and add it to src/app-config.yaml `page:home.defaultConfig`
-- [ ] T029 [US3] Create two complete layout definitions in specs/005-homepage-info-hub/layout/variant-a.md and specs/005-homepage-info-hub/layout/variant-b.md ensuring each variant includes all required widgets and required toolkit links
-- [ ] T030 [US3] Capture stakeholder review artifacts at specs/005-homepage-info-hub/artifacts/variant-a.png and specs/005-homepage-info-hub/artifacts/variant-b.png and link them from specs/005-homepage-info-hub/quickstart.md
+- [X] T026 [US3] Implement Google Calendar today client in src/plugins/home-module-info-hub/src/api/google-calendar-client.ts using primary calendar and enforce constraints verbatim: "`timeMin < timeMax`." and "Query window must represent the current day in the browser's local timezone."
+- [X] T027 [US3] Implement today-events widget UI in src/plugins/home-module-info-hub/src/components/google-calendar-widget.tsx with explicit no-events and unavailable states
+- [X] T028 [US3] Register `HomePageGoogleCalendarToday` widget in src/plugins/home-module-info-hub/src/module.tsx and add it to src/app-config.yaml `page:home.defaultConfig`
+- [X] T029 [US3] Create two complete layout definitions in specs/005-homepage-info-hub/layout/variant-a.md and specs/005-homepage-info-hub/layout/variant-b.md ensuring each variant includes all required widgets and required toolkit links
+- [X] T030 [US3] Capture stakeholder review artifacts at specs/005-homepage-info-hub/artifacts/variant-a.png and specs/005-homepage-info-hub/artifacts/variant-b.png and link them from specs/005-homepage-info-hub/quickstart.md
 
 **Checkpoint**: All user stories are independently functional and review-ready.
 

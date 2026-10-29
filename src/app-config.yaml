@@ -95,6 +95,11 @@ app:
               row: 17
               width: 6
               height: 4
+            - component: HomePageGoogleCalendarToday
+              column: 0
+              row: 21
+              width: 12
+              height: 4
     # Catalog
     - page:catalog:
         config:

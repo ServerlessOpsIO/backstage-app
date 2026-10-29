@@ -83,6 +83,7 @@ describe('Homepage layout config', () => {
       HomePageGitHubAssignedIssues: { column: 6, row: 13 },
       HomePageGitHubOpenedPrs: { column: 0, row: 17 },
       HomePageGitHubReviewRequestedPrs: { column: 6, row: 17 },
+      HomePageGoogleCalendarToday: { column: 0, row: 21 },
     };
 
     for (const [widgetId, expected] of Object.entries(expectedPositions)) {

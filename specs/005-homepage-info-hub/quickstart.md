@@ -77,6 +77,11 @@ Expected outcome:
 2. Capture screenshots/mockups for both variants.
 3. Verify each variant preserves full required widget set and toolkit links.
 
+Current review artifacts:
+
+- [Variant A screenshot](./artifacts/variant-a.png)
+- [Variant B screenshot](./artifacts/variant-b.png)
+
 Expected outcome:
 - Meets FR-015..FR-016 and SC-005.
 
