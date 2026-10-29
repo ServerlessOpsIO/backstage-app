@@ -126,7 +126,9 @@ export function GitHubWorkWidget(props: GitHubWorkWidgetProps): JSX.Element {
   if (state.status === 'ready') {
     return (
       <Table
-        components={{ Container: props => <div {...props} /> }}
+        components={{
+          Container: containerProps => <div {...containerProps} />,
+        }}
         columns={columns}
         data={state.data}
         page={page}
