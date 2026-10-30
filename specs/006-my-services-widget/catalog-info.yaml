@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: backstage-app-spec-006
+  title: "006 - My services widget"
+  description: "Homepage widget listing services owned by the user or their groups"
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/backstage-app
+    serverlessops.io/spec-dir: specs/006-my-services-widget
+    serverlessops.io/spec-number: "006"
+    backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/006-my-services-widget/
+  tags:
+    - speckit
+  links:
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/006-my-services-widget/spec.md
+      title: Specification
+      icon: docs
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/006-my-services-widget/plan.md
+      title: Implementation plan
+      icon: docs
+spec:
+  type: doc-spec
+  owner: group:00gjdgxs1ur6lsu
+  system: backstage
+  dependsOn:
+    - component:default/backstage-app
