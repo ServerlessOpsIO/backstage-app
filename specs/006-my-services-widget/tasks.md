@@ -17,7 +17,7 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 **Purpose**: Add the catalog React API dependency to the existing home module.
 
-- [ ] T001 Add `@backstage/plugin-catalog-react` to `src/plugins/home-module-info-hub/package.json` and update `src/yarn.lock` using the repository package manager
+- [X] T001 Add `@backstage/plugin-catalog-react` to `src/plugins/home-module-info-hub/package.json` and update `src/yarn.lock` using the repository package manager
 
 ---
 
@@ -37,14 +37,14 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 ### Tests for User Story 1
 
-- [ ] T002 [US1] Add colocated tests for ownership filtering, duplicate suppression, display-name sorting, title fallback, service links, empty ownership refs, loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx`
+- [X] T002 [US1] Add colocated tests for ownership filtering, duplicate suppression, display-name sorting, title fallback, service links, empty ownership refs, loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx`
 
 ### Implementation for User Story 1
 
-- [ ] T003 [P] [US1] Define the `MyService` model, catalog-entity mapping, owner fallback, missing-name handling, display-name sorting, and optional lifecycle data in `src/plugins/home-module-info-hub/src/models/my-services.ts`
-- [ ] T004 [US1] Implement the widget's identity lookup, guarded catalog query, service rows, service links, and loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
-- [ ] T005 [US1] Register the `HomePageMyServices` widget using a `HomePageWidgetBlueprint` named `my-services` in `src/plugins/home-module-info-hub/src/module.tsx`
-- [ ] T006 [P] [US1] Add `HomePageMyServices` to `src/app-config.yaml` at column 0, row 12, width 9, height 8; shift the GitHub widgets to rows 20, 26, 32, and 38; set the calendar height to 28; and update `src/app-config.test.ts` to assert the new layout and widget presence
+- [X] T003 [P] [US1] Define the `MyService` model, catalog-entity mapping, owner fallback, missing-name handling, display-name sorting, and optional lifecycle data in `src/plugins/home-module-info-hub/src/models/my-services.ts`
+- [X] T004 [US1] Implement the widget's identity lookup, guarded catalog query, service rows, service links, and loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
+- [X] T005 [US1] Register the `HomePageMyServices` widget using a `HomePageWidgetBlueprint` named `my-services` in `src/plugins/home-module-info-hub/src/module.tsx`
+- [X] T006 [P] [US1] Add `HomePageMyServices` to `src/app-config.yaml` at column 0, row 12, width 9, height 8; shift the GitHub widgets to rows 20, 26, 32, and 38; set the calendar height to 28; and update `src/app-config.test.ts` to assert the new layout and widget presence
 
 **Checkpoint**: User Story 1 is independently usable with direct/group ownership, safe empty refs, links, and explicit data states.
 
@@ -58,11 +58,11 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 ### Tests for User Story 2
 
-- [ ] T007 [US2] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with owner-link, lifecycle, and mocked missing-lifecycle response cases
+- [X] T007 [US2] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with owner-link, lifecycle, and mocked missing-lifecycle response cases
 
 ### Implementation for User Story 2
 
-- [ ] T008 [US2] Render linked owner and optional lifecycle columns in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
+- [X] T008 [US2] Render linked owner and optional lifecycle columns in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
 
 **Checkpoint**: User Story 2 adds ownership context while preserving the User Story 1 listing and states.
 
@@ -76,11 +76,11 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 ### Tests for User Story 3
 
-- [ ] T009 [US3] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with 13-service paging and "View all" destination cases
+- [X] T009 [US3] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with 13-service paging and "View all" destination cases
 
 ### Implementation for User Story 3
 
-- [ ] T010 [US3] Add local paging at 10 services per page, show the pager only above 10 results, and add the contract's filtered "View all" link in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
+- [X] T010 [US3] Add local paging at 10 services per page, show the pager only above 10 results, and add the contract's filtered "View all" link in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
 
 **Checkpoint**: User Story 3 exposes every service and a full catalog route without additional catalog requests.
 
@@ -90,9 +90,9 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 **Purpose**: Keep operator-facing documentation and repository validation aligned with the feature.
 
-- [ ] T011 [P] Document the My Services widget and saved-layout caveat in `src/plugins/home-module-info-hub/README.md`
-- [ ] T012 [P] Update `specs/006-my-services-widget/quickstart.md` so every temporary Component has a valid lifecycle and the missing-lifecycle scenario is covered by the mocked widget test rather than invalid catalog data
-- [ ] T013 Run `yarn workspace @internal/backstage-plugin-home-module-info-hub test --watchAll=false` from `src/` and resolve failures
+- [X] T011 [P] Document the My Services widget and saved-layout caveat in `src/plugins/home-module-info-hub/README.md`
+- [X] T012 [P] Update `specs/006-my-services-widget/quickstart.md` so every temporary Component has a valid lifecycle and the missing-lifecycle scenario is covered by the mocked widget test rather than invalid catalog data
+- [X] T013 Run `yarn workspace @internal/backstage-plugin-home-module-info-hub test --watchAll=false` from `src/` and resolve failures
 - [ ] T014 Run `yarn tsc:full`, `yarn build:all`, `yarn test:all`, and `yarn lint:all` from `src/` and resolve failures
 
 ---

@@ -69,31 +69,36 @@ app:
               row: 4
               width: 4
               height: 5
-            - component: HomePageGitHubOpenedIssues
+            - component: HomePageMyServices
               column: 0
               row: 12
+              width: 9
+              height: 8
+            - component: HomePageGitHubOpenedIssues
+              column: 0
+              row: 20
               width: 9
               height: 5
             - component: HomePageGitHubAssignedIssues
               column: 0
-              row: 18
+              row: 26
               width: 9
               height: 5
             - component: HomePageGitHubOpenedPrs
               column: 0
-              row: 24
+              row: 32
               width: 9
               height: 5
             - component: HomePageGitHubReviewRequestedPrs
               column: 0
-              row: 30
+              row: 38
               width: 9
               height: 5
             - component: HomePageGoogleCalendarToday
               column: 9
               row: 12
               width: 3
-              height: 20
+              height: 28
     # Catalog
     - page:catalog:
         config:

@@ -14,6 +14,10 @@ import {
   DatadogMonitorsWidget,
   DatadogMonitorsWidgetRenderer,
 } from './components/datadog-monitors-widget';
+import {
+  MySystemsWidget,
+  MySystemsWidgetRenderer,
+} from './components/my-systems-widget';
 
 const datadogMonitorsWidget = HomePageWidgetBlueprint.make({
   name: 'datadog-monitors',
@@ -23,6 +27,17 @@ const datadogMonitorsWidget = HomePageWidgetBlueprint.make({
     description: 'Datadog monitors matching the configured alert query',
     componentProps: { Renderer: DatadogMonitorsWidgetRenderer },
     components: async () => ({ Content: DatadogMonitorsWidget }),
+  },
+});
+
+const mySystemsWidget = HomePageWidgetBlueprint.make({
+  name: 'my-services',
+  params: {
+    name: 'HomePageMyServices',
+    title: 'My Systems',
+    description: 'Systems owned by you or your groups',
+    componentProps: { Renderer: MySystemsWidgetRenderer },
+    components: async () => ({ Content: MySystemsWidget }),
   },
 });
 
@@ -119,6 +134,7 @@ export const homeModuleInfoHub = createFrontendModule({
   extensions: [
     serverlessOpsLogoWidget,
     datadogMonitorsWidget,
+    mySystemsWidget,
     localUtcClockWidget,
     githubOpenedIssuesWidget,
     githubAssignedIssuesWidget,

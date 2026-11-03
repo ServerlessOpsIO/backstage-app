@@ -34,6 +34,7 @@
     "@backstage/core-components": "backstage:^",
     "@backstage/core-plugin-api": "backstage:^",
     "@backstage/frontend-plugin-api": "backstage:^",
+    "@backstage/plugin-catalog-react": "backstage:^",
     "@backstage/plugin-home-react": "backstage:^",
     "@material-ui/core": "^4.12.2",
     "@octokit/rest": "^22.0.0"

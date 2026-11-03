@@ -91,10 +91,11 @@ describe('Homepage layout config', () => {
       HomePageDatadogMonitors: { column: 0, row: 4 },
       HomePageToolkit: { column: 4, row: 4 },
       HomePageLocalAndUtcClock: { column: 8, row: 4 },
-      HomePageGitHubOpenedIssues: { column: 0, row: 12 },
-      HomePageGitHubAssignedIssues: { column: 0, row: 18 },
-      HomePageGitHubOpenedPrs: { column: 0, row: 24 },
-      HomePageGitHubReviewRequestedPrs: { column: 0, row: 30 },
+      HomePageMyServices: { column: 0, row: 12 },
+      HomePageGitHubOpenedIssues: { column: 0, row: 20 },
+      HomePageGitHubAssignedIssues: { column: 0, row: 26 },
+      HomePageGitHubOpenedPrs: { column: 0, row: 32 },
+      HomePageGitHubReviewRequestedPrs: { column: 0, row: 38 },
       HomePageGoogleCalendarToday: { column: 9, row: 12 },
     };
 
@@ -116,7 +117,10 @@ describe('Homepage layout config', () => {
       }
     }
     expect(config).toMatch(
-      /component: HomePageGoogleCalendarToday\n\s+column: 9\n\s+row: 12\n\s+width: 3\n\s+height: 20\n/,
+      /component: HomePageMyServices\n\s+column: 0\n\s+row: 12\n\s+width: 9\n\s+height: 8\n/,
+    );
+    expect(config).toMatch(
+      /component: HomePageGoogleCalendarToday\n\s+column: 9\n\s+row: 12\n\s+width: 3\n\s+height: 28\n/,
     );
   });
 
