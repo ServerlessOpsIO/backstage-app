@@ -58,11 +58,11 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 ### Tests for User Story 2
 
-- [ ] T007 [US2] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with owner-link, lifecycle, and mocked missing-lifecycle response cases
+- [X] T007 [US2] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with owner-link, lifecycle, and mocked missing-lifecycle response cases
 
 ### Implementation for User Story 2
 
-- [ ] T008 [US2] Render linked owner and optional lifecycle columns in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
+- [X] T008 [US2] Render linked owner and optional lifecycle columns in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
 
 **Checkpoint**: User Story 2 adds ownership context while preserving the User Story 1 listing and states.
 

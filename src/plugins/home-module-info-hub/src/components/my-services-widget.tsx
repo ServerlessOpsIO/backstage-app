@@ -16,6 +16,20 @@ const columns: TableColumn<MyService>[] = [
       <EntityRefLink entityRef={service.ref}>{service.displayName}</EntityRefLink>
     ),
   },
+  {
+    title: 'Owner',
+    field: 'owner',
+    render: service =>
+      service.owner ? (
+        <EntityRefLink entityRef={service.owner} defaultKind="group" />
+      ) : null,
+  },
+  {
+    title: 'Lifecycle',
+    field: 'lifecycle',
+    width: '120px',
+    render: service => service.lifecycle ?? '',
+  },
 ];
 
 export function MyServicesWidgetRenderer({ title, Content }: RendererProps) {

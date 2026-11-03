@@ -21,12 +21,12 @@ function service(
   name: string,
   owner: string,
   extra: Partial<TestEntity['metadata']> = {},
-  lifecycle: string | undefined = 'production',
+  lifecycle: string | null = 'production',
 ): TestEntity {
   return {
     kind: 'Component',
     metadata: { name, namespace: 'default', ...extra },
-    spec: { type: 'service', owner, lifecycle },
+    spec: { type: 'service', owner, lifecycle: lifecycle ?? undefined },
     relations: [{ type: 'ownedBy', targetRef: owner }],
   };
 }
@@ -212,5 +212,45 @@ describe('MyServicesWidget', () => {
     expect(
       await screen.findByText(/Your services are currently unavailable\./),
     ).toBeVisible();
+  });
+
+  test('shows the linked owner and lifecycle for each service', async () => {
+    render({
+      entities: [
+        service('direct-svc', 'user:default/jdoe', {}, 'experimental'),
+        service('group-svc', 'group:default/team-a', {}, 'production'),
+      ],
+    });
+
+    await screen.findByText('direct-svc');
+    const [table] = screen.getAllByRole('table');
+    expect(
+      within(table)
+        .getAllByRole('columnheader')
+        .map(header => header.textContent),
+    ).toEqual(['Service', 'Owner', 'Lifecycle']);
+
+    const [direct, group] = within(table).getAllByRole('row').slice(1);
+    expect(within(direct).getByText('experimental')).toBeVisible();
+    expect(within(group).getByText('production')).toBeVisible();
+    expect(within(group).getByRole('link', { name: /team-a/ })).toHaveAttribute(
+      'href',
+      '/catalog/default/group/team-a',
+    );
+    expect(within(direct).getByRole('link', { name: /jdoe/ })).toHaveAttribute(
+      'href',
+      '/catalog/default/user/jdoe',
+    );
+  });
+
+  test('still lists a service whose lifecycle is missing', async () => {
+    render({
+      entities: [service('no-lifecycle', 'user:default/jdoe', {}, null)],
+    });
+
+    expect(await screen.findByText('no-lifecycle')).toBeVisible();
+    const [table] = screen.getAllByRole('table');
+    const [row] = within(table).getAllByRole('row').slice(1);
+    expect(within(row).getAllByRole('cell')[2]).toBeEmptyDOMElement();
   });
 });
