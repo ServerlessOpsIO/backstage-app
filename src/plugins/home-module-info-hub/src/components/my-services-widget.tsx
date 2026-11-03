@@ -7,6 +7,10 @@ import { MyService, toMyServices } from '../models/my-services';
 import { WidgetDataState } from '../models/widget-data-state';
 import { WidgetStatePanel } from './widget-state-panel';
 
+const PAGE_SIZE = 10;
+const VIEW_ALL_PATH =
+  '/catalog?filters[kind]=component&filters[type]=service&filters[user]=owned';
+
 const columns: TableColumn<MyService>[] = [
   {
     title: 'Service',
@@ -116,17 +120,25 @@ export function MyServicesWidget() {
     );
   }
   return (
-    <Table
-      columns={columns}
-      data={state.data}
-      components={{ Container: props => <div {...props} /> }}
-      options={{
-        paging: false,
-        search: false,
-        toolbar: false,
-        sorting: false,
-        padding: 'dense',
-      }}
-    />
+    <>
+      <Table
+        columns={columns}
+        data={state.data}
+        components={{ Container: props => <div {...props} /> }}
+        options={{
+          paging: state.data.length > PAGE_SIZE,
+          pageSize: PAGE_SIZE,
+          pageSizeOptions: [PAGE_SIZE],
+          emptyRowsWhenPaging: false,
+          search: false,
+          toolbar: false,
+          sorting: false,
+          padding: 'dense',
+        }}
+      />
+      <div style={{ padding: '0.5rem 1rem', textAlign: 'right' }}>
+        <Link to={VIEW_ALL_PATH}>View all</Link>
+      </div>
+    </>
   );
 }

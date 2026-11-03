@@ -76,11 +76,11 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 ### Tests for User Story 3
 
-- [ ] T009 [US3] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with 13-service paging and "View all" destination cases
+- [X] T009 [US3] Extend `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx` with 13-service paging and "View all" destination cases
 
 ### Implementation for User Story 3
 
-- [ ] T010 [US3] Add local paging at 10 services per page, show the pager only above 10 results, and add the contract's filtered "View all" link in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
+- [X] T010 [US3] Add local paging at 10 services per page, show the pager only above 10 results, and add the contract's filtered "View all" link in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
 
 **Checkpoint**: User Story 3 exposes every service and a full catalog route without additional catalog requests.
 

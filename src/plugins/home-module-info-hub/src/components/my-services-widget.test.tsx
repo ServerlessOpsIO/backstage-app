@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import { renderInTestApp } from '@backstage/frontend-test-utils';
 import { identityApiRef } from '@backstage/core-plugin-api';
 import {
@@ -252,5 +252,49 @@ describe('MyServicesWidget', () => {
     const [table] = screen.getAllByRole('table');
     const [row] = within(table).getAllByRole('row').slice(1);
     expect(within(row).getAllByRole('cell')[2]).toBeEmptyDOMElement();
+  });
+
+  describe('with many services', () => {
+    const many = Array.from({ length: 13 }, (_, index) =>
+      service(`svc-${String(index + 1).padStart(2, '0')}`, 'user:default/jdoe'),
+    );
+
+    function bodyRows() {
+      const [table] = screen.getAllByRole('table');
+      return within(table).getAllByRole('row').slice(1);
+    }
+
+    test('pages through 13 services as 10 then 3 rows', async () => {
+      const { catalog } = render({ entities: [...many].reverse() });
+
+      expect(await screen.findByText('svc-01')).toBeVisible();
+      expect(bodyRows()).toHaveLength(10);
+      expect(screen.queryByText('svc-11')).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole('button', { name: /next page/i }));
+
+      expect(await screen.findByText('svc-11')).toBeVisible();
+      expect(bodyRows()).toHaveLength(3);
+      expect(screen.queryByText('svc-01')).not.toBeInTheDocument();
+      expect(catalog.getEntities).toHaveBeenCalledTimes(1);
+    });
+
+    test('hides the pager when there are 10 or fewer services', async () => {
+      render({ entities: many.slice(0, 10) });
+
+      expect(await screen.findByText('svc-10')).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: /next page/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test('links "View all" to the catalog owned service filters', async () => {
+    render({ entities: [service('payments', 'user:default/jdoe')] });
+
+    expect(await screen.findByRole('link', { name: 'View all' })).toHaveAttribute(
+      'href',
+      '/catalog?filters[kind]=component&filters[type]=service&filters[user]=owned',
+    );
   });
 });
