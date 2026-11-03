@@ -16,7 +16,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y --no-install-recommends gh && \
     rm -rf /var/lib/apt/lists/*
-RUN curl -fsSL https://gh.io/copilot-install | sudo bash
+RUN curl -fsSL https://gh.io/copilot-install | bash
 USER node
 
 # Add SSL cert for RDS. We support all US regions
