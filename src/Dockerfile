@@ -15,8 +15,8 @@ RUN apt-get update && \
       > /etc/apt/sources.list.d/github-cli.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends gh && \
-    gh copilot \
     rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL https://gh.io/copilot-install | sudo bash
 USER node
 
 # Add SSL cert for RDS. We support all US regions
