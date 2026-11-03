@@ -1,11 +1,10 @@
-export interface MyService {
+export interface MySystem {
   ref: string;
   displayName: string;
   owner?: string;
-  lifecycle?: string;
 }
 
-export interface CatalogServiceEntity {
+export interface CatalogSystemEntity {
   kind: string;
   metadata: {
     name?: string;
@@ -14,7 +13,6 @@ export interface CatalogServiceEntity {
   };
   spec?: {
     owner?: unknown;
-    lifecycle?: unknown;
   };
   relations?: { type: string; targetRef: string }[];
 }
@@ -23,10 +21,10 @@ function nonEmptyString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value : undefined;
 }
 
-export function toMyService(
-  entity: CatalogServiceEntity,
+export function toMySystem(
+  entity: CatalogSystemEntity,
   ownershipEntityRefs: string[] = [],
-): MyService | undefined {
+): MySystem | undefined {
   const name = nonEmptyString(entity.metadata?.name);
   if (!name || !nonEmptyString(entity.kind)) {
     return undefined;
@@ -45,12 +43,11 @@ export function toMyService(
     ref: `${entity.kind}:${namespace}/${name}`.toLocaleLowerCase('en-US'),
     displayName: nonEmptyString(entity.metadata.title) ?? name,
     owner,
-    lifecycle: nonEmptyString(entity.spec?.lifecycle),
   };
 }
 
-export function sortByDisplayName(services: MyService[]): MyService[] {
-  return [...services].sort(
+export function sortByDisplayName(systems: MySystem[]): MySystem[] {
+  return [...systems].sort(
     (a, b) =>
       a.displayName.localeCompare(b.displayName, 'en', {
         sensitivity: 'base',
@@ -58,15 +55,15 @@ export function sortByDisplayName(services: MyService[]): MyService[] {
   );
 }
 
-export function toMyServices(
-  entities: CatalogServiceEntity[],
+export function toMySystems(
+  entities: CatalogSystemEntity[],
   ownershipEntityRefs: string[] = [],
-): MyService[] {
-  const byRef = new Map<string, MyService>();
+): MySystem[] {
+  const byRef = new Map<string, MySystem>();
   for (const entity of entities) {
-    const service = toMyService(entity, ownershipEntityRefs);
-    if (service && !byRef.has(service.ref)) {
-      byRef.set(service.ref, service);
+    const system = toMySystem(entity, ownershipEntityRefs);
+    if (system && !byRef.has(system.ref)) {
+      byRef.set(system.ref, system);
     }
   }
   return sortByDisplayName([...byRef.values()]);

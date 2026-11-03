@@ -3,40 +3,33 @@ import { identityApiRef, useApi } from '@backstage/core-plugin-api';
 import { catalogApiRef, EntityRefLink } from '@backstage/plugin-catalog-react';
 import { RendererProps } from '@backstage/plugin-home-react';
 import { useEffect, useState } from 'react';
-import { MyService, toMyServices } from '../models/my-services';
+import { MySystem, toMySystems } from '../models/my-systems';
 import { WidgetDataState } from '../models/widget-data-state';
 import { WidgetStatePanel } from './widget-state-panel';
 
 const PAGE_SIZE = 10;
-const VIEW_ALL_PATH =
-  '/catalog?filters[kind]=component&filters[type]=service&filters[user]=owned';
+const VIEW_ALL_PATH = '/catalog?filters[kind]=system&filters[user]=owned';
 
-const columns: TableColumn<MyService>[] = [
+const columns: TableColumn<MySystem>[] = [
   {
-    title: 'Service',
+    title: 'System',
     field: 'displayName',
     highlight: true,
-    render: service => (
-      <EntityRefLink entityRef={service.ref}>{service.displayName}</EntityRefLink>
+    render: system => (
+      <EntityRefLink entityRef={system.ref}>{system.displayName}</EntityRefLink>
     ),
   },
   {
     title: 'Owner',
     field: 'owner',
-    render: service =>
-      service.owner ? (
-        <EntityRefLink entityRef={service.owner} defaultKind="group" />
+    render: system =>
+      system.owner ? (
+        <EntityRefLink entityRef={system.owner} defaultKind="group" />
       ) : null,
-  },
-  {
-    title: 'Lifecycle',
-    field: 'lifecycle',
-    width: '120px',
-    render: service => service.lifecycle ?? '',
   },
 ];
 
-export function MyServicesWidgetRenderer({ title, Content }: RendererProps) {
+export function MySystemsWidgetRenderer({ title, Content }: RendererProps) {
   return (
     <InfoCard title={title} divider noPadding>
       <Content />
@@ -44,10 +37,10 @@ export function MyServicesWidgetRenderer({ title, Content }: RendererProps) {
   );
 }
 
-export function MyServicesWidget() {
+export function MySystemsWidget() {
   const catalogApi = useApi(catalogApiRef);
   const identityApi = useApi(identityApiRef);
-  const [state, setState] = useState<WidgetDataState<MyService[]>>({
+  const [state, setState] = useState<WidgetDataState<MySystem[]>>({
     status: 'loading',
   });
 
@@ -61,8 +54,7 @@ export function MyServicesWidget() {
       }
       const { items } = await catalogApi.getEntities({
         filter: {
-          kind: 'component',
-          'spec.type': 'service',
+          kind: 'system',
           'relations.ownedBy': ownershipEntityRefs,
         },
         fields: [
@@ -70,20 +62,19 @@ export function MyServicesWidget() {
           'metadata.namespace',
           'metadata.name',
           'metadata.title',
-          'spec.lifecycle',
           'spec.owner',
           'relations',
         ],
       });
-      return toMyServices(items, ownershipEntityRefs);
+      return toMySystems(items, ownershipEntityRefs);
     };
     load()
-      .then(services => {
+      .then(systems => {
         if (!cancelled) {
           setState(
-            services.length
-              ? { status: 'ready', data: services }
-              : { status: 'empty', message: "You don't own any services yet." },
+            systems.length
+              ? { status: 'ready', data: systems }
+              : { status: 'empty', message: "You don't own any systems yet." },
           );
         }
       })
@@ -91,7 +82,7 @@ export function MyServicesWidget() {
         if (!cancelled) {
           setState({
             status: 'unavailable',
-            message: `Your services are currently unavailable.${
+            message: `Your systems are currently unavailable.${
               error instanceof Error && error.message
                 ? ` ${error.message}`
                 : ''
@@ -115,7 +106,7 @@ export function MyServicesWidget() {
     return (
       <WidgetStatePanel
         state={state}
-        loadingMessage="Your services are loading…"
+        loadingMessage="Your systems are loading…"
       />
     );
   }

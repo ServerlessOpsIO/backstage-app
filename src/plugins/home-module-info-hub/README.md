@@ -9,7 +9,7 @@ The module owns custom homepage cards for:
 - Local + UTC clock visibility
 - GitHub personal work summaries
 - Datadog monitors matching the configured alert query
-- My Services, listing services owned by the signed-in user or their groups
+- My Systems, listing systems owned by the signed-in user or their groups
 - Today's Google Calendar events
 
 All four GitHub widgets use the standard Backstage Table component with
@@ -39,22 +39,23 @@ Its heading shows the selected local weekday, month, and day. Previous and Next
 controls at the bottom load the adjacent day's events; Today returns to the
 current local day.
 
-## My Services
+## My Systems
 
-The My Services widget (`HomePageMyServices`) lists catalog Components of type
-`service` owned by the signed-in user or by groups they directly belong to. It
-reads the identity's ownership refs and makes one read-only catalog request, so
-results follow the catalog permission policy and no backend code is needed.
+The My Systems widget uses the existing `HomePageMyServices` layout identifier
+to preserve saved homepage layouts. It lists catalog Systems owned by the
+signed-in user or by groups they directly belong to. It reads the identity's
+ownership refs and makes one read-only catalog request, so results follow the
+catalog permission policy and no backend code is needed.
 
-Rows are sorted by display name (title, else name) and show the service, its
-linked owner, and its lifecycle (blank when absent). Ten services are shown per
-page; the pager appears only when there are more than ten. "View all" opens the
-catalog filtered to owned services. Loading, empty ("You don't own any services
-yet."), and unavailable states stay inside the widget.
+Rows are sorted by display name (title, else name) and show each system and its
+linked owner. Ten systems are shown per page; the pager appears only when there
+are more than ten. "View all" opens the catalog filtered to owned systems.
+Loading, empty ("You don't own any systems yet."), and unavailable states stay
+inside the widget.
 
 The default layout places it at column 0, row 12 (width 9, height 8) above the
 GitHub widgets. If a saved layout overrides the defaults, use the homepage's
-restore-default layout action or add My Services from the widget catalog.
+restore-default layout action or add My Systems from the widget catalog.
 
 ## Google Calendar
 
