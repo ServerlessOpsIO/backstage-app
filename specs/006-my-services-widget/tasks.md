@@ -90,9 +90,9 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 **Purpose**: Keep operator-facing documentation and repository validation aligned with the feature.
 
-- [ ] T011 [P] Document the My Services widget and saved-layout caveat in `src/plugins/home-module-info-hub/README.md`
-- [ ] T012 [P] Update `specs/006-my-services-widget/quickstart.md` so every temporary Component has a valid lifecycle and the missing-lifecycle scenario is covered by the mocked widget test rather than invalid catalog data
-- [ ] T013 Run `yarn workspace @internal/backstage-plugin-home-module-info-hub test --watchAll=false` from `src/` and resolve failures
+- [X] T011 [P] Document the My Services widget and saved-layout caveat in `src/plugins/home-module-info-hub/README.md`
+- [X] T012 [P] Update `specs/006-my-services-widget/quickstart.md` so every temporary Component has a valid lifecycle and the missing-lifecycle scenario is covered by the mocked widget test rather than invalid catalog data
+- [X] T013 Run `yarn workspace @internal/backstage-plugin-home-module-info-hub test --watchAll=false` from `src/` and resolve failures
 - [ ] T014 Run `yarn tsc:full`, `yarn build:all`, `yarn test:all`, and `yarn lint:all` from `src/` and resolve failures
 
 ---

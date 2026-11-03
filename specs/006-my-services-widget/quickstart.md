@@ -6,10 +6,10 @@
 - A local catalog with test data. Add a temporary location (do not commit) containing:
   - User `jdoe`, a member of group `team-a`; group `team-b` without `jdoe`.
   - `svc-direct` (Component, `type: service`, `owner: user:jdoe`, `lifecycle: production`).
-  - `svc-team` (Component, `type: service`, `owner: group:team-a`, no lifecycle).
+  - `svc-team` (Component, `type: service`, `owner: group:team-a`, `lifecycle: experimental`).
   - `svc-other` (Component, `type: service`, `owner: group:team-b`).
   - `web-team` (Component, `type: website`, `owner: group:team-a`).
-  - 11 more services owned by `group:team-a` for the paging check.
+  - 11 more services owned by `group:team-a` (each with a valid `lifecycle`) for the paging check.
 - Sign in with an identity that resolves to `user:default/jdoe` (see `app-config.local.yaml`).
 
 ## Automated checks (from `src/`)
@@ -32,7 +32,7 @@ Expected: all pass. The new `my-services-widget.test.tsx` covers the scenarios b
 | 2 | Group ownership (US1-2) | `svc-team` listed |
 | 3 | Unowned excluded (US1-3) | `svc-other` and `web-team` absent |
 | 4 | Link (US1-4) | Clicking `svc-direct` opens its catalog page |
-| 5 | Owner and lifecycle (US2) | `svc-team` shows owner `team-a` and a blank lifecycle; `svc-direct` shows `production` |
+| 5 | Owner and lifecycle (US2) | `svc-team` shows owner `team-a` and lifecycle `experimental`; `svc-direct` shows `production`. A missing lifecycle (blank cell) is covered by the mocked widget test, because the catalog requires a valid lifecycle |
 | 6 | Paging (US3-1) | 13 services: page 1 shows 10 sorted alphabetically, page 2 shows 3 |
 | 7 | View all (US3-2) | Opens the catalog with Owned + service filters showing the same 13 |
 | 8 | Empty (edge) | Guest sign-in shows "You don't own any services yet." |

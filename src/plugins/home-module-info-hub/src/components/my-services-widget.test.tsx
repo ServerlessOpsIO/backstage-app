@@ -34,11 +34,7 @@ function service(
 // Mimics the catalog's filter semantics so exclusion is exercised end to end.
 function filteringGetEntities(entities: TestEntity[]) {
   return jest.fn(
-    async ({
-      filter,
-    }: {
-      filter: Record<string, string | string[]>;
-    }) => ({
+    async ({ filter }: { filter: Record<string, string | string[]> }): Promise<any> => ({
       items: entities.filter(
         entity =>
           entity.kind.toLowerCase() === filter.kind &&
@@ -85,7 +81,10 @@ function render({
         [catalogApiRef, catalog],
         [identityApiRef, identity],
       ],
-      mountedRoutes: { '/catalog/:namespace/:kind/:name': entityRouteRef },
+      mountedRoutes: {
+        // The catalog's legacy route ref is accepted at runtime but typed as the old API.
+        '/catalog/:namespace/:kind/:name': entityRouteRef as never,
+      },
     },
   );
   return { catalog, identity };
