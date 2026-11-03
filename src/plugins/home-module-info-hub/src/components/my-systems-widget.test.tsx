@@ -11,8 +11,9 @@ import {
 } from './my-systems-widget';
 
 type TestEntity = {
+  apiVersion: string;
   kind: string;
-  metadata: { name?: string; namespace?: string; title?: string };
+  metadata: { name: string; namespace?: string; title?: string };
   spec?: { owner?: string };
   relations?: { type: string; targetRef: string }[];
 };
@@ -23,6 +24,7 @@ function system(
   extra: Partial<TestEntity['metadata']> = {},
 ): TestEntity {
   return {
+    apiVersion: 'backstage.io/v1alpha1',
     kind: 'System',
     metadata: { name, namespace: 'default', ...extra },
     spec: { owner },
