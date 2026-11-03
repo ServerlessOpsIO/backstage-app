@@ -17,7 +17,7 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 **Purpose**: Add the catalog React API dependency to the existing home module.
 
-- [ ] T001 Add `@backstage/plugin-catalog-react` to `src/plugins/home-module-info-hub/package.json` and update `src/yarn.lock` using the repository package manager
+- [X] T001 Add `@backstage/plugin-catalog-react` to `src/plugins/home-module-info-hub/package.json` and update `src/yarn.lock` using the repository package manager
 
 ---
 
