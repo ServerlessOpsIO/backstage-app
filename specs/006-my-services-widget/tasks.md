@@ -37,14 +37,14 @@ description: "Implementation tasks for the My Services Homepage Widget"
 
 ### Tests for User Story 1
 
-- [ ] T002 [US1] Add colocated tests for ownership filtering, duplicate suppression, display-name sorting, title fallback, service links, empty ownership refs, loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx`
+- [X] T002 [US1] Add colocated tests for ownership filtering, duplicate suppression, display-name sorting, title fallback, service links, empty ownership refs, loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.test.tsx`
 
 ### Implementation for User Story 1
 
-- [ ] T003 [P] [US1] Define the `MyService` model, catalog-entity mapping, owner fallback, missing-name handling, display-name sorting, and optional lifecycle data in `src/plugins/home-module-info-hub/src/models/my-services.ts`
-- [ ] T004 [US1] Implement the widget's identity lookup, guarded catalog query, service rows, service links, and loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
-- [ ] T005 [US1] Register the `HomePageMyServices` widget using a `HomePageWidgetBlueprint` named `my-services` in `src/plugins/home-module-info-hub/src/module.tsx`
-- [ ] T006 [P] [US1] Add `HomePageMyServices` to `src/app-config.yaml` at column 0, row 12, width 9, height 8; shift the GitHub widgets to rows 20, 26, 32, and 38; set the calendar height to 28; and update `src/app-config.test.ts` to assert the new layout and widget presence
+- [X] T003 [P] [US1] Define the `MyService` model, catalog-entity mapping, owner fallback, missing-name handling, display-name sorting, and optional lifecycle data in `src/plugins/home-module-info-hub/src/models/my-services.ts`
+- [X] T004 [US1] Implement the widget's identity lookup, guarded catalog query, service rows, service links, and loading, empty, and unavailable states in `src/plugins/home-module-info-hub/src/components/my-services-widget.tsx`
+- [X] T005 [US1] Register the `HomePageMyServices` widget using a `HomePageWidgetBlueprint` named `my-services` in `src/plugins/home-module-info-hub/src/module.tsx`
+- [X] T006 [P] [US1] Add `HomePageMyServices` to `src/app-config.yaml` at column 0, row 12, width 9, height 8; shift the GitHub widgets to rows 20, 26, 32, and 38; set the calendar height to 28; and update `src/app-config.test.ts` to assert the new layout and widget presence
 
 **Checkpoint**: User Story 1 is independently usable with direct/group ownership, safe empty refs, links, and explicit data states.
 
