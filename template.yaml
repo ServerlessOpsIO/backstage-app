@@ -252,11 +252,6 @@ Resources:
               awslogs-group: !Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: app
-          DockerLabels:
-            com.datadoghq.tags.domain: !Ref Domain
-            com.datadoghq.tags.system: !Ref System
-            com.datadoghq.tags.component: !Ref Component
-            com.datadoghq.tags.code_branch: !Ref CodeBranch
         - Name: datadog-agent
           Image: public.ecr.aws/datadog/agent:latest
           Cpu: 256
