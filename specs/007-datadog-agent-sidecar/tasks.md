@@ -67,10 +67,10 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 
 ## Phase 5: Polish & Cross-Cutting
 
-- [ ] T016 [P] Update `README.md` with a "Datadog" section: required `DATADOG_API_KEY` / `DATADOG_SITE` CI secrets, sidecar behaviour (non-essential, ECS metrics only, no log forwarding/tracing), and verification steps from quickstart (FR-008)
-- [ ] T017 [P] Run `git grep` for the Datadog API key value and `DD_API_KEY` to confirm no literal key in the repo (SC-004, contract item 3)
+- [X] T016 [P] Update `README.md` with a "Datadog" section: required `DATADOG_API_KEY` / `DATADOG_SITE` CI secrets, sidecar behaviour (non-essential, ECS metrics only, no log forwarding/tracing), and verification steps from quickstart (FR-008)
+- [X] T017 [P] Run `git grep` for the Datadog API key value and `DD_API_KEY` to confirm no literal key in the repo (SC-004, contract item 3)
 - [ ] T018 Walk through `specs/007-datadog-agent-sidecar/quickstart.md` after deployment (both containers RUNNING, agent HEALTHY, metrics visible within 10 minutes, verify expected stack tags appear on metrics and record the human check outcome, resilience check)
-- [ ] T019 [P] Note in `README.md` the follow-up to move `DD_API_KEY` to Secrets Manager `Secrets:` (research D4)
+- [X] T019 [P] Note in `README.md` the follow-up to move `DD_API_KEY` to Secrets Manager `Secrets:` (research D4)
 
 ---
 
