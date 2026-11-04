@@ -56,10 +56,10 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 
 **Independent Test**: Stop `datadog-agent` or use a bad key; app keeps serving and task stays RUNNING (quickstart step 5).
 
-- [ ] T012 [US2] In `template.yaml`, set `Essential: false` on the `datadog-agent` container (contract item 1; default is true)
-- [ ] T013 [US2] Verify in `template.yaml` that the app container has no `DependsOn` on `datadog-agent` and that `Service.LoadBalancers.ContainerName` still targets the app container (contract item 6)
-- [ ] T014 [US2] Verify in `template.yaml` that summed container `Cpu`/`Memory` (agent 256/512 plus app, which has no container limits) fits within `ContainerCpu`/`ContainerMemory` (2048/4096) (FR-007, contract item 2)
-- [ ] T015 [US2] Re-run `sam validate --lint && sam build --parallel --template template.yaml` after changes
+- [X] T012 [US2] In `template.yaml`, set `Essential: false` on the `datadog-agent` container (contract item 1; default is true)
+- [X] T013 [US2] Verify in `template.yaml` that the app container has no `DependsOn` on `datadog-agent` and that `Service.LoadBalancers.ContainerName` still targets the app container (contract item 6)
+- [X] T014 [US2] Verify in `template.yaml` that summed container `Cpu`/`Memory` (agent 256/512 plus app, which has no container limits) fits within `ContainerCpu`/`ContainerMemory` (2048/4096) (FR-007, contract item 2)
+- [X] T015 [US2] Re-run `sam validate --lint && sam build --parallel --template template.yaml` after changes
 
 **Checkpoint**: Both stories satisfy the task-definition contract.
 
