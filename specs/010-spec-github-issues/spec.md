@@ -1,6 +1,6 @@
 # Feature Specification: Spec-Tracked GitHub Issues
 
-**Feature Branch**: `008-spec-github-issues`
+**Feature Branch**: `010-spec-github-issues`
 
 **Created**: 2026-11-04
 
