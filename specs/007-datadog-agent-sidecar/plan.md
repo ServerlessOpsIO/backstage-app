@@ -37,7 +37,7 @@ Add a `datadog-agent` sidecar container to the `TaskDefinition` in the root `tem
 |---|---|
 | I. Architecture Boundaries | Pass: root SAM asset only; nothing under `src/` |
 | II. Catalog Integrity | Pass: not affected |
-| III. Environment-Driven Config | Pass: site/key via parameters; env/service tags derived from existing `Domain`/`System`/`Component`/`CodeBranch` params |
+| III. Environment-Driven Config | Pass: site/key via parameters; whether CloudFormation stack tags reach Datadog metrics remains unverified and is a post-deployment human check (research D3) |
 | IV. Secrets and Least Privilege | Pass with note: key stays a `NoEcho` parameter injected by CI (spec clarification); it is visible as a plain task-definition env var, same as the app's existing `DATADOG_API_KEY`. Moving to SSM/Secrets Manager `Secrets:` is a documented follow-up (research D4) |
 | V. Validation and Deployment Integrity | Pass: `sam validate --lint` and `sam build` required; deployment impact below |
 

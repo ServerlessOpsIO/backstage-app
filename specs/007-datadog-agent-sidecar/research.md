@@ -10,8 +10,8 @@
 - **Rationale**: FR-006 / US2: agent failure must not stop the task. Do not add `DependsOn` on the agent from the app.
 
 ## D3 Tags
-- **Decision**: Add `DockerLabels` (`com.datadoghq.tags.domain/system/component/code_branch`) to the app container as upstream does; add `DD_TAGS` (`env:<CodeBranch>`) is optional—use `DD_ENV` only if consistent with specs 003/004 tag conventions (verify during tasks). Service tag from `Component`.
-- **Rationale**: FR-003; agent reads docker labels from task metadata. The app container currently has none.
+- **Decision**: Whether CloudFormation stack tags propagate to the ECS task and appear on Datadog metrics is unknown. Do not assume stack tags or add `DD_ENV`/`DD_SERVICE` based on the specs; have a human verify the resulting metric tags after deployment.
+- **Rationale**: FR-003 requires filterable service/environment tags, but the tag propagation path and Datadog representation have not been verified. If expected tags are absent, determine the required explicit tag configuration.
 
 ## D4 API key handling
 - **Decision**: `Environment: DD_API_KEY: !Ref DatadogApiKey` via existing CI parameter (clarification 4). Param is `NoEcho`.

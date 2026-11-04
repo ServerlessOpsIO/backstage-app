@@ -21,7 +21,7 @@ description: "Task list for Datadog Agent Sidecar for Backstage"
 
 - [ ] T001 Run baseline `sam validate --lint && sam build --parallel --template template.yaml` from repo root and record that `template.yaml` passes before edits
 - [ ] T002 [P] Confirm parameters `DatadogSite` and `DatadogApiKey` (NoEcho) exist in `template.yaml` (~L169-L176) and that CI parameter mapping (`cfn-parameters.json` generation in `.github/workflows/`) maps `secrets.DATADOG_API_KEY` / `secrets.DATADOG_SITE`; add no new parameters
-- [ ] T003 [P] Check `specs/003-*/` and `specs/004-*/` for the Datadog service/env tag conventions and note whether `DD_ENV`/`DD_SERVICE` should be set (research D3)
+- [ ] T003 [P] Record as unresolved whether CloudFormation stack tags propagate to the ECS task and Datadog metrics; defer the decision on explicit `DD_ENV`/`DD_SERVICE` tags to the post-deployment human verification in T018 (research D3)
 
 ---
 
@@ -42,7 +42,7 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 - [ ] T006 [US1] In the `datadog-agent` container in `template.yaml`, add `HealthCheck` with `Command: [CMD-SHELL, agent health]`, `Interval: 5`, `Retries: 3`, `StartPeriod: 10`, `Timeout: 5`
 - [ ] T007 [US1] In the `datadog-agent` container in `template.yaml`, add `LogConfiguration` (awslogs, same group `!Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'`, region `!Ref AWS::Region`, `awslogs-stream-prefix: sidecar`)
 - [ ] T008 [US1] In `template.yaml`, add `DockerLabels` to the app container (`!Ref Component`): `com.datadoghq.tags.domain: !Ref Domain`, `com.datadoghq.tags.system: !Ref System`, `com.datadoghq.tags.component: !Ref Component`, `com.datadoghq.tags.code_branch: !Ref CodeBranch` (confirm the parameter names exist; contract item 5)
-- [ ] T009 [US1] In `template.yaml`, apply the tag decision from T003: set `DD_ENV`/`DD_SERVICE` (or `DD_TAGS`) on the `datadog-agent` container only if consistent with specs 003/004 conventions, so metrics are filterable by service and environment (FR-003)
+- [ ] T009 [US1] Do not add `DD_ENV`/`DD_SERVICE` or `DD_TAGS` based on an unverified assumption; validate the resulting metric tags after deployment in T018, then determine whether explicit tags are needed (FR-003, research D3)
 - [ ] T010 [US1] Run `sam validate --lint && sam build --parallel --template template.yaml` and fix any errors in `template.yaml`
 - [ ] T011 [US1] Document the service-level metrics risk (research D7): after deploy, check whether `aws.ecs.service.*` desired/running/deployment metrics appear; if not, record in `specs/007-datadog-agent-sidecar/research.md` that spec clarification is needed (AWS integration is out of scope)
 
@@ -69,7 +69,7 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 
 - [ ] T016 [P] Update `README.md` with a "Datadog" section: required `DATADOG_API_KEY` / `DATADOG_SITE` CI secrets, sidecar behaviour (non-essential, ECS metrics only, no log forwarding/tracing), and verification steps from quickstart (FR-008)
 - [ ] T017 [P] Run `git grep` for the Datadog API key value and `DD_API_KEY` to confirm no literal key in the repo (SC-004, contract item 3)
-- [ ] T018 Walk through `specs/007-datadog-agent-sidecar/quickstart.md` after deployment (both containers RUNNING, agent HEALTHY, metrics visible within 10 minutes, resilience check)
+- [ ] T018 Walk through `specs/007-datadog-agent-sidecar/quickstart.md` after deployment (both containers RUNNING, agent HEALTHY, metrics visible within 10 minutes, verify expected stack tags appear on metrics and record the human check outcome, resilience check)
 - [ ] T019 [P] Note in `README.md` the follow-up to move `DD_API_KEY` to Secrets Manager `Secrets:` (research D4)
 
 ---
