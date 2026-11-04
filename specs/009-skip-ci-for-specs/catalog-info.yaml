@@ -1,0 +1,26 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: backstage-app-spec-009
+  title: "009 - Skip ci for specs"
+  description: "skip GHA on spec changes"
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/backstage-app
+    serverlessops.io/spec-dir: specs/009-skip-ci-for-specs
+    serverlessops.io/spec-number: "009"
+    backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/009-skip-ci-for-specs/
+  tags:
+    - speckit
+  links:
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/009-skip-ci-for-specs/spec.md
+      title: Specification
+      icon: docs
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/009-skip-ci-for-specs/plan.md
+      title: Implementation plan
+      icon: docs
+spec:
+  type: doc-spec
+  owner: group:00gjdgxs1ur6lsu
+  system: backstage
+  dependsOn:
+    - component:default/backstage-app
