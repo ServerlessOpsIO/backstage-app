@@ -13,6 +13,8 @@
 ### Session 2026-11-04
 
 - Q: At what point in section-by-section authoring should the GitHub issue first be created? → A: Create the issue before running `/speckit-specify`; do not mark it as a draft.
+- Q: Which GitHub identity should be recorded as the issue's creator? → A: The engineer's individual GitHub identity.
+- Q: When should edits to an existing spec be reflected in its linked GitHub issue? → A: Automatically after each spec save.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -29,7 +31,8 @@ Before running `/speckit-specify`, an engineer creates an open GitHub issue in t
 1. **Given** an engineer creates an open, non-draft GitHub issue for a feature, **When** they run `/speckit-specify`, **Then** the spec links to that issue and the issue body contains the spec content.
 2. **Given** a spec has an associated issue, **When** the engineer opens the spec, **Then** it shows the issue number and link.
 3. **Given** no issue exists for the feature, **When** the engineer runs `/speckit-specify`, **Then** the engineer is told to create an issue before authoring begins.
-4. **Given** a spec already has an issue, **When** the engineer re-runs spec creation or updates the spec, **Then** no duplicate issue is created.
+4. **Given** a spec already has an issue, **When** the engineer re-runs spec creation, **Then** no duplicate issue is created.
+5. **Given** a spec has a linked issue, **When** the engineer saves the spec, **Then** the issue is automatically updated to reflect the saved spec content.
 
 ---
 
@@ -85,22 +88,22 @@ Merging a PR never automatically closes the spec's issue. A person closes it whe
 - No issue exists before `/speckit-specify` runs: the engineer is told to create an issue before authoring begins.
 - The engineer lacks permission to create issues in the repository.
 - A spec is abandoned: the issue remains open for a human to close.
-- Spec content is edited after the issue is created: the issue can be updated to match without creating a new one.
+- A saved spec cannot be synced to its issue: the engineer is told the update failed and can retry without losing the saved spec.
 - A PR relates to a spec but the engineer forgot the reference: the missing link is detectable.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: Before `/speckit-specify` runs, an engineer MUST create an open, non-draft GitHub issue in the project's repository for the feature.
+- **FR-001**: Before `/speckit-specify` runs, an engineer MUST create an open, non-draft GitHub issue in the project's repository for the feature using their individual GitHub identity.
 - **FR-002**: The spec MUST record the issue number and link, and the issue MUST identify the spec.
-- **FR-003**: Re-running or updating a spec MUST NOT create duplicate issues; it MUST update the existing issue instead.
+- **FR-003**: Re-running spec creation MUST NOT create a duplicate issue. Each spec save MUST automatically update its existing issue.
 - **FR-004**: Spec authoring MUST present each required section individually, with guidance on its content, and capture the response per section.
 - **FR-005**: The system MUST indicate which required sections are incomplete before a spec is finalized.
-- **FR-006**: The issue content MUST reflect the completed spec sections.
+- **FR-006**: The issue content MUST reflect the spec's current saved sections.
 - **FR-007**: PRs for a spec's work MUST reference the spec's issue in a way that links the PR to the issue without closing it.
 - **FR-008**: Merging a PR MUST NOT automatically close the issue; only a human may close it.
-- **FR-009**: If no issue exists when `/speckit-specify` runs, the engineer MUST be told to create an issue before authoring begins.
+- **FR-009**: If no issue exists when `/speckit-specify` runs, the engineer MUST be told to create an issue before authoring begins. If an issue update fails after a save, the engineer MUST be shown a clear message and a way to retry, and the saved spec MUST be preserved.
 - **FR-010**: The feature MUST NOT store credentials in tracked files.
 
 ### Key Entities
@@ -122,7 +125,7 @@ Merging a PR never automatically closes the spec's issue. A person closes it whe
 
 ## Assumptions
 
-- Engineers are authenticated to GitHub with permission to create issues in the repository.
+- Engineers are authenticated to GitHub with their individual identity and permission to create issues in the repository.
 - The GitHub repository hosting the spec is the same one where the issue is created.
 - Required sections are those in the existing spec template: user scenarios, requirements, success criteria, and assumptions.
 - Linking PRs uses non-closing references; enforcing it on every PR is via guidance and detection rather than blocking, unless later specified.
