@@ -19,9 +19,9 @@ description: "Task list for Datadog Agent Sidecar for Backstage"
 
 **Purpose**: Establish baseline and confirm existing configuration
 
-- [ ] T001 Run baseline `sam validate --lint && sam build --parallel --template template.yaml` from repo root and record that `template.yaml` passes before edits
-- [ ] T002 [P] Confirm parameters `DatadogSite` and `DatadogApiKey` (NoEcho) exist in `template.yaml` (~L169-L176) and that CI parameter mapping (`cfn-parameters.json` generation in `.github/workflows/`) maps `secrets.DATADOG_API_KEY` / `secrets.DATADOG_SITE`; add no new parameters
-- [ ] T003 [P] Record as unresolved whether CloudFormation stack tags propagate to the ECS task and Datadog metrics; defer the decision on explicit `DD_ENV`/`DD_SERVICE` tags to the post-deployment human verification in T018 (research D3)
+- [X] T001 Run baseline `sam validate --lint && sam build --parallel --template template.yaml` from repo root and record that `template.yaml` passes before edits
+- [X] T002 [P] Confirm parameters `DatadogSite` and `DatadogApiKey` (NoEcho) exist in `template.yaml` (~L169-L176) and that CI parameter mapping (`cfn-parameters.json` generation in `.github/workflows/`) maps `secrets.DATADOG_API_KEY` / `secrets.DATADOG_SITE`; add no new parameters
+- [X] T003 [P] Record as unresolved whether CloudFormation stack tags propagate to the ECS task and Datadog metrics; defer the decision on explicit `DD_ENV`/`DD_SERVICE` tags to the post-deployment human verification in T018 (research D3)
 
 ---
 
