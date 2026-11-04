@@ -79,7 +79,6 @@ As a developer, I would like the workflow to know which component I came from so
 
 - **SC-001**: 100% of component specs pages show the "Create spec" button in the upper right.
 - **SC-002**: When the workflow is available and permitted, a developer can go from a component's specs page to the start of the "Create feature spec" workflow in a single click.
-- **SC-003**: When the workflow is available and permitted, developers can start spec creation in under 10 seconds from opening the specs page.
 
 ## Assumptions
 

@@ -34,7 +34,6 @@
 ## Acceptance Criteria Quality
 
 - [ ] CHK015 Can SC-001 (100% of pages) be objectively measured given components without a specs page are excluded? [Measurability, Spec §SC-001, Edge Cases]
-- [ ] CHK016 Is the 10-second target in SC-003 defined with a start/end point and conditions that exclude workflow load time? [Measurability, Spec §SC-003]
 - [ ] CHK017 Does SC-002's "single click" account for the disabled and checking states? [Clarity, Spec §SC-002]
 - [ ] CHK018 Are acceptance criteria defined for the pre-selection and editability of the component? [Gap, Spec §US2]
 
@@ -48,7 +47,6 @@
 ## Non-Functional Requirements
 
 - [ ] CHK023 Are accessibility requirements (keyboard focus, disabled-state semantics, explanation association) stated in the spec rather than only the contract? [Gap, Contract]
-- [ ] CHK024 Is the requirement that lookups never block page rendering captured as a spec-level requirement? [Gap, Spec §SC-003]
 - [ ] CHK025 Are visual consistency requirements with existing catalog page action buttons specified? [Gap]
 
 ## Dependencies & Assumptions

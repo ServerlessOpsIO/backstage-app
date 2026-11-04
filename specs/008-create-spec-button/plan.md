@@ -22,8 +22,6 @@ Add a "Create spec" button to the upper right of the existing component Specs ta
 
 **Project Type**: Web application (Backstage frontend plugin module)
 
-**Performance Goals**: Button renders with the page; availability/permission lookups never block it (SC-003: under 10 s end to end)
-
 **Constraints**: Button visible during specs loading and error states (FR-008); no new permissions or config; template ref defined in one constant
 
 **Scale/Scope**: One component changed, three small files added, tests
