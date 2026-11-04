@@ -19,9 +19,9 @@ description: "Task list for Datadog Agent Sidecar for Backstage"
 
 **Purpose**: Establish baseline and confirm existing configuration
 
-- [ ] T001 Run baseline `sam validate --lint && sam build --parallel --template template.yaml` from repo root and record that `template.yaml` passes before edits
-- [ ] T002 [P] Confirm parameters `DatadogSite` and `DatadogApiKey` (NoEcho) exist in `template.yaml` (~L169-L176) and that CI parameter mapping (`cfn-parameters.json` generation in `.github/workflows/`) maps `secrets.DATADOG_API_KEY` / `secrets.DATADOG_SITE`; add no new parameters
-- [ ] T003 [P] Record as unresolved whether CloudFormation stack tags propagate to the ECS task and Datadog metrics; defer the decision on explicit `DD_ENV`/`DD_SERVICE` tags to the post-deployment human verification in T018 (research D3)
+- [X] T001 Run baseline `sam validate --lint && sam build --parallel --template template.yaml` from repo root and record that `template.yaml` passes before edits
+- [X] T002 [P] Confirm parameters `DatadogSite` and `DatadogApiKey` (NoEcho) exist in `template.yaml` (~L169-L176) and that CI parameter mapping (`cfn-parameters.json` generation in `.github/workflows/`) maps `secrets.DATADOG_API_KEY` / `secrets.DATADOG_SITE`; add no new parameters
+- [X] T003 [P] Record as unresolved whether CloudFormation stack tags propagate to the ECS task and Datadog metrics; defer the decision on explicit `DD_ENV`/`DD_SERVICE` tags to the post-deployment human verification in T018 (research D3)
 
 ---
 
@@ -37,14 +37,14 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 
 **Independent Test**: Deploy, then in Datadog Metrics Explorer filter `ecs.fargate.cpu.usage` / `ecs.fargate.mem.usage` by service/cluster; data is present and tagged (quickstart steps 3-4).
 
-- [ ] T004 [US1] In `template.yaml` `TaskDefinition.Properties.ContainerDefinitions`, add a second container `Name: datadog-agent`, `Image: public.ecr.aws/datadog/agent:latest`, `Cpu: 256`, `Memory: 512`, mirroring upstream `container/skeleton/template.yaml` L172-L199 without the Jinja `enable_datadog` guard
-- [ ] T005 [US1] In the `datadog-agent` container in `template.yaml`, add `Environment`: `DD_API_KEY: !Ref DatadogApiKey`, `DD_SITE: !Ref DatadogSite`, `ECS_FARGATE: "true"` (quoted string), `DD_LOG_LEVEL: ERROR`; no literal key values
-- [ ] T006 [US1] In the `datadog-agent` container in `template.yaml`, add `HealthCheck` with `Command: [CMD-SHELL, agent health]`, `Interval: 5`, `Retries: 3`, `StartPeriod: 10`, `Timeout: 5`
-- [ ] T007 [US1] In the `datadog-agent` container in `template.yaml`, add `LogConfiguration` (awslogs, same group `!Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'`, region `!Ref AWS::Region`, `awslogs-stream-prefix: sidecar`)
-- [ ] T008 [US1] In `template.yaml`, add `DockerLabels` to the app container (`!Ref Component`): `com.datadoghq.tags.domain: !Ref Domain`, `com.datadoghq.tags.system: !Ref System`, `com.datadoghq.tags.component: !Ref Component`, `com.datadoghq.tags.code_branch: !Ref CodeBranch` (confirm the parameter names exist; contract item 5)
-- [ ] T009 [US1] Do not add `DD_ENV`/`DD_SERVICE` or `DD_TAGS` based on an unverified assumption; validate the resulting metric tags after deployment in T018, then determine whether explicit tags are needed (FR-003, research D3)
-- [ ] T010 [US1] Run `sam validate --lint && sam build --parallel --template template.yaml` and fix any errors in `template.yaml`
-- [ ] T011 [US1] Document the service-level metrics risk (research D7): after deploy, check whether `aws.ecs.service.*` desired/running/deployment metrics appear; if not, record in `specs/007-datadog-agent-sidecar/research.md` that spec clarification is needed (AWS integration is out of scope)
+- [X] T004 [US1] In `template.yaml` `TaskDefinition.Properties.ContainerDefinitions`, add a second container `Name: datadog-agent`, `Image: public.ecr.aws/datadog/agent:latest`, `Cpu: 256`, `Memory: 512`, mirroring upstream `container/skeleton/template.yaml` L172-L199 without the Jinja `enable_datadog` guard
+- [X] T005 [US1] In the `datadog-agent` container in `template.yaml`, add `Environment`: `DD_API_KEY: !Ref DatadogApiKey`, `DD_SITE: !Ref DatadogSite`, `ECS_FARGATE: "true"` (quoted string), `DD_LOG_LEVEL: ERROR`; no literal key values
+- [X] T006 [US1] In the `datadog-agent` container in `template.yaml`, add `HealthCheck` with `Command: [CMD-SHELL, agent health]`, `Interval: 5`, `Retries: 3`, `StartPeriod: 10`, `Timeout: 5`
+- [X] T007 [US1] In the `datadog-agent` container in `template.yaml`, add `LogConfiguration` (awslogs, same group `!Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'`, region `!Ref AWS::Region`, `awslogs-stream-prefix: sidecar`)
+- [X] T008 [US1] In `template.yaml`, add `DockerLabels` to the app container (`!Ref Component`): `com.datadoghq.tags.domain: !Ref Domain`, `com.datadoghq.tags.system: !Ref System`, `com.datadoghq.tags.component: !Ref Component`, `com.datadoghq.tags.code_branch: !Ref CodeBranch` (confirm the parameter names exist; contract item 5)
+- [X] T009 [US1] Do not add `DD_ENV`/`DD_SERVICE` or `DD_TAGS` based on an unverified assumption; validate the resulting metric tags after deployment in T018, then determine whether explicit tags are needed (FR-003, research D3)
+- [X] T010 [US1] Run `sam validate --lint && sam build --parallel --template template.yaml` and fix any errors in `template.yaml`
+- [X] T011 [US1] Document the service-level metrics risk (research D7): after deploy, check whether `aws.ecs.service.*` desired/running/deployment metrics appear; if not, record in `specs/007-datadog-agent-sidecar/research.md` that spec clarification is needed (AWS integration is out of scope)
 
 **Checkpoint**: Task definition has both containers and validates; metrics verified post-deploy per quickstart.
 
@@ -56,10 +56,10 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 
 **Independent Test**: Stop `datadog-agent` or use a bad key; app keeps serving and task stays RUNNING (quickstart step 5).
 
-- [ ] T012 [US2] In `template.yaml`, set `Essential: false` on the `datadog-agent` container (contract item 1; default is true)
-- [ ] T013 [US2] Verify in `template.yaml` that the app container has no `DependsOn` on `datadog-agent` and that `Service.LoadBalancers.ContainerName` still targets the app container (contract item 6)
-- [ ] T014 [US2] Verify in `template.yaml` that summed container `Cpu`/`Memory` (agent 256/512 plus app, which has no container limits) fits within `ContainerCpu`/`ContainerMemory` (2048/4096) (FR-007, contract item 2)
-- [ ] T015 [US2] Re-run `sam validate --lint && sam build --parallel --template template.yaml` after changes
+- [X] T012 [US2] In `template.yaml`, set `Essential: false` on the `datadog-agent` container (contract item 1; default is true)
+- [X] T013 [US2] Verify in `template.yaml` that the app container has no `DependsOn` on `datadog-agent` and that `Service.LoadBalancers.ContainerName` still targets the app container (contract item 6)
+- [X] T014 [US2] Verify in `template.yaml` that summed container `Cpu`/`Memory` (agent 256/512 plus app, which has no container limits) fits within `ContainerCpu`/`ContainerMemory` (2048/4096) (FR-007, contract item 2)
+- [X] T015 [US2] Re-run `sam validate --lint && sam build --parallel --template template.yaml` after changes
 
 **Checkpoint**: Both stories satisfy the task-definition contract.
 
@@ -67,10 +67,10 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 
 ## Phase 5: Polish & Cross-Cutting
 
-- [ ] T016 [P] Update `README.md` with a "Datadog" section: required `DATADOG_API_KEY` / `DATADOG_SITE` CI secrets, sidecar behaviour (non-essential, ECS metrics only, no log forwarding/tracing), and verification steps from quickstart (FR-008)
-- [ ] T017 [P] Run `git grep` for the Datadog API key value and `DD_API_KEY` to confirm no literal key in the repo (SC-004, contract item 3)
+- [X] T016 [P] Update `README.md` with a "Datadog" section: required `DATADOG_API_KEY` / `DATADOG_SITE` CI secrets, sidecar behaviour (non-essential, ECS metrics only, no log forwarding/tracing), and verification steps from quickstart (FR-008)
+- [X] T017 [P] Run `git grep` for the Datadog API key value and `DD_API_KEY` to confirm no literal key in the repo (SC-004, contract item 3)
 - [ ] T018 Walk through `specs/007-datadog-agent-sidecar/quickstart.md` after deployment (both containers RUNNING, agent HEALTHY, metrics visible within 10 minutes, verify expected stack tags appear on metrics and record the human check outcome, resilience check)
-- [ ] T019 [P] Note in `README.md` the follow-up to move `DD_API_KEY` to Secrets Manager `Secrets:` (research D4)
+- [X] T019 [P] Note in `README.md` the follow-up to move `DD_API_KEY` to Secrets Manager `Secrets:` (research D4)
 
 ---
 

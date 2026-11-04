@@ -252,6 +252,35 @@ Resources:
               awslogs-group: !Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: app
+        - Name: datadog-agent
+          Image: public.ecr.aws/datadog/agent:latest
+          Cpu: 256
+          Memory: 512
+          Essential: false
+          Environment:
+            - Name: DD_API_KEY
+              Value: !Ref DatadogApiKey
+            - Name: DD_SITE
+              Value: !Ref DatadogSite
+            - Name: ECS_FARGATE
+              Value: 'true'
+            - Name: DD_LOG_LEVEL
+              Value: ERROR
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - agent health
+            Interval: 5
+            Retries: 3
+            StartPeriod: 10
+            Timeout: 5
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-create-group: true
+              awslogs-group: !Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: sidecar
 
   Service:
     Type: AWS::ECS::Service
