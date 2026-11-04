@@ -8,21 +8,27 @@
 
 **Input**: User description: "As an engineer my specs are recorded as Github issues. When creating a spec the work should be recorded in Github issues. While working on new features the work is not being captured in the system we use for tracking work. Additionally to improve specs the user should be shown different sections needed to write a good spec. The user will fill out each section individually. Acceptance criteria: a newly created spec results in a new GitHub issue; each PR related to the spec references the issue so reviewing the issue links to the work; the issue is not automatically closed and requires a human to close it, since a feature may need multiple feature branch commits."
 
+## Clarifications
+
+### Session 2026-11-04
+
+- Q: At what point in section-by-section authoring should the GitHub issue first be created? → A: Create the issue before running `/speckit-specify`; do not mark it as a draft.
+
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Spec creation opens a tracking issue (Priority: P1)
+### User Story 1 - Spec creation is linked to a tracking issue (Priority: P1)
 
-An engineer creates a new spec. As part of that action, a GitHub issue is created in the repository to represent the feature, so the work is visible in the team's work-tracking system from the start.
+Before running `/speckit-specify`, an engineer creates an open GitHub issue in the repository to represent the feature. Spec authoring links to that existing issue, so the work is visible in the team's tracking system from the start.
 
 **Why this priority**: Without the issue, feature work is invisible to the tracking system. This is the core problem.
 
-**Independent Test**: Create a new spec and confirm exactly one new GitHub issue exists for it, and that the spec and issue reference each other.
+**Independent Test**: Create a GitHub issue, run `/speckit-specify`, and confirm the resulting spec links to that issue and the issue contains the spec content.
 
 **Acceptance Scenarios**:
 
-1. **Given** an engineer creates a new spec, **When** creation completes, **Then** a new GitHub issue exists whose title identifies the feature and whose body contains the spec content.
+1. **Given** an engineer creates an open, non-draft GitHub issue for a feature, **When** they run `/speckit-specify`, **Then** the spec links to that issue and the issue body contains the spec content.
 2. **Given** a spec has an associated issue, **When** the engineer opens the spec, **Then** it shows the issue number and link.
-3. **Given** the issue cannot be created (e.g., not authenticated or no network), **When** the spec is created, **Then** the engineer is told clearly that no issue was created and how to retry, and the spec itself is not lost.
+3. **Given** no issue exists for the feature, **When** the engineer runs `/speckit-specify`, **Then** the engineer is told to create an issue before authoring begins.
 4. **Given** a spec already has an issue, **When** the engineer re-runs spec creation or updates the spec, **Then** no duplicate issue is created.
 
 ---
@@ -76,7 +82,7 @@ Merging a PR never automatically closes the spec's issue. A person closes it whe
 
 ### Edge Cases
 
-- Issue creation fails midway (spec exists, no issue): the engineer can retry and obtain exactly one issue.
+- No issue exists before `/speckit-specify` runs: the engineer is told to create an issue before authoring begins.
 - The engineer lacks permission to create issues in the repository.
 - A spec is abandoned: the issue remains open for a human to close.
 - Spec content is edited after the issue is created: the issue can be updated to match without creating a new one.
@@ -86,7 +92,7 @@ Merging a PR never automatically closes the spec's issue. A person closes it whe
 
 ### Functional Requirements
 
-- **FR-001**: Creating a new spec MUST create exactly one GitHub issue in the project's repository.
+- **FR-001**: Before `/speckit-specify` runs, an engineer MUST create an open, non-draft GitHub issue in the project's repository for the feature.
 - **FR-002**: The spec MUST record the issue number and link, and the issue MUST identify the spec.
 - **FR-003**: Re-running or updating a spec MUST NOT create duplicate issues; it MUST update the existing issue instead.
 - **FR-004**: Spec authoring MUST present each required section individually, with guidance on its content, and capture the response per section.
@@ -94,7 +100,7 @@ Merging a PR never automatically closes the spec's issue. A person closes it whe
 - **FR-006**: The issue content MUST reflect the completed spec sections.
 - **FR-007**: PRs for a spec's work MUST reference the spec's issue in a way that links the PR to the issue without closing it.
 - **FR-008**: Merging a PR MUST NOT automatically close the issue; only a human may close it.
-- **FR-009**: If issue creation fails, the engineer MUST be shown a clear message and a way to retry, and the spec MUST be preserved.
+- **FR-009**: If no issue exists when `/speckit-specify` runs, the engineer MUST be told to create an issue before authoring begins.
 - **FR-010**: The feature MUST NOT store credentials in tracked files.
 
 ### Key Entities
