@@ -6,7 +6,6 @@
 | `title` | Yes | Issue title |
 | `body` | Yes | Markdown body |
 | `labels` | No | String array of labels |
-| `idempotencyKey` | No | If set, an existing issue carrying the same hidden marker is returned instead of creating a new one |
 | `userCredentialsSecretKey` | No | Defaults to `USER_GITHUB_TOKEN` |
 
 | Output | Description |
@@ -14,7 +13,7 @@
 | `issueUrl` | HTML URL of the issue |
 | `issueNumber` | Issue number |
 
-Behavior: acts as the user; throws `Failed to create issue in <owner>/<repo>: <message>` on API failure; never closes or links the issue to closing keywords.
+Behavior: acts as the user; appends a hidden `<!-- spec-key: <task-id> -->` marker derived from the scaffolder task ID, returning the matching issue on a retry of the same run and creating a new issue for a new run; throws `Failed to create issue in <owner>/<repo>: <message>` on API failure; never closes or links the issue to closing keywords.
 
 Template usage:
 

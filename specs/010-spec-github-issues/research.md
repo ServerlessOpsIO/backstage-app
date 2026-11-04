@@ -21,10 +21,11 @@
 - **Rationale**: Existing module already follows this pattern (`x_github:pr:comment`), acts as the user, and is unit-tested the same way. The built-in `github:issues:label` only labels; no built-in creates issues.
 - **Alternatives**: Raw `http:backstage:request` (no GitHub auth handling); `octokit` in template (not possible).
 
-## D4. Idempotency (FR-003)
-- **Decision**: Action embeds a hidden marker (`<!-- spec-key: <key> -->`) only when an optional `idempotencyKey` input is given, and searches existing issues for it before creating; returns the existing issue if found. Not part of the visible body layout otherwise.
-- **Rationale**: Prevents duplicates on scaffolder retry. Marker is an HTML comment, so the visible body matches the required format.
-- **Alternatives**: No dedupe (violates FR-003); title search (titles are not unique).
+## D4. Repeat behavior (FR-003)
+- **Decision**: The action uses the scaffolder task ID as its idempotency key. A retry in the same run finds and returns its issue; a separate workflow run has a different ID and creates a new issue.
+- **Rationale**: This produces a fresh issue on every intentional workflow run while keeping retries within a run idempotent, as required by the repository's scaffolder conventions.
+- **Key source**: The action derives the key from its task context; it must not use a stable spec title or other value shared across runs.
+- **Marker**: The key is appended as a hidden `<!-- spec-key: <task-id> -->` HTML comment and searched before issue creation.
 
 ## D5. Body format
 - **Decision**: The template assembles the body exactly per the input layout (blank line between sections) and passes it as `body`; the action does no body templating.

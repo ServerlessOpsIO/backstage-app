@@ -6,7 +6,7 @@
 
 ## Summary
 
-Add a spec form page (first page of the "Create feature spec" scaffolder template) that collects spec type, title, story sentence, proposed solution, additional context, and acceptance criteria. Then file a GitHub issue from those answers: title = spec title, label = spec type, body in the fixed layout below. Filing needs a new scaffolder action, `x_github:issue:create`, in the existing `scaffolder-backend-module-github` plugin, which already creates Octokit clients from the user's token. The form and the issue-body assembly live in the template (`ServerlessOpsIO/backstage-github-speckit-feature`, `template-spec.yaml`, registered in `app-config.production.yaml`); this repo owns the action and the contract.
+Add a single-page spec form to the "Create feature spec" scaffolder template. Each new workflow run creates a new GitHub issue before `/speckit-specify` runs; retries within that run reuse its issue, while a later run creates another issue. Issue title, label, and body are populated from the form. Filing uses a new scaffolder action, `x_github:issue:create`, in the existing `scaffolder-backend-module-github` plugin, which already creates Octokit clients from the user's token. The form and issue-body assembly live in the template (`ServerlessOpsIO/backstage-github-speckit-feature`, `template-spec.yaml`, registered in `app-config.production.yaml`); this repo owns the action and the contract. The workflow exposes the issue number and URL for PR authors, but adding a non-closing PR reference is best effort.
 
 ## Technical Context
 
@@ -22,9 +22,9 @@ Add a spec form page (first page of the "Create feature spec" scaffolder templat
 
 **Project Type**: Backstage backend module plus scaffolder template YAML (external repo)
 
-**Performance Goals**: Issue is created in one GitHub API call during the scaffolder run
+**Performance Goals**: Issue creation uses one create request; retry detection may search for the run marker before creating.
 
-**Constraints**: Acts as the signed-in user (`requestUserCredentials`), no tokens in tracked files; issue must not close automatically (spec FR-008); must not duplicate issues on re-run (FR-003)
+**Constraints**: Acts as the signed-in user (`requestUserCredentials`), no tokens in tracked files; creates one issue per workflow run and remains idempotent on retries within that run (spec FR-003); issue must not close automatically (spec FR-008); PR references are best effort (FR-007)
 
 **Scale/Scope**: One new action file, its test, registration, README entry, one template page
 
@@ -33,7 +33,7 @@ Add a spec form page (first page of the "Create feature spec" scaffolder templat
 | Principle | Status |
 |---|---|
 | I. Architecture Boundaries | Pass: reusable behavior goes in `src/plugins/scaffolder-backend-module-github`, registered through its module; no code in `packages/app` or `packages/backend` |
-| II. Catalog Integrity | Pass: scaffolder action defines failure behavior (throws with a clear message, no partial state) and repeat behavior (idempotency marker, see research D4) |
+| II. Catalog Integrity | Pass: scaffolder action defines failure behavior (throws with a clear message, no partial state) and repeat behavior (run-scoped idempotency; distinct runs create distinct issues; see research D4) |
 | III. Environment-Driven Configuration | Pass: no new config keys; uses existing GitHub host/user token. Template registration already exists in `app-config.production.yaml` |
 | IV. Secrets and Least Privilege | Pass: user's token via task secret, not stored; fails safely if the secret is missing or the user lacks issue permission |
 | V. Validation and Deployment Integrity | Pass, gated: `yarn tsc:full`, `yarn build:all`, `yarn test:all`, `yarn lint:all`; unit tests added for the action. No new dependencies; no infra change |

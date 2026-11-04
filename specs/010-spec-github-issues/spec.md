@@ -6,62 +6,61 @@
 
 **Status**: Draft
 
-**Input**: User description: "As an engineer my specs are recorded as Github issues. When creating a spec the work should be recorded in Github issues. While working on new features the work is not being captured in the system we use for tracking work. Additionally to improve specs the user should be shown different sections needed to write a good spec. The user will fill out each section individually. Acceptance criteria: a newly created spec results in a new GitHub issue; each PR related to the spec references the issue so reviewing the issue links to the work; the issue is not automatically closed and requires a human to close it, since a feature may need multiple feature branch commits."
+**Input**: User description: "As an engineer my specs are recorded as Github issues. When creating a spec the work should be recorded in Github issues. While working on new features the work is not being captured in the system we use for tracking work. Additionally to improve specs the user should be shown the fields needed to write a good spec together on a single page. Acceptance criteria: a newly created spec results in a new GitHub issue; PRs should reference the issue when practical so reviewing the issue can link to the work; the issue is not automatically closed and requires a human to close it, since a feature may need multiple feature branch commits."
 
 ## Clarifications
 
 ### Session 2026-11-04
 
-- Q: At what point in section-by-section authoring should the GitHub issue first be created? → A: Create the issue before running `/speckit-specify`; do not mark it as a draft.
+- Q: When should the GitHub issue be created relative to `/speckit-specify`? → A: Create the issue before running `/speckit-specify`; do not mark it as a draft.
 
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Spec creation is linked to a tracking issue (Priority: P1)
 
-Before running `/speckit-specify`, an engineer creates an open GitHub issue in the repository to represent the feature. Spec authoring links to that existing issue, so the work is visible in the team's tracking system from the start.
+The engineer fills in a single-page spec form. The workflow creates an open GitHub issue from those answers before `/speckit-specify` runs, so spec authoring can link to an existing issue and the work is visible in the team's tracking system from the start.
 
 **Why this priority**: Without the issue, feature work is invisible to the tracking system. This is the core problem.
 
-**Independent Test**: Create a GitHub issue, run `/speckit-specify`, and confirm the resulting spec links to that issue and the issue contains the spec content.
+**Independent Test**: Submit the spec form, confirm it creates an open issue, then run `/speckit-specify` and confirm the resulting spec links to that issue.
 
 **Acceptance Scenarios**:
 
-1. **Given** an engineer creates an open, non-draft GitHub issue for a feature, **When** they run `/speckit-specify`, **Then** the spec links to that issue and the issue body contains the spec content.
+1. **Given** an engineer submits the spec form, **When** the workflow creates the issue and `/speckit-specify` runs, **Then** the spec links to the issue and the issue body contains the submitted form content.
 2. **Given** a spec has an associated issue, **When** the engineer opens the spec, **Then** it shows the issue number and link.
 3. **Given** no issue exists for the feature, **When** the engineer runs `/speckit-specify`, **Then** the engineer is told to create an issue before authoring begins.
-4. **Given** a spec already has an issue, **When** the engineer re-runs spec creation or updates the spec, **Then** no duplicate issue is created.
+4. **Given** an engineer re-runs the spec creation workflow, **When** the form is submitted, **Then** a new issue is created rather than reusing the issue from an earlier run.
 
 ---
 
-### User Story 2 - Guided, section-by-section spec authoring (Priority: P2)
+### User Story 2 - Single-page spec form (Priority: P2)
 
-The engineer is shown each section needed for a good spec (e.g., user scenarios, requirements, success criteria, assumptions) one at a time, with a short explanation of what belongs in it, and fills each in individually.
+The engineer is shown one form page with fields for spec type, title, story sentence, proposed solution, additional context, and acceptance criteria.
 
-**Why this priority**: Improves spec quality, and the sectioned content is what populates the issue. It is valuable but the issue tracking works without it.
+**Why this priority**: Improves spec quality, and the form content populates the issue. It is valuable but the issue tracking works without it.
 
-**Independent Test**: Start a new spec and confirm each required section is presented separately with guidance, and that the completed content appears in the spec and issue.
+**Independent Test**: Open the spec form and confirm all specified fields appear on the same page, required fields are enforced, and the submitted content appears in the issue.
 
 **Acceptance Scenarios**:
 
-1. **Given** an engineer starts a new spec, **When** authoring begins, **Then** each required section is presented individually with a description of what a good answer contains.
-2. **Given** the engineer is on a section, **When** they submit content, **Then** it is recorded under that section and the next section is presented.
-3. **Given** the engineer leaves a required section empty, **When** they try to finish, **Then** they are told which sections are incomplete.
-4. **Given** all sections are completed, **When** the spec is finalized, **Then** the issue reflects the full sectioned content.
+1. **Given** an engineer starts a new spec, **When** the form opens, **Then** all fields are presented together on a single page with the specified guidance.
+2. **Given** the engineer submits the form, **When** a required field is empty, **Then** the form identifies that field as incomplete and does not create the issue.
+3. **Given** the engineer completes the required fields, **When** the form is submitted, **Then** the issue body contains the submitted values in the specified layout.
 
 ---
 
 ### User Story 3 - Pull requests link to the spec's issue (Priority: P2)
 
-Every pull request for work belonging to a spec references the spec's issue, so viewing the issue shows all related PRs.
+The workflow provides the issue reference and encourages pull requests for spec work to include it, so the issue can show related PRs when authors add the reference.
 
 **Why this priority**: Gives traceability from the issue to the actual work.
 
-**Independent Test**: Open a PR from a spec's feature branch and confirm the issue shows a link to that PR.
+**Independent Test**: Confirm the workflow exposes the issue URL and number and gives PR authors non-closing reference guidance.
 
 **Acceptance Scenarios**:
 
-1. **Given** a spec with an issue, **When** a PR is opened for that spec's work, **Then** the PR description references the issue and the issue shows the PR as linked.
-2. **Given** a feature requires multiple PRs, **When** each is opened, **Then** each references the same issue.
+1. **Given** a spec with an issue, **When** a PR is prepared for that spec's work, **Then** the workflow provides the issue reference and guidance to include a non-closing reference; inclusion is best effort.
+2. **Given** a feature requires multiple PRs, **When** authors include the provided reference, **Then** each PR links to the same issue.
 
 ---
 
@@ -85,45 +84,45 @@ Merging a PR never automatically closes the spec's issue. A person closes it whe
 - No issue exists before `/speckit-specify` runs: the engineer is told to create an issue before authoring begins.
 - The engineer lacks permission to create issues in the repository.
 - A spec is abandoned: the issue remains open for a human to close.
-- Spec content is edited after the issue is created: the issue can be updated to match without creating a new one.
-- A PR relates to a spec but the engineer forgot the reference: the missing link is detectable.
+- A spec creation workflow is re-run: it creates a new issue rather than reusing the issue from an earlier run. Retries within one workflow run reuse that run's issue.
+- A PR relates to a spec but the engineer omits the reference: issue-linking guidance is best effort and does not block the PR.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: Before `/speckit-specify` runs, an engineer MUST create an open, non-draft GitHub issue in the project's repository for the feature.
+- **FR-001**: The spec creation workflow MUST create an open, non-draft GitHub issue in the project's repository before `/speckit-specify` runs.
 - **FR-002**: The spec MUST record the issue number and link, and the issue MUST identify the spec.
-- **FR-003**: Re-running or updating a spec MUST NOT create duplicate issues; it MUST update the existing issue instead.
-- **FR-004**: Spec authoring MUST present each required section individually, with guidance on its content, and capture the response per section.
-- **FR-005**: The system MUST indicate which required sections are incomplete before a spec is finalized.
-- **FR-006**: The issue content MUST reflect the completed spec sections.
-- **FR-007**: PRs for a spec's work MUST reference the spec's issue in a way that links the PR to the issue without closing it.
+- **FR-003**: Each new run of the spec creation workflow MUST create a new issue rather than reuse an issue from an earlier run. Retries within the same run MUST reuse that run's issue.
+- **FR-004**: Spec authoring MUST present spec type, title, story sentence, proposed solution, additional context, and acceptance criteria together on a single form page.
+- **FR-005**: The form MUST identify incomplete required fields and prevent issue creation until they are completed.
+- **FR-006**: The issue content MUST reflect the values submitted through the spec form.
+- **FR-007**: The workflow SHOULD provide the issue number/link and guidance for adding a non-closing reference to PRs for the spec's work. PR linking is best effort and MUST NOT be a blocker.
 - **FR-008**: Merging a PR MUST NOT automatically close the issue; only a human may close it.
 - **FR-009**: If no issue exists when `/speckit-specify` runs, the engineer MUST be told to create an issue before authoring begins.
 - **FR-010**: The feature MUST NOT store credentials in tracked files.
 
 ### Key Entities
 
-- **Spec**: The feature specification, made of individual sections, with a reference to its issue.
-- **Spec Section**: A named part of a spec (e.g., scenarios, requirements) with guidance and completion state.
+- **Spec**: The feature specification, authored from a single-page form, with a reference to its issue.
+- **Spec Form**: The single-page set of type, title, story, proposed solution, additional context, and acceptance criteria fields.
 - **Tracking Issue**: The GitHub issue representing the feature's work; open until a human closes it.
-- **Pull Request**: A unit of work for the feature that links to the tracking issue.
+- **Pull Request**: A unit of work for the feature that may include a non-closing reference to the tracking issue.
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
 - **SC-001**: 100% of newly created specs have exactly one linked GitHub issue.
-- **SC-002**: 100% of PRs for spec work link to the spec's issue, visible from the issue.
+- **SC-002**: Every issue created by the workflow exposes its issue number and URL to template outputs for PR authors; PR references remain best effort.
 - **SC-003**: 0 spec issues are closed automatically by a PR merge.
-- **SC-004**: An engineer can complete all spec sections in a single guided session without needing to consult external documentation.
-- **SC-005**: Zero duplicate issues are created when a spec is re-run or edited.
+- **SC-004**: An engineer can submit the single-page form with all required fields completed in one scaffolder run.
+- **SC-005**: Each workflow run creates exactly one issue; retrying the same run creates no additional issue, while a separate run creates a new issue.
 
 ## Assumptions
 
 - Engineers are authenticated to GitHub with permission to create issues in the repository.
 - The GitHub repository hosting the spec is the same one where the issue is created.
-- Required sections are those in the existing spec template: user scenarios, requirements, success criteria, and assumptions.
-- Linking PRs uses non-closing references; enforcing it on every PR is via guidance and detection rather than blocking, unless later specified.
+- The form's required fields are spec type, spec title, story sentence, and proposed solution; additional context is optional and acceptance criteria is pre-populated but optional.
+- PR references use non-closing wording when provided, but adding the reference is best effort and is not enforced.
 - Existing specs (001–007) are out of scope and are not retroactively given issues.

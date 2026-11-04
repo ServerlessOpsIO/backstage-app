@@ -20,4 +20,4 @@
 | `body` | Layout in contracts/spec-form.md |
 | state | open; never closed by automation |
 
-Relationship: one SpecForm submission produces one SpecIssue; the issue number/URL is an output of the action and is passed to later template steps.
+Relationship: each distinct workflow run produces one SpecIssue. The action derives an idempotency key from the task ID, so retries in one run reuse that run's issue while a later run produces a new issue. The issue number/URL is an output of the action and is passed to later template steps.

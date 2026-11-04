@@ -27,7 +27,7 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 **Purpose**: Blocking prerequisites for all stories
 
-- [ ] T002 Create `PLUGIN/src/actions/issue-create.ts` skeleton exporting `createGithubIssueAction` (id `x_github:issue:create`) with zod input schema per contracts/issue-create-action.md (`repoUrl`, `title`, `body`, optional `labels` string[], optional `idempotencyKey`, optional `userCredentialsSecretKey` default `USER_GITHUB_TOKEN`) and output schema (`issueUrl`, `issueNumber`)
+- [ ] T002 Create `PLUGIN/src/actions/issue-create.ts` skeleton exporting `createGithubIssueAction` (id `x_github:issue:create`) with zod input schema per contracts/issue-create-action.md (`repoUrl`, `title`, `body`, optional `labels` string[], optional `userCredentialsSecretKey` default `USER_GITHUB_TOKEN`) and output schema (`issueUrl`, `issueNumber`); derive its idempotency key from the scaffolder task ID
 - [ ] T003 Export the action in `PLUGIN/src/actions/index.ts` (`export * from './issue-create'`) and register `createGithubIssueAction()` in `PLUGIN/src/module.ts`
 
 **Checkpoint**: Action is registered and type-checks.
@@ -36,33 +36,33 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 ## Phase 3: User Story 1 - Spec creation is linked to a tracking issue (P1) 🎯 MVP
 
-**Goal**: Submitting the spec form creates exactly one open GitHub issue (title = spec title, label = spec type, body in fixed layout), with no duplicates on retry.
+**Goal**: Each successful form submission creates one new open GitHub issue (title = spec title, label = spec type, body in fixed layout) before `/speckit-specify` runs.
 
-**Independent Test**: Run the action (or template) against a test repo; confirm one open issue; re-run with same `idempotencyKey` and confirm no second issue.
+**Independent Test**: Submit the form against a test repo; confirm one open issue is created before `/speckit-specify`; retry that run and confirm no duplicate, then start a separate run and confirm a second issue is created.
 
 ### Tests for User Story 1
 
-- [ ] T004 [P] [US1] Write `PLUGIN/src/actions/issue-create.test.ts` covering: title/labels/body passthrough, outputs `issueUrl`/`issueNumber`, missing user token error, non-`github.com` host error, API failure message `Failed to create issue in <owner>/<repo>: <message>`, idempotent reuse (existing issue with marker returned, no create call), marker appended only when `idempotencyKey` set
+- [ ] T004 [P] [US1] Write `PLUGIN/src/actions/issue-create.test.ts` covering: title/labels/body passthrough, outputs `issueUrl`/`issueNumber`, missing user token error, non-`github.com` host error, API failure message `Failed to create issue in <owner>/<repo>: <message>`, same-run marker reuse, and distinct markers/issues across runs
 
 ### Implementation for User Story 1
 
 - [ ] T005 [US1] Implement handler in `PLUGIN/src/actions/issue-create.ts`: parse `repoUrl`, read user token from task secrets, build client with `createUserOctokit`, call `POST /repos/{owner}/{repo}/issues` with title, body, labels; set outputs; throw on failure per contract
-- [ ] T006 [US1] Implement idempotency in `PLUGIN/src/actions/issue-create.ts`: when `idempotencyKey` is set, append hidden `<!-- spec-key: <key> -->` marker to body, search existing issues in the repo for the marker first, and return the existing issue's `issueUrl`/`issueNumber` if found (research D4)
+- [ ] T006 [US1] Implement run-scoped idempotency in `PLUGIN/src/actions/issue-create.ts`: append a hidden `<!-- spec-key: <task-id> -->` marker, search for it before creation, reuse its issue for the same run, and create a new issue for a distinct run (FR-003)
 - [ ] T007 [US1] Ensure the action never uses closing keywords and never closes/reopens issues (contract; supports FR-008) in `PLUGIN/src/actions/issue-create.ts`
-- [ ] T008 [US1] Add `x_github:issue:create` documentation (inputs, outputs, usage example, idempotency) to `PLUGIN/README.md`
+- [ ] T008 [US1] Add `x_github:issue:create` documentation (inputs, outputs, usage example, run-scoped idempotency) to `PLUGIN/README.md`
 
 **Checkpoint**: US1 action works and is tested.
 
 ---
 
-## Phase 4: User Story 2 - Guided, section-by-section spec authoring (P2)
+## Phase 4: User Story 2 - Single-page spec form (P2)
 
-**Goal**: A spec form page presents each section with guidance; required fields are enforced; completed content populates the issue.
+**Goal**: A single-page form presents the specified fields with guidance; required fields are enforced; completed content populates the issue.
 
 **Independent Test**: Open Create → "Create feature spec"; verify fields, required markers, and issue body.
 
-- [ ] T009 [US2] In `template-spec.yaml` (external template repo), add first `parameters` page "Spec" with fields per contracts/spec-form.md and data-model.md: `specType` (enum `feature|bug|documentation`, radio, default `feature`), `specTitle` (`minLength: 1`), `storySentence` (`minLength: 1`, description/placeholder "As a ____, I can ____"), `proposedSolution` (textarea, 10 rows), `additionalContext` (optional textarea, 5 rows), `acceptanceCriteria` (optional textarea, 5 rows, default `- [ ] ...`); `required: [specType, specTitle, storySentence, proposedSolution]`
-- [ ] T010 [US2] In `template-spec.yaml`, request user credentials (`requestUserCredentials`) and add a `fileIssue` step using `x_github:issue:create` with title `${{ parameters.specTitle }}`, labels `['${{ parameters.specType }}']`, and body in the exact layout from contracts/spec-form.md (note the `##` heading-space caveat in research D5); pass an `idempotencyKey`; expose issue number/URL to later steps
+- [ ] T009 [US2] In `template-spec.yaml` (external template repo), add one `parameters` page "Spec" with fields per contracts/spec-form.md and data-model.md: `specType` (enum `feature|bug|documentation`, radio, default `feature`), `specTitle` (`minLength: 1`), `storySentence` (`minLength: 1`, description/placeholder "As a ____, I can ____"), `proposedSolution` (textarea, 10 rows), `additionalContext` (optional textarea, 5 rows), `acceptanceCriteria` (optional textarea, 5 rows, default `- [ ] ...`); `required: [specType, specTitle, storySentence, proposedSolution]`
+- [ ] T010 [US2] In `template-spec.yaml`, request user credentials (`requestUserCredentials`) and add a `fileIssue` step before `/speckit-specify` using `x_github:issue:create` with title `${{ parameters.specTitle }}`, labels `['${{ parameters.specType }}']`, and body in the exact layout from contracts/spec-form.md (note the `##` heading-space caveat in research D5); expose issue number/URL to later steps
 - [ ] T011 [US2] Confirm `template-spec.yaml` is registered in `app-config.production.yaml` (no change expected; edit only if missing)
 
 **Checkpoint**: Form renders and files the issue.
@@ -71,11 +71,11 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 ## Phase 5: User Story 3 - PRs link to the spec's issue (P2)
 
-**Goal**: Issue number is available so PRs can reference it without closing it.
+**Goal**: Issue number is available and guidance encourages non-closing PR references; linking remains best effort.
 
-**Independent Test**: PR text references `#<n>`/URL with non-closing wording; issue shows the link.
+**Independent Test**: Confirm template outputs expose the issue URL/number and provide non-closing reference guidance without blocking PR creation.
 
-- [ ] T012 [US3] In `template-spec.yaml`, surface `issueUrl`/`issueNumber` in template `output.links` and pass them to downstream steps so PR bodies can reference the issue with non-closing wording (e.g. "Related to #N", never "Closes/Fixes/Resolves")
+- [ ] T012 [US3] In `template-spec.yaml`, surface `issueUrl`/`issueNumber` in template `output.links` and provide guidance to downstream PR authors to use non-closing wording (e.g. "Related to #N", never "Closes/Fixes/Resolves"); do not block PR creation when the reference is omitted
 
 ---
 
@@ -86,7 +86,7 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 **Independent Test**: Merge a PR referencing the issue; issue stays open.
 
 - [ ] T013 [P] [US4] Verify in `PLUGIN/src/actions/issue-create.test.ts` that the created issue payload/body contains no closing keywords and no state change calls are made
-- [ ] T014 [US4] Document in `PLUGIN/README.md` that issues are opened only and PR references must be non-closing
+- [ ] T014 [US4] Document in `PLUGIN/README.md` that issues are opened only and PR references should be non-closing, with linking best effort
 
 ---
 
