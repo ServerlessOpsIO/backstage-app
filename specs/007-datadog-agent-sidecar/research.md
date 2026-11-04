@@ -25,3 +25,4 @@
 
 ## D7 Open risk: service-level metrics
 - Agent on Fargate yields `ecs.fargate.*` task/container metrics tagged with cluster/service. Desired/running counts and deployment metrics (`aws.ecs.service.*`) normally come from the AWS integration, which the spec says is not required. Verify in quickstart; if absent, spec needs clarification (not solved by config).
+- **Status (post-implementation)**: Pending deployment. After deploy, check whether `aws.ecs.service.*` metrics appear; if absent, record here that spec clarification is needed (AWS integration is out of scope).

@@ -37,14 +37,14 @@ No blocking prerequisites beyond Phase 1; infrastructure (cluster, roles, log gr
 
 **Independent Test**: Deploy, then in Datadog Metrics Explorer filter `ecs.fargate.cpu.usage` / `ecs.fargate.mem.usage` by service/cluster; data is present and tagged (quickstart steps 3-4).
 
-- [ ] T004 [US1] In `template.yaml` `TaskDefinition.Properties.ContainerDefinitions`, add a second container `Name: datadog-agent`, `Image: public.ecr.aws/datadog/agent:latest`, `Cpu: 256`, `Memory: 512`, mirroring upstream `container/skeleton/template.yaml` L172-L199 without the Jinja `enable_datadog` guard
-- [ ] T005 [US1] In the `datadog-agent` container in `template.yaml`, add `Environment`: `DD_API_KEY: !Ref DatadogApiKey`, `DD_SITE: !Ref DatadogSite`, `ECS_FARGATE: "true"` (quoted string), `DD_LOG_LEVEL: ERROR`; no literal key values
-- [ ] T006 [US1] In the `datadog-agent` container in `template.yaml`, add `HealthCheck` with `Command: [CMD-SHELL, agent health]`, `Interval: 5`, `Retries: 3`, `StartPeriod: 10`, `Timeout: 5`
-- [ ] T007 [US1] In the `datadog-agent` container in `template.yaml`, add `LogConfiguration` (awslogs, same group `!Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'`, region `!Ref AWS::Region`, `awslogs-stream-prefix: sidecar`)
-- [ ] T008 [US1] In `template.yaml`, add `DockerLabels` to the app container (`!Ref Component`): `com.datadoghq.tags.domain: !Ref Domain`, `com.datadoghq.tags.system: !Ref System`, `com.datadoghq.tags.component: !Ref Component`, `com.datadoghq.tags.code_branch: !Ref CodeBranch` (confirm the parameter names exist; contract item 5)
-- [ ] T009 [US1] Do not add `DD_ENV`/`DD_SERVICE` or `DD_TAGS` based on an unverified assumption; validate the resulting metric tags after deployment in T018, then determine whether explicit tags are needed (FR-003, research D3)
-- [ ] T010 [US1] Run `sam validate --lint && sam build --parallel --template template.yaml` and fix any errors in `template.yaml`
-- [ ] T011 [US1] Document the service-level metrics risk (research D7): after deploy, check whether `aws.ecs.service.*` desired/running/deployment metrics appear; if not, record in `specs/007-datadog-agent-sidecar/research.md` that spec clarification is needed (AWS integration is out of scope)
+- [X] T004 [US1] In `template.yaml` `TaskDefinition.Properties.ContainerDefinitions`, add a second container `Name: datadog-agent`, `Image: public.ecr.aws/datadog/agent:latest`, `Cpu: 256`, `Memory: 512`, mirroring upstream `container/skeleton/template.yaml` L172-L199 without the Jinja `enable_datadog` guard
+- [X] T005 [US1] In the `datadog-agent` container in `template.yaml`, add `Environment`: `DD_API_KEY: !Ref DatadogApiKey`, `DD_SITE: !Ref DatadogSite`, `ECS_FARGATE: "true"` (quoted string), `DD_LOG_LEVEL: ERROR`; no literal key values
+- [X] T006 [US1] In the `datadog-agent` container in `template.yaml`, add `HealthCheck` with `Command: [CMD-SHELL, agent health]`, `Interval: 5`, `Retries: 3`, `StartPeriod: 10`, `Timeout: 5`
+- [X] T007 [US1] In the `datadog-agent` container in `template.yaml`, add `LogConfiguration` (awslogs, same group `!Sub '/aws/ecs/${ClusterName}/${AWS::StackName}'`, region `!Ref AWS::Region`, `awslogs-stream-prefix: sidecar`)
+- [X] T008 [US1] In `template.yaml`, add `DockerLabels` to the app container (`!Ref Component`): `com.datadoghq.tags.domain: !Ref Domain`, `com.datadoghq.tags.system: !Ref System`, `com.datadoghq.tags.component: !Ref Component`, `com.datadoghq.tags.code_branch: !Ref CodeBranch` (confirm the parameter names exist; contract item 5)
+- [X] T009 [US1] Do not add `DD_ENV`/`DD_SERVICE` or `DD_TAGS` based on an unverified assumption; validate the resulting metric tags after deployment in T018, then determine whether explicit tags are needed (FR-003, research D3)
+- [X] T010 [US1] Run `sam validate --lint && sam build --parallel --template template.yaml` and fix any errors in `template.yaml`
+- [X] T011 [US1] Document the service-level metrics risk (research D7): after deploy, check whether `aws.ecs.service.*` desired/running/deployment metrics appear; if not, record in `specs/007-datadog-agent-sidecar/research.md` that spec clarification is needed (AWS integration is out of scope)
 
 **Checkpoint**: Task definition has both containers and validates; metrics verified post-deploy per quickstart.
 
