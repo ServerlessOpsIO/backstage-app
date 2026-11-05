@@ -1,4 +1,5 @@
 import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { renderInTestApp } from '@backstage/frontend-test-utils'
 import { catalogApiRef, EntityProvider } from '@backstage/plugin-catalog-react'
 import scaffolderPlugin from '@backstage/plugin-scaffolder/alpha'
@@ -111,34 +112,35 @@ describe('CreateSpecButton', () => {
   test('is disabled with an explanation when the template is missing', async () => {
     render({ getEntityByRef: jest.fn().mockResolvedValue(undefined) })
 
-    const reason = await screen.findByText(
+    const button = await screen.findByRole('button', { name: 'Create spec' })
+    expect(button).toBeDisabled()
+
+    await userEvent.setup().hover(button)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
       'The "1-speckit-feature" workflow is unavailable.',
     )
-    const button = screen.getByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
-    expect(button).toHaveAttribute('aria-describedby', reason.id)
   })
 
   test('is disabled with an explanation when the template lookup fails', async () => {
     render({ getEntityByRef: jest.fn().mockRejectedValue(new Error('boom')) })
 
-    expect(
-      await screen.findByText(
-        'The "1-speckit-feature" workflow is unavailable.',
-      ),
-    ).toBeVisible()
-    expect(screen.getByRole('button', { name: 'Create spec' })).toBeDisabled()
+    const button = await screen.findByRole('button', { name: 'Create spec' })
+    expect(button).toBeDisabled()
+    await userEvent.setup().hover(button)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'The "1-speckit-feature" workflow is unavailable.',
+    )
   })
 
   test('is disabled with an explanation when permission is denied', async () => {
     mockUsePermission.mockReturnValue({ loading: false, allowed: false })
     render()
 
-    const reason = await screen.findByText(
+    const button = await screen.findByRole('button', { name: 'Create spec' })
+    expect(button).toBeDisabled()
+    await userEvent.setup().hover(button)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
       "You don't have permission to start the Create feature spec workflow.",
     )
-    const button = screen.getByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
-    expect(button).toHaveAttribute('aria-describedby', reason.id)
   })
 })

@@ -8,15 +8,18 @@ import { catalogApiRef, useEntity } from '@backstage/plugin-catalog-react'
 import { useRouteRef } from '@backstage/frontend-plugin-api'
 import scaffolderPlugin from '@backstage/plugin-scaffolder/alpha'
 import useAsync from 'react-use/esm/useAsync'
-import { Button, ButtonLink, Flex, Text } from '@backstage/ui'
+import {
+  Button,
+  ButtonLink,
+  Tooltip,
+  TooltipTrigger,
+} from '@backstage/ui'
 import {
   CREATE_SPEC_TEMPLATE_NAME,
   CREATE_SPEC_TEMPLATE_NAMESPACE,
   UNAVAILABLE_REASON,
   useCreateSpecAvailability,
 } from './useCreateSpecAvailability'
-
-const REASON_ID = 'create-spec-button-reason'
 
 const refOf = (
   value: unknown,
@@ -80,16 +83,20 @@ export const CreateSpecButton = () => {
   const explanation =
     state === 'checking' ? undefined : reason ?? UNAVAILABLE_REASON
 
+  if (explanation) {
+    return (
+      <TooltipTrigger>
+        <Button variant="primary" isDisabled>
+          Create spec
+        </Button>
+        <Tooltip>{explanation}</Tooltip>
+      </TooltipTrigger>
+    )
+  }
+
   return (
-    <Flex direction="column" align="end" gap="1">
-      <Button
-        variant="primary"
-        isDisabled
-        aria-describedby={explanation ? REASON_ID : undefined}
-      >
-        Create spec
-      </Button>
-      {explanation && <Text id={REASON_ID}>{explanation}</Text>}
-    </Flex>
+    <Button variant="primary" isDisabled>
+      Create spec
+    </Button>
   )
 }
