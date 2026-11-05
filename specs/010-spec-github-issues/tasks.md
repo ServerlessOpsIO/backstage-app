@@ -19,7 +19,7 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 ## Phase 1: Setup
 
-- [ ] T001 Review `PLUGIN/src/actions/pr-comment.ts`, `pr-comment.test.ts`, and `common.ts` (`createUserOctokit`) to mirror structure, error handling, and test mocking for the new action
+- [X] T001 Review `PLUGIN/src/actions/pr-comment.ts`, `pr-comment.test.ts`, and `common.ts` (`createUserOctokit`) to mirror structure, error handling, and test mocking for the new action
 
 ---
 
