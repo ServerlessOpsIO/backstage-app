@@ -42,14 +42,14 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 ### Tests for User Story 1
 
-- [ ] T004 [P] [US1] Write `PLUGIN/src/actions/issue-create.test.ts` covering: title/labels/body passthrough, outputs `issueUrl`/`issueNumber`, missing user token error, non-`github.com` host error, API failure message `Failed to create issue in <owner>/<repo>: <message>`, same-run marker reuse, and distinct markers/issues across runs
+- [X] T004 [P] [US1] Write `PLUGIN/src/actions/issue-create.test.ts` covering: title/labels/body passthrough, outputs `issueUrl`/`issueNumber`, missing user token error, non-`github.com` host error, API failure message `Failed to create issue in <owner>/<repo>: <message>`, same-run marker reuse, and distinct markers/issues across runs
 
 ### Implementation for User Story 1
 
-- [ ] T005 [US1] Implement handler in `PLUGIN/src/actions/issue-create.ts`: parse `repoUrl`, read user token from task secrets, build client with `createUserOctokit`, call `POST /repos/{owner}/{repo}/issues` with title, body, labels; set outputs; throw on failure per contract
-- [ ] T006 [US1] Implement run-scoped idempotency in `PLUGIN/src/actions/issue-create.ts`: append a hidden `<!-- spec-key: <task-id> -->` marker, search for it before creation, reuse its issue for the same run, and create a new issue for a distinct run (FR-003)
-- [ ] T007 [US1] Ensure the action never uses closing keywords and never closes/reopens issues (contract; supports FR-008) in `PLUGIN/src/actions/issue-create.ts`
-- [ ] T008 [US1] Add `x_github:issue:create` documentation (inputs, outputs, usage example, run-scoped idempotency) to `PLUGIN/README.md`
+- [X] T005 [US1] Implement handler in `PLUGIN/src/actions/issue-create.ts`: parse `repoUrl`, read user token from task secrets, build client with `createUserOctokit`, call `POST /repos/{owner}/{repo}/issues` with title, body, labels; set outputs; throw on failure per contract
+- [X] T006 [US1] Implement run-scoped idempotency in `PLUGIN/src/actions/issue-create.ts`: append a hidden `<!-- spec-key: <task-id> -->` marker, search for it before creation, reuse its issue for the same run, and create a new issue for a distinct run (FR-003)
+- [X] T007 [US1] Ensure the action never uses closing keywords and never closes/reopens issues (contract; supports FR-008) in `PLUGIN/src/actions/issue-create.ts`
+- [X] T008 [US1] Add `x_github:issue:create` documentation (inputs, outputs, usage example, run-scoped idempotency) to `PLUGIN/README.md`
 
 **Checkpoint**: US1 action works and is tested.
 

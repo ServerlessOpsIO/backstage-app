@@ -150,6 +150,43 @@ The comment goes on the pull request's conversation, not on a line of its
 diff. The action returns the `commentUrl` and `commentId` outputs. Copilot only
 responds to `@copilot` mentions from users who can write to the repository.
 
+### `x_github:issue:create`
+
+Creates an issue in a repository, as the user running the template. For
+example, a spec template can file a tracking issue before it runs
+`/speckit-specify`:
+
+```yaml
+steps:
+  - id: fileIssue
+    name: File spec issue
+    action: x_github:issue:create
+    input:
+      repoUrl: github.com?owner=${{ parameters.github_org }}&repo=my-service
+      title: ${{ parameters.specTitle }}
+      labels: ['${{ parameters.specType }}']
+      body: ${{ parameters.storySentence }}
+```
+
+The action accepts these inputs:
+
+| Input | Required | Default | Description |
+| --- | --- | --- | --- |
+| `repoUrl` | Yes | | GitHub repository in Backstage `repoUrl` format. Only `github.com` is supported. |
+| `title` | Yes | | Title of the issue. |
+| `body` | Yes | | Markdown text of the issue. |
+| `labels` | No | | Labels to apply. GitHub creates labels that don't exist yet. |
+| `userCredentialsSecretKey` | No | `USER_GITHUB_TOKEN` | Key of the task secret that holds the GitHub user token. |
+
+The action returns the `issueUrl` and `issueNumber` outputs.
+
+It appends a hidden `<!-- spec-key: <task ID> -->` comment to the body, using
+the scaffolder task ID. If the same run executes the action again, for example
+on a retry, it finds the issue with that marker and returns it instead of
+creating a duplicate. A separate template run has a different task ID, so it
+creates a new issue. GitHub's search index can lag by a few seconds, so a retry
+made immediately after creating the issue may not find it.
+
 ### `x_github:commit`
 
 Commits every change in the workspace's git repository, including new and
