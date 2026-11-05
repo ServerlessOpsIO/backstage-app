@@ -19,7 +19,7 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 **Purpose**: Dependencies
 
-- [ ] T001 Add `@backstage/plugin-scaffolder`, `@backstage/plugin-scaffolder-common`, and `@backstage/plugin-permission-react` to dependencies in `src/plugins/catalog-module-serverlessops/package.json` (match versions used in `src/packages/app/package.json`), then run `yarn install` in `src/` to update `src/yarn.lock`
+- [X] T001 Add `@backstage/plugin-scaffolder`, `@backstage/plugin-scaffolder-common`, and `@backstage/plugin-permission-react` to dependencies in `src/plugins/catalog-module-serverlessops/package.json` (match versions used in `src/packages/app/package.json`), then run `yarn install` in `src/` to update `src/yarn.lock`
 
 ---
 
