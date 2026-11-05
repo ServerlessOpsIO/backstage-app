@@ -112,10 +112,10 @@ describe('CreateSpecButton', () => {
   test('is disabled with an explanation when the template is missing', async () => {
     render({ getEntityByRef: jest.fn().mockResolvedValue(undefined) })
 
-    const button = await screen.findByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
+    const trigger = await screen.findByTestId('create-spec-tooltip-trigger')
+    expect(trigger.querySelector('button')).toBeDisabled()
 
-    await userEvent.setup().hover(button)
+    await userEvent.setup().hover(trigger)
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       'The "1-speckit-feature" workflow is unavailable.',
     )
@@ -124,9 +124,9 @@ describe('CreateSpecButton', () => {
   test('is disabled with an explanation when the template lookup fails', async () => {
     render({ getEntityByRef: jest.fn().mockRejectedValue(new Error('boom')) })
 
-    const button = await screen.findByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
-    await userEvent.setup().hover(button)
+    const trigger = await screen.findByTestId('create-spec-tooltip-trigger')
+    expect(trigger.querySelector('button')).toBeDisabled()
+    await userEvent.setup().hover(trigger)
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       'The "1-speckit-feature" workflow is unavailable.',
     )
@@ -136,9 +136,9 @@ describe('CreateSpecButton', () => {
     mockUsePermission.mockReturnValue({ loading: false, allowed: false })
     render()
 
-    const button = await screen.findByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
-    await userEvent.setup().hover(button)
+    const trigger = await screen.findByTestId('create-spec-tooltip-trigger')
+    expect(trigger.querySelector('button')).toBeDisabled()
+    await userEvent.setup().hover(trigger)
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       "You don't have permission to start the Create feature spec workflow.",
     )

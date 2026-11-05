@@ -86,9 +86,14 @@ export const CreateSpecButton = () => {
   if (explanation) {
     return (
       <TooltipTrigger>
-        <Button variant="primary" isDisabled>
-          Create spec
-        </Button>
+        <span
+          data-testid="create-spec-tooltip-trigger"
+          style={{ display: 'inline-flex' }}
+        >
+          <Button variant="primary" isDisabled>
+            Create spec
+          </Button>
+        </span>
         <Tooltip>{explanation}</Tooltip>
       </TooltipTrigger>
     )
