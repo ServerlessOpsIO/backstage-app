@@ -33,3 +33,30 @@ test('App should render the welcome page', async ({ page }) => {
     page.getByRole('link', { name: 'APIs', exact: true }),
   ).toBeVisible();
 });
+
+test('Specs tab shows the Create spec button at the upper right', async ({
+  page,
+}) => {
+  await page.goto('/catalog/default/component/example-website/specs')
+
+  const enterButton = page.getByRole('button', { name: 'Enter' })
+  if (await enterButton.isVisible()) {
+    await enterButton.click()
+  }
+
+  const createSpec = page.getByText('Create spec', { exact: true })
+  await expect(createSpec).toBeVisible()
+
+  const box = await createSpec.boundingBox()
+  const viewport = page.viewportSize()
+  expect(box).not.toBeNull()
+  expect(box!.x + box!.width / 2).toBeGreaterThan(viewport!.width / 2)
+
+  // Only enabled when the Create feature spec template is registered.
+  const link = page.getByRole('link', { name: 'Create spec' })
+  if (await link.isVisible()) {
+    await link.click()
+    await expect(page).toHaveURL(/\/create\/templates\/default\/1-speckit-feature/)
+    await expect(page.getByText('Create feature spec').first()).toBeVisible()
+  }
+})
