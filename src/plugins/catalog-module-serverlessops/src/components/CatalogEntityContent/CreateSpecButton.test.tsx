@@ -112,7 +112,7 @@ describe('CreateSpecButton', () => {
     render({ getEntityByRef: jest.fn().mockResolvedValue(undefined) })
 
     const reason = await screen.findByText(
-      'The "Create feature spec" workflow is unavailable.',
+      'The "1-speckit-feature" workflow is unavailable.',
     )
     const button = screen.getByRole('button', { name: 'Create spec' })
     expect(button).toBeDisabled()
@@ -124,7 +124,7 @@ describe('CreateSpecButton', () => {
 
     expect(
       await screen.findByText(
-        'The "Create feature spec" workflow is unavailable.',
+        'The "1-speckit-feature" workflow is unavailable.',
       ),
     ).toBeVisible()
     expect(screen.getByRole('button', { name: 'Create spec' })).toBeDisabled()

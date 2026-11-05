@@ -6,7 +6,7 @@
 |---|---|---|---|
 | available (any specs state: loading, error, empty, populated) | enabled, "Create spec" | none | `/create/templates/default/1-speckit-feature?formData=...` |
 | checking | disabled, "Create spec" | none | none |
-| unavailable | disabled | The "Create feature spec" workflow is unavailable. | none |
+| unavailable | disabled | The "1-speckit-feature" workflow is unavailable. | none |
 | forbidden | disabled | "You don't have permission to start the Create feature spec workflow." | none |
 
 **Prefill**: `formData` is URL-encoded JSON, e.g. `{"component":"component:default/my-service"}`; optional `system`, `domain`, `owner`. The user can edit all values in the scaffolder form.
