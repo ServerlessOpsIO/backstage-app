@@ -79,8 +79,8 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T013 Update `specs/008-create-spec-button/quickstart.md` if behavior diverged during implementation (e.g. reduced prefill)
-- [ ] T014 Run validation from `src/`: `yarn tsc:full`, `yarn lint:all`, `yarn test:all`, `yarn build:all`; fix any failures
+- [X] T013 Update `specs/008-create-spec-button/quickstart.md` if behavior diverged during implementation (e.g. reduced prefill)
+- [X] T014 Run validation from `src/`: `yarn tsc:full`, `yarn lint:all`, `yarn test:all`, `yarn build:all`; fix any failures
 - [ ] T015 Run the quickstart.md manual checks (upper right placement, narrow viewport, unavailable, forbidden, specs lookup failure keeps button enabled)
 
 ---
