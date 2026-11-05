@@ -17,7 +17,7 @@ export const CREATE_SPEC_TEMPLATE_REF = stringifyEntityRef({
 })
 
 export const UNAVAILABLE_REASON =
-  'The Create feature spec workflow is unavailable.'
+  'The "Create feature spec" workflow is unavailable.'
 export const FORBIDDEN_REASON =
   "You don't have permission to start the Create feature spec workflow."
 
