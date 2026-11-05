@@ -85,8 +85,8 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 **Independent Test**: Merge a PR referencing the issue; issue stays open.
 
-- [ ] T013 [P] [US4] Verify in `PLUGIN/src/actions/issue-create.test.ts` that the created issue payload/body contains no closing keywords and no state change calls are made
-- [ ] T014 [US4] Document in `PLUGIN/README.md` that issues are opened only and PR references should be non-closing, with linking best effort
+- [X] T013 [P] [US4] Verify in `PLUGIN/src/actions/issue-create.test.ts` that the created issue payload/body contains no closing keywords and no state change calls are made
+- [X] T014 [US4] Document in `PLUGIN/README.md` that issues are opened only and PR references should be non-closing, with linking best effort
 
 ---
 
