@@ -27,8 +27,8 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 **Purpose**: Blocking prerequisites for all stories
 
-- [ ] T002 Create `PLUGIN/src/actions/issue-create.ts` skeleton exporting `createGithubIssueAction` (id `x_github:issue:create`) with zod input schema per contracts/issue-create-action.md (`repoUrl`, `title`, `body`, optional `labels` string[], optional `userCredentialsSecretKey` default `USER_GITHUB_TOKEN`) and output schema (`issueUrl`, `issueNumber`); derive its idempotency key from the scaffolder task ID
-- [ ] T003 Export the action in `PLUGIN/src/actions/index.ts` (`export * from './issue-create'`) and register `createGithubIssueAction()` in `PLUGIN/src/module.ts`
+- [X] T002 Create `PLUGIN/src/actions/issue-create.ts` skeleton exporting `createGithubIssueAction` (id `x_github:issue:create`) with zod input schema per contracts/issue-create-action.md (`repoUrl`, `title`, `body`, optional `labels` string[], optional `userCredentialsSecretKey` default `USER_GITHUB_TOKEN`) and output schema (`issueUrl`, `issueNumber`); derive its idempotency key from the scaffolder task ID
+- [X] T003 Export the action in `PLUGIN/src/actions/index.ts` (`export * from './issue-create'`) and register `createGithubIssueAction()` in `PLUGIN/src/module.ts`
 
 **Checkpoint**: Action is registered and type-checks.
 
