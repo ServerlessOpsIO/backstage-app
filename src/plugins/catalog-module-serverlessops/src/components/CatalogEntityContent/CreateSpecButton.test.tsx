@@ -1,6 +1,6 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import { renderInTestApp } from '@backstage/frontend-test-utils'
-import { catalogApiRef } from '@backstage/plugin-catalog-react'
+import { catalogApiRef, EntityProvider } from '@backstage/plugin-catalog-react'
 import scaffolderPlugin from '@backstage/plugin-scaffolder/alpha'
 import { usePermission } from '@backstage/plugin-permission-react'
 import { CreateSpecButton } from './CreateSpecButton'
@@ -17,15 +17,53 @@ const template = {
   metadata: { name: '1-speckit-feature', namespace: 'default' },
 }
 
+const component = {
+  apiVersion: 'backstage.io/v1alpha1',
+  kind: 'Component',
+  metadata: { name: 'my-service', namespace: 'default' },
+  spec: {
+    type: 'service',
+    owner: 'group:default/team-a',
+    system: 'my-system',
+  },
+}
+
+const bareComponent = {
+  apiVersion: 'backstage.io/v1alpha1',
+  kind: 'Component',
+  metadata: { name: 'bare', namespace: 'default' },
+  spec: { type: 'service' },
+}
+
+const system = {
+  apiVersion: 'backstage.io/v1alpha1',
+  kind: 'System',
+  metadata: { name: 'my-system', namespace: 'default' },
+  relations: [{ type: 'partOf', targetRef: 'domain:default/my-domain' }],
+}
+
+const formData = (link: HTMLElement) =>
+  JSON.parse(
+    decodeURIComponent(link.getAttribute('href')!.split('?formData=')[1]),
+  )
+
 const allowed = { loading: false, allowed: true }
 
 function render({
-  getEntityByRef = jest.fn().mockResolvedValue(template),
-}: { getEntityByRef?: jest.Mock } = {}) {
-  return renderInTestApp(<CreateSpecButton />, {
-    apis: [[catalogApiRef, { getEntityByRef }]],
-    mountedRoutes: { '/create': scaffolderPlugin.routes.root as never },
-  })
+  getEntityByRef = jest.fn(async (ref: string) =>
+    ref.startsWith('system:') ? system : template,
+  ),
+  entity = component,
+}: { getEntityByRef?: jest.Mock; entity?: object } = {}) {
+  return renderInTestApp(
+    <EntityProvider entity={entity as never}>
+      <CreateSpecButton />
+    </EntityProvider>,
+    {
+      apis: [[catalogApiRef, { getEntityByRef }]],
+      mountedRoutes: { '/create': scaffolderPlugin.routes.root as never },
+    },
+  )
 }
 
 describe('CreateSpecButton', () => {
@@ -37,10 +75,29 @@ describe('CreateSpecButton', () => {
     render()
 
     const link = await screen.findByRole('link', { name: 'Create spec' })
-    expect(link).toHaveAttribute(
-      'href',
-      '/create/templates/default/1-speckit-feature',
+    expect(link.getAttribute('href')).toMatch(
+      /^\/create\/templates\/default\/1-speckit-feature\?formData=/,
     )
+  })
+
+  test('prefills the component, system, owner and domain', async () => {
+    render()
+
+    const link = await screen.findByRole('link', { name: 'Create spec' })
+    await waitFor(() => expect(formData(link)).toHaveProperty('domain'))
+    expect(formData(link)).toEqual({
+      component: 'component:default/my-service',
+      system: 'system:default/my-system',
+      owner: 'group:default/team-a',
+      domain: 'domain:default/my-domain',
+    })
+  })
+
+  test('omits optional values the entity does not have', async () => {
+    render({ entity: bareComponent })
+
+    const link = await screen.findByRole('link', { name: 'Create spec' })
+    expect(formData(link)).toEqual({ component: 'component:default/bare' })
   })
 
   test('is disabled without text while checking', async () => {

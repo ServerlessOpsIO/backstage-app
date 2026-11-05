@@ -66,12 +66,12 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 ### Tests for User Story 2
 
-- [ ] T010 [P] [US2] Add tests in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.test.tsx` asserting the link contains `?formData=` URL-encoded JSON with `component` (entity ref, required) and optional `system`, `owner`, `domain` from the entity; omitted when absent
+- [X] T010 [P] [US2] Add tests in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.test.tsx` asserting the link contains `?formData=` URL-encoded JSON with `component` (entity ref, required) and optional `system`, `owner`, `domain` from the entity; omitted when absent
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] In `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.tsx`, build the `formData` query from `useEntity()`: `component` = `stringifyEntityRef(entity)`; `system` from `spec.system`, `owner` from `spec.owner`, `domain` from the system's `partOf` domain when available (catalog lookup, non-blocking); URL-encode the JSON (depends on T007)
-- [ ] T012 [US2] Manually verify in a running app (`cd src && yarn start`, template registered) that the `SoContextualEntityPicker` accepts the prefilled values and the field stays editable; if not, reduce prefill to `component` only and update T010 tests accordingly
+- [X] T011 [US2] In `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.tsx`, build the `formData` query from `useEntity()`: `component` = `stringifyEntityRef(entity)`; `system` from `spec.system`, `owner` from `spec.owner`, `domain` from the system's `partOf` domain when available (catalog lookup, non-blocking); URL-encode the JSON (depends on T007)
+- [X] T012 [US2] Manually verify in a running app (`cd src && yarn start`, template registered) that the `SoContextualEntityPicker` accepts the prefilled values and the field stays editable; if not, reduce prefill to `component` only and update T010 tests accordingly
 
 **Checkpoint**: Both stories work
 
