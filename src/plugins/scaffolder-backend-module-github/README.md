@@ -187,6 +187,12 @@ creating a duplicate. A separate template run has a different task ID, so it
 creates a new issue. GitHub's search index can lag by a few seconds, so a retry
 made immediately after creating the issue may not find it.
 
+The action only opens issues. It never closes or reopens them or changes their
+state, and it adds no closing keywords. When a pull request refers to the issue,
+use non-closing wording such as `Related to #12`, not `Closes`, `Fixes` or
+`Resolves`, so that merging doesn't close it. Linking pull requests to the issue
+is best effort and never blocks anything.
+
 ### `x_github:commit`
 
 Commits every change in the workspace's git repository, including new and

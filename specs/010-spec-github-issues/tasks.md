@@ -63,7 +63,7 @@ Plugin root: `src/plugins/scaffolder-backend-module-github/` (abbreviated `PLUGI
 
 - [ ] T009 [US2] In `template-spec.yaml` (external template repo), add one `parameters` page "Spec" with fields per contracts/spec-form.md and data-model.md: `specType` (enum `feature|bug|documentation`, radio, default `feature`), `specTitle` (`minLength: 1`), `storySentence` (`minLength: 1`, description/placeholder "As a ____, I can ____"), `proposedSolution` (textarea, 10 rows), `additionalContext` (optional textarea, 5 rows), `acceptanceCriteria` (optional textarea, 5 rows, default `- [ ] ...`); `required: [specType, specTitle, storySentence, proposedSolution]`
 - [ ] T010 [US2] In `template-spec.yaml`, request user credentials (`requestUserCredentials`) and add a `fileIssue` step before `/speckit-specify` using `x_github:issue:create` with title `${{ parameters.specTitle }}`, labels `['${{ parameters.specType }}']`, and body in the exact layout from contracts/spec-form.md (note the `##` heading-space caveat in research D5); expose issue number/URL to later steps
-- [ ] T011 [US2] Confirm `template-spec.yaml` is registered in `app-config.production.yaml` (no change expected; edit only if missing)
+- [X] T011 [US2] Confirm `template-spec.yaml` is registered in `app-config.production.yaml` (no change expected; edit only if missing)
 
 **Checkpoint**: Form renders and files the issue.
 
