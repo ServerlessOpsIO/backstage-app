@@ -6273,6 +6273,7 @@ __metadata:
     classnames: "npm:^2.5.1"
     msw: "npm:^1.0.0"
     react: "npm:^16.13.1 || ^17.0.0 || ^18.0.0"
+    react-aria-components: "npm:~1.17.0"
     react-use: "npm:^17.2.4"
     zod: "npm:^4.4.3"
   peerDependencies:

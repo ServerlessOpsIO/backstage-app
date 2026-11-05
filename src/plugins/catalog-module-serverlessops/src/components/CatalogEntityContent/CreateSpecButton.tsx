@@ -8,6 +8,7 @@ import { catalogApiRef, useEntity } from '@backstage/plugin-catalog-react'
 import { useRouteRef } from '@backstage/frontend-plugin-api'
 import scaffolderPlugin from '@backstage/plugin-scaffolder/alpha'
 import useAsync from 'react-use/esm/useAsync'
+import { Focusable } from 'react-aria-components'
 import {
   Button,
   ButtonLink,
@@ -85,10 +86,23 @@ export const CreateSpecButton = () => {
 
   if (explanation) {
     return (
+      // The tooltip trigger must be a react-aria focusable element; a disabled
+      // button never receives hover or focus, so wrap it in a focusable span.
       <TooltipTrigger>
-        <Button variant="primary" isDisabled>
-          Create spec
-        </Button>
+        <Focusable>
+          <span
+            role="button"
+            aria-disabled="true"
+            aria-label="Create spec"
+            tabIndex={0}
+            data-testid="create-spec-tooltip-trigger"
+            style={{ display: 'inline-flex' }}
+          >
+            <Button variant="primary" isDisabled>
+              Create spec
+            </Button>
+          </span>
+        </Focusable>
         <Tooltip>{explanation}</Tooltip>
       </TooltipTrigger>
     )

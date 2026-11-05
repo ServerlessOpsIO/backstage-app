@@ -53,6 +53,7 @@
     "@remixicon/react": "^4.9.0",
     "@roadiehq/backstage-plugin-github-insights": "^3.5.0",
     "classnames": "^2.5.1",
+    "react-aria-components": "~1.17.0",
     "react-use": "^17.2.4",
     "zod": "^4.4.3"
   },

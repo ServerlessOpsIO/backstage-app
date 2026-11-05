@@ -5,6 +5,10 @@ import { catalogApiRef, EntityProvider } from '@backstage/plugin-catalog-react'
 import scaffolderPlugin from '@backstage/plugin-scaffolder/alpha'
 import { usePermission } from '@backstage/plugin-permission-react'
 import { CreateSpecButton } from './CreateSpecButton'
+import {
+  CREATE_SPEC_TEMPLATE_NAME,
+  UNAVAILABLE_REASON,
+} from './useCreateSpecAvailability'
 
 jest.mock('@backstage/plugin-permission-react', () => ({
   usePermission: jest.fn(),
@@ -15,7 +19,7 @@ const mockUsePermission = usePermission as jest.Mock
 const template = {
   apiVersion: 'scaffolder.backstage.io/v1beta3',
   kind: 'Template',
-  metadata: { name: '1-speckit-feature', namespace: 'default' },
+  metadata: { name: CREATE_SPEC_TEMPLATE_NAME, namespace: 'default' },
 }
 
 const component = {
@@ -48,6 +52,15 @@ const formData = (link: HTMLElement) =>
     decodeURIComponent(link.getAttribute('href')!.split('?formData=')[1]),
   )
 
+// React Aria opens tooltips on hover only after it has seen pointer input,
+// which a real user's earlier mouse use provides; click the page to match.
+const findTooltipOnHover = async (trigger: HTMLElement) => {
+  const user = userEvent.setup()
+  await user.click(document.body)
+  await user.hover(trigger)
+  return screen.findByRole('tooltip')
+}
+
 const allowed = { loading: false, allowed: true }
 
 function render({
@@ -77,7 +90,9 @@ describe('CreateSpecButton', () => {
 
     const link = await screen.findByRole('link', { name: 'Create spec' })
     expect(link.getAttribute('href')).toMatch(
-      /^\/create\/templates\/default\/1-speckit-feature\?formData=/,
+      new RegExp(
+        `^/create/templates/default/${CREATE_SPEC_TEMPLATE_NAME}\\?formData=`,
+      ),
     )
   })
 
@@ -112,23 +127,21 @@ describe('CreateSpecButton', () => {
   test('is disabled with an explanation when the template is missing', async () => {
     render({ getEntityByRef: jest.fn().mockResolvedValue(undefined) })
 
-    const button = await screen.findByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
+    const trigger = await screen.findByTestId('create-spec-tooltip-trigger')
+    expect(trigger.querySelector('button')).toBeDisabled()
 
-    await userEvent.setup().hover(button)
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'The "1-speckit-feature" workflow is unavailable.',
+    expect(await findTooltipOnHover(trigger)).toHaveTextContent(
+      UNAVAILABLE_REASON,
     )
   })
 
   test('is disabled with an explanation when the template lookup fails', async () => {
     render({ getEntityByRef: jest.fn().mockRejectedValue(new Error('boom')) })
 
-    const button = await screen.findByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
-    await userEvent.setup().hover(button)
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
-      'The "1-speckit-feature" workflow is unavailable.',
+    const trigger = await screen.findByTestId('create-spec-tooltip-trigger')
+    expect(trigger.querySelector('button')).toBeDisabled()
+    expect(await findTooltipOnHover(trigger)).toHaveTextContent(
+      UNAVAILABLE_REASON,
     )
   })
 
@@ -136,10 +149,9 @@ describe('CreateSpecButton', () => {
     mockUsePermission.mockReturnValue({ loading: false, allowed: false })
     render()
 
-    const button = await screen.findByRole('button', { name: 'Create spec' })
-    expect(button).toBeDisabled()
-    await userEvent.setup().hover(button)
-    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+    const trigger = await screen.findByTestId('create-spec-tooltip-trigger')
+    expect(trigger.querySelector('button')).toBeDisabled()
+    expect(await findTooltipOnHover(trigger)).toHaveTextContent(
       "You don't have permission to start the Create feature spec workflow.",
     )
   })
