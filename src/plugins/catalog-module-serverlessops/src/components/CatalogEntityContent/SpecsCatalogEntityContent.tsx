@@ -1,6 +1,10 @@
 import { Grid } from '@material-ui/core'
 import { Entity, stringifyEntityRef } from '@backstage/catalog-model'
-import { Progress, ResponseErrorPanel } from '@backstage/core-components'
+import {
+  ContentHeader,
+  Progress,
+  ResponseErrorPanel,
+} from '@backstage/core-components'
 import { useApi } from '@backstage/core-plugin-api'
 import {
   catalogApiRef,
@@ -8,6 +12,7 @@ import {
   useEntity,
 } from '@backstage/plugin-catalog-react'
 import useAsync from 'react-use/esm/useAsync'
+import { CreateSpecButton } from './CreateSpecButton'
 
 // Specs are Resources of this type that depend on their component; the
 // speckit-spec template creates them.
@@ -42,27 +47,37 @@ export const SpecsCatalogEntityContent = () => {
     return items.sort(compareSpecTitles)
   }, [catalogApi, entityRef])
 
+  // The header stays rendered so the button is available in every state.
+  let body
   if (loading) {
-    return <Progress />
-  }
-  if (error) {
-    return <ResponseErrorPanel error={error} />
+    body = <Progress />
+  } else if (error) {
+    body = <ResponseErrorPanel error={error} />
+  } else {
+    body = (
+      <EntityTable
+        title="Specs"
+        entities={specs ?? []}
+        columns={columns}
+        emptyContent={
+          <div style={{ padding: 16 }}>
+            No specs for this component yet. Specs appear here once their
+            spec pull request is merged.
+          </div>
+        }
+      />
+    )
   }
 
   return (
     <Grid container spacing={3} alignItems="stretch">
       <Grid item xs={12}>
-        <EntityTable
-          title="Specs"
-          entities={specs ?? []}
-          columns={columns}
-          emptyContent={
-            <div style={{ padding: 16 }}>
-              No specs for this component yet. Specs appear here once their
-              spec pull request is merged.
-            </div>
-          }
-        />
+        <ContentHeader title="">
+          <CreateSpecButton />
+        </ContentHeader>
+      </Grid>
+      <Grid item xs={12}>
+        {body}
       </Grid>
     </Grid>
   )

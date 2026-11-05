@@ -19,7 +19,7 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 **Purpose**: Dependencies
 
-- [ ] T001 Add `@backstage/plugin-scaffolder`, `@backstage/plugin-scaffolder-common`, and `@backstage/plugin-permission-react` to dependencies in `src/plugins/catalog-module-serverlessops/package.json` (match versions used in `src/packages/app/package.json`), then run `yarn install` in `src/` to update `src/yarn.lock`
+- [X] T001 Add `@backstage/plugin-scaffolder`, `@backstage/plugin-scaffolder-common`, and `@backstage/plugin-permission-react` to dependencies in `src/plugins/catalog-module-serverlessops/package.json` (match versions used in `src/packages/app/package.json`), then run `yarn install` in `src/` to update `src/yarn.lock`
 
 ---
 
@@ -29,8 +29,8 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 **⚠️ CRITICAL**: Complete before user stories
 
-- [ ] T002 Define a single exported constant for the template ref `template:default/1-speckit-feature` (plus template name/namespace helpers for the route path `templates/default/1-speckit-feature`) in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/useCreateSpecAvailability.ts`
-- [ ] T003 Implement `useCreateSpecAvailability` hook in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/useCreateSpecAvailability.ts` returning `{ state: 'checking' | 'available' | 'unavailable' | 'forbidden', reason?: string }`: `catalogApi.getEntityByRef(templateRef)` via `useAsync` (null or error → `unavailable`, reason "The Create feature spec workflow is unavailable."); `usePermission` for `taskCreatePermission` and `templateParameterReadPermission` (resource ref = template ref); either denied → `forbidden` (reason "You don't have permission to start the Create feature spec workflow."); pending → `checking`; independent of specs list loading/error state (depends on T002)
+- [X] T002 Define a single exported constant for the template ref `template:default/1-speckit-feature` (plus template name/namespace helpers for the route path `templates/default/1-speckit-feature`) in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/useCreateSpecAvailability.ts`
+- [X] T003 Implement `useCreateSpecAvailability` hook in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/useCreateSpecAvailability.ts` returning `{ state: 'checking' | 'available' | 'unavailable' | 'forbidden', reason?: string }`: `catalogApi.getEntityByRef(templateRef)` via `useAsync` (null or error → `unavailable`, reason "The Create feature spec workflow is unavailable."); `usePermission` for `taskCreatePermission` and `templateParameterReadPermission` (resource ref = template ref); either denied → `forbidden` (reason "You don't have permission to start the Create feature spec workflow."); pending → `checking`; independent of specs list loading/error state (depends on T002)
 
 **Checkpoint**: Hook ready
 
@@ -44,15 +44,15 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 ### Tests for User Story 1
 
-- [ ] T004 [P] [US1] Unit tests for `CreateSpecButton` in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.test.tsx`: enabled when available and navigates to the scaffolder template route; disabled with no text when checking; disabled with unavailable explanation; disabled with permission explanation; explanation linked via `aria-describedby`
-- [ ] T005 [P] [US1] Unit tests for `SpecsCatalogEntityContent` in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/SpecsCatalogEntityContent.test.tsx`: button rendered (enabled when available) in loading, error, empty, and populated states
-- [ ] T006 [P] [US1] Extend Playwright e2e in `src/packages/app/e2e-tests/app.test.ts`: Specs tab shows "Create spec" at the upper right and clicking it lands on the "Create feature spec" workflow start
+- [X] T004 [P] [US1] Unit tests for `CreateSpecButton` in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.test.tsx`: enabled when available and navigates to the scaffolder template route; disabled with no text when checking; disabled with unavailable explanation; disabled with permission explanation; explanation linked via `aria-describedby`
+- [X] T005 [P] [US1] Unit tests for `SpecsCatalogEntityContent` in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/SpecsCatalogEntityContent.test.tsx`: button rendered (enabled when available) in loading, error, empty, and populated states
+- [X] T006 [P] [US1] Extend Playwright e2e in `src/packages/app/e2e-tests/app.test.ts`: Specs tab shows "Create spec" at the upper right and clicking it lands on the "Create feature spec" workflow start
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Create `CreateSpecButton` in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.tsx` using `Button`/`Text` from `@backstage/ui` and the scaffolder root route (`useRouteRef(rootRouteRef)` from `@backstage/plugin-scaffolder`) to link to `<root>/templates/default/1-speckit-feature`; use `useCreateSpecAvailability`; disabled unless `available`; render the reason as visible `Text` linked by `aria-describedby` for `unavailable`/`forbidden` (per contracts/create-spec-button.md) (depends on T003)
-- [ ] T008 [US1] Restructure `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/SpecsCatalogEntityContent.tsx`: always render `ContentHeader` from `@backstage/core-components` with `CreateSpecButton` in its action slot (upper right, wraps on narrow screens); swap only the body between `Progress`, `ResponseErrorPanel`, and the table instead of returning early (depends on T007)
-- [ ] T009 [US1] Verify the scaffolder route ref is resolvable from the plugin module (new frontend system external route binding); add the binding in `src/packages/app` only if required, and confirm the link resolves to `/create/templates/default/1-speckit-feature`
+- [X] T007 [US1] Create `CreateSpecButton` in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.tsx` using `Button`/`Text` from `@backstage/ui` and the scaffolder root route (`useRouteRef(rootRouteRef)` from `@backstage/plugin-scaffolder`) to link to `<root>/templates/default/1-speckit-feature`; use `useCreateSpecAvailability`; disabled unless `available`; render the reason as visible `Text` linked by `aria-describedby` for `unavailable`/`forbidden` (per contracts/create-spec-button.md) (depends on T003)
+- [X] T008 [US1] Restructure `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/SpecsCatalogEntityContent.tsx`: always render `ContentHeader` from `@backstage/core-components` with `CreateSpecButton` in its action slot (upper right, wraps on narrow screens); swap only the body between `Progress`, `ResponseErrorPanel`, and the table instead of returning early (depends on T007)
+- [X] T009 [US1] Verify the scaffolder route ref is resolvable from the plugin module (new frontend system external route binding); add the binding in `src/packages/app` only if required, and confirm the link resolves to `/create/templates/default/1-speckit-feature`
 
 **Checkpoint**: US1 functional and testable independently
 
@@ -66,12 +66,12 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 ### Tests for User Story 2
 
-- [ ] T010 [P] [US2] Add tests in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.test.tsx` asserting the link contains `?formData=` URL-encoded JSON with `component` (entity ref, required) and optional `system`, `owner`, `domain` from the entity; omitted when absent
+- [X] T010 [P] [US2] Add tests in `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.test.tsx` asserting the link contains `?formData=` URL-encoded JSON with `component` (entity ref, required) and optional `system`, `owner`, `domain` from the entity; omitted when absent
 
 ### Implementation for User Story 2
 
-- [ ] T011 [US2] In `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.tsx`, build the `formData` query from `useEntity()`: `component` = `stringifyEntityRef(entity)`; `system` from `spec.system`, `owner` from `spec.owner`, `domain` from the system's `partOf` domain when available (catalog lookup, non-blocking); URL-encode the JSON (depends on T007)
-- [ ] T012 [US2] Manually verify in a running app (`cd src && yarn start`, template registered) that the `SoContextualEntityPicker` accepts the prefilled values and the field stays editable; if not, reduce prefill to `component` only and update T010 tests accordingly
+- [X] T011 [US2] In `src/plugins/catalog-module-serverlessops/src/components/CatalogEntityContent/CreateSpecButton.tsx`, build the `formData` query from `useEntity()`: `component` = `stringifyEntityRef(entity)`; `system` from `spec.system`, `owner` from `spec.owner`, `domain` from the system's `partOf` domain when available (catalog lookup, non-blocking); URL-encode the JSON (depends on T007)
+- [X] T012 [US2] Manually verify in a running app (`cd src && yarn start`, template registered) that the `SoContextualEntityPicker` accepts the prefilled values and the field stays editable; if not, reduce prefill to `component` only and update T010 tests accordingly
 
 **Checkpoint**: Both stories work
 
@@ -79,8 +79,8 @@ description: "Task list for Create Spec Button on Component Specs Page"
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T013 Update `specs/008-create-spec-button/quickstart.md` if behavior diverged during implementation (e.g. reduced prefill)
-- [ ] T014 Run validation from `src/`: `yarn tsc:full`, `yarn lint:all`, `yarn test:all`, `yarn build:all`; fix any failures
+- [X] T013 Update `specs/008-create-spec-button/quickstart.md` if behavior diverged during implementation (e.g. reduced prefill)
+- [X] T014 Run validation from `src/`: `yarn tsc:full`, `yarn lint:all`, `yarn test:all`, `yarn build:all`; fix any failures
 - [ ] T015 Run the quickstart.md manual checks (upper right placement, narrow viewport, unavailable, forbidden, specs lookup failure keeps button enabled)
 
 ---
