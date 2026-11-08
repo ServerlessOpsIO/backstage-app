@@ -101,20 +101,14 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
     }
 
     async run(): Promise<void> {
-        if (!this.jwt || isJwtExpired(this.jwt)) {
-            this.jwt = await getJwt(
-                this.providerConfig.auth.clientId,
-                this.providerConfig.auth.clientSecret,
-                this.providerConfig.auth.endpoint
-            )
-        }
+        const jwt = await this.getValidJwt()
 
         const collectedEntities: DeferredEntity[] = []
         await Promise.all(this.providerConfig.entityKinds.map(async (kind) => {
-            const entities = await this.getEntitiesByKind(kind, this.jwt as string)
+            const entities = await this.getEntitiesByKind(kind, jwt)
 
             await Promise.all(entities.entities.map(async (entry) => {
-                const entity = await this.getEntityByPath(entry, this.jwt as string)
+                const entity = await this.getEntityByPath(entry, jwt)
                 collectedEntities.push(this.toDeferredEntity(entry, entity))
             }))
         }))
@@ -142,10 +136,11 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
                 await this.handleCreateNotification(notification)
                 return
             case 'update':
+                await this.handleUpdateNotification(notification)
+                return
             case 'delete':
-                throw new Error(
-                    `Unsupported changeType "${notification.changeType}" during create-only phase`
-                )
+                await this.handleDeleteNotification(notification)
+                return
             default: {
                 const unknownType: never = notification.changeType
                 throw new Error(`Unsupported changeType "${unknownType}"`)
@@ -221,7 +216,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
     }
 
     toDeferredEntity(entityPath: string, entity: Entity): DeferredEntity {
-        const locationRef = `url:${this.providerConfig.baseUrl}/catalog/${entityPath}`
+        const locationRef = this.toLocationRef(entityPath)
         const locationAnnotations = {
             [ANNOTATION_LOCATION]: locationRef,
             [ANNOTATION_ORIGIN_LOCATION]: locationRef
@@ -257,5 +252,67 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
             added: [deferredEntity],
             removed: [],
         })
+    }
+
+    async handleUpdateNotification(notification: CatalogEntityChangeNotification): Promise<void> {
+        const connection = this.getConnection()
+        const updatedEntity = await this.getEntityForUpdate(notification)
+        if (!updatedEntity) {
+            this.logger.warn(
+                `Update notification skipped because entity could not be resolved for ${notification.entityRef}`
+            )
+            return
+        }
+
+        const deferredEntity = this.toDeferredEntity(notification.entityRef, updatedEntity)
+        await connection.applyMutation({
+            type: 'delta',
+            added: [deferredEntity],
+            removed: [],
+        })
+    }
+
+    async handleDeleteNotification(notification: CatalogEntityChangeNotification): Promise<void> {
+        const connection = this.getConnection()
+        await connection.applyMutation({
+            type: 'delta',
+            added: [],
+            removed: [
+                {
+                    entityRef: notification.entityRef,
+                    locationKey: this.toLocationRef(notification.entityRef),
+                }
+            ],
+        })
+    }
+
+    private async getEntityForUpdate(
+        notification: CatalogEntityChangeNotification
+    ): Promise<Entity | undefined> {
+        try {
+            const jwt = await this.getValidJwt()
+            return await this.getEntityByPath(notification.entityRef, jwt)
+        } catch (error) {
+            this.logger.warn(
+                `Falling back to event payload for update ${notification.entityRef}: ${(error as Error).message}`
+            )
+            return notification.entity
+        }
+    }
+
+    private async getValidJwt(): Promise<string> {
+        if (!this.jwt || isJwtExpired(this.jwt)) {
+            this.jwt = await getJwt(
+                this.providerConfig.auth.clientId,
+                this.providerConfig.auth.clientSecret,
+                this.providerConfig.auth.endpoint
+            )
+        }
+
+        return this.jwt
+    }
+
+    private toLocationRef(entityPath: string): string {
+        return `url:${this.providerConfig.baseUrl}/catalog/${entityPath}`
     }
 }

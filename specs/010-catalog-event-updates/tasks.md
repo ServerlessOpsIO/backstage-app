@@ -79,16 +79,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T022 [P] [US2] Add failing unit tests for update mutation and missing-entity fetch/add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
-- [ ] T023 [P] [US2] Add failing unit tests for delete mutation semantics and duplicate event idempotency in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
+- [X] T022 [P] [US2] Add failing unit tests for update mutation and missing-entity fetch/add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
+- [X] T023 [P] [US2] Add failing unit tests for delete mutation semantics and duplicate event idempotency in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Implement provider `update` path with fallback fetch-by-entityRef then add-if-present behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T025 [US2] Implement provider `delete` path using provider-managed entity removal semantics in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T026 [US2] Add idempotency guard keyed by the producer-assigned unique `eventId` (which remains stable for retries/republishing) and `entityRef` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/processed-event-cache.ts`
-- [ ] T027 [US2] Route `create|update|delete` and reject unsupported `changeType` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
-- [ ] T028 [US2] Emit deterministic duplicate/unsupported-type outcomes with reasons in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
+- [X] T024 [US2] Implement provider `update` path with fallback fetch-by-entityRef then add-if-present behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
+- [X] T025 [US2] Implement provider `delete` path using provider-managed entity removal semantics in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
+- [X] T026 [US2] Add idempotency guard keyed by the producer-assigned unique `eventId` (which remains stable for retries/republishing) and `entityRef` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/processed-event-cache.ts`
+- [X] T027 [US2] Route `create|update|delete` and reject unsupported `changeType` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
+- [X] T028 [US2] Emit deterministic duplicate/unsupported-type outcomes with reasons in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 
