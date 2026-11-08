@@ -64,7 +64,15 @@ export const catalogModuleServerlessopsCatalog = createBackendModule({
                 const eventProcessor = new EventProcessor({
                     logger,
                     topic: eventConfig.topic,
-                    dispatch: async notification => provider.processEventNotification(notification),
+                    dispatch: async notification => {
+                        if (notification.changeType !== 'create') {
+                            throw new Error(
+                                `Unsupported changeType "${notification.changeType}" during create-only phase`
+                            )
+                        }
+
+                        await provider.handleCreateNotification(notification)
+                    },
                     outcomeLogger,
                 })
 

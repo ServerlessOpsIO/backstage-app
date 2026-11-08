@@ -56,16 +56,16 @@
 
 ### Tests for User Story 1
 
-- [ ] T015 [P] [US1] Add failing unit test for `create` notification -> `applyMutation` add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
-- [ ] T016 [P] [US1] Add failing unit test that validates `create` event routing from topic handler into provider logic in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
+- [X] T015 [P] [US1] Add failing unit test for `create` notification -> `applyMutation` add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
+- [X] T016 [P] [US1] Add failing unit test that validates `create` event routing from topic handler into provider logic in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implement provider `create` notification mutation path with managed-by annotations in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T018 [US1] Implement payload validation rules in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts` quoting constraints verbatim: `changeType must be one of the three supported values`, `entityRef must be non-empty and match provider entity identity constraints`, `entity must include apiVersion, kind, and metadata.name`, and `unknown changeType or missing required fields is a processing failure and must be retried/then DLQ-routed`
-- [ ] T019 [US1] Add schema-level checks from contract (`eventId minLength: 1`, `entityRef pattern: ^[^/]+/[^/]+/[^/]+$`, required `eventId/changeType/entityRef/entity`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts`
-- [ ] T020 [US1] Wire `serverlessops.catalog` `create` message dispatch to provider handler in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
-- [ ] T021 [US1] Record successful create processing outcomes with event and delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
+- [X] T017 [US1] Implement provider `create` notification mutation path with managed-by annotations in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
+- [X] T018 [US1] Implement payload validation rules in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts` quoting constraints verbatim: `changeType must be one of the three supported values`, `entityRef must be non-empty and match provider entity identity constraints`, `entity must include apiVersion, kind, and metadata.name`, and `unknown changeType or missing required fields is a processing failure and must be retried/then DLQ-routed`
+- [X] T019 [US1] Add schema-level checks from contract (`eventId minLength: 1`, `entityRef pattern: ^[^/]+/[^/]+/[^/]+$`, required `eventId/changeType/entityRef/entity`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts`
+- [X] T020 [US1] Wire `serverlessops.catalog` `create` message dispatch to provider handler in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
+- [X] T021 [US1] Record successful create processing outcomes with event and delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 

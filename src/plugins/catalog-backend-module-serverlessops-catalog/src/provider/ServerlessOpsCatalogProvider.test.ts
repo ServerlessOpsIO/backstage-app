@@ -83,6 +83,9 @@ describe('ServerlessOpsCatalogProvider', () => {
     describe('processEventNotification()', () => {
         describe('should succeed when', () => {
             test('valid notification is accepted', async () => {
+                await provider.connect(mockConnection)
+                jest.clearAllMocks()
+
                 await expect(provider.processEventNotification({
                     eventId: 'evt-1',
                     changeType: 'create',
@@ -93,6 +96,45 @@ describe('ServerlessOpsCatalogProvider', () => {
                         metadata: { name: 'test-component' }
                     }
                 })).resolves.toBeUndefined()
+            })
+        })
+    })
+
+    describe('handleCreateNotification()', () => {
+        describe('should succeed when', () => {
+            test('create notification applies add mutation with managed-by annotations', async () => {
+                await provider.connect(mockConnection)
+                jest.clearAllMocks()
+
+                await provider.handleCreateNotification({
+                    eventId: 'evt-create-1',
+                    changeType: 'create',
+                    entityRef: 'default/component/test-component',
+                    entity: {
+                        apiVersion: 'backstage.io/v1alpha1',
+                        kind: 'Component',
+                        metadata: { name: 'test-component' }
+                    }
+                })
+
+                const locationRef = 'url:http://api.example.com/catalog/default/component/test-component'
+                expect(mockConnection.applyMutation).toHaveBeenCalledWith({
+                    type: 'delta',
+                    added: [
+                        {
+                            locationKey: locationRef,
+                            entity: expect.objectContaining({
+                                metadata: expect.objectContaining({
+                                    annotations: {
+                                        'backstage.io/managed-by-location': locationRef,
+                                        'backstage.io/managed-by-origin-location': locationRef
+                                    }
+                                })
+                            })
+                        }
+                    ],
+                    removed: []
+                })
             })
         })
     })

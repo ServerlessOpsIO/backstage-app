@@ -137,9 +137,20 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
     }
 
     async processEventNotification(notification: CatalogEntityChangeNotification): Promise<void> {
-        this.logger.debug(
-            `Received catalog change notification ${notification.changeType} for ${notification.entityRef}`
-        )
+        switch (notification.changeType) {
+            case 'create':
+                await this.handleCreateNotification(notification)
+                return
+            case 'update':
+            case 'delete':
+                throw new Error(
+                    `Unsupported changeType "${notification.changeType}" during create-only phase`
+                )
+            default: {
+                const unknownType: never = notification.changeType
+                throw new Error(`Unsupported changeType "${unknownType}"`)
+            }
+        }
     }
 
     /**
@@ -222,5 +233,29 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
         }
 
         return { entity, locationKey: locationRef }
+    }
+
+    private getConnection(): EntityProviderConnection {
+        if (!this.connection) {
+            throw new Error('Not initialized')
+        }
+
+        return this.connection
+    }
+
+    async handleCreateNotification(notification: CatalogEntityChangeNotification): Promise<void> {
+        const connection = this.getConnection()
+        const deferredEntity = this.toDeferredEntity(notification.entityRef, {
+            ...notification.entity,
+            metadata: {
+                ...notification.entity.metadata,
+            },
+        })
+
+        await connection.applyMutation({
+            type: 'delta',
+            added: [deferredEntity],
+            removed: [],
+        })
     }
 }
