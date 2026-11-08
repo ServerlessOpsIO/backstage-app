@@ -42,6 +42,10 @@ events:
             queue:
               url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL}
               region: ${AWS_REGION}
+            visibilityTimeout: { seconds: 60 }
+            waitTime: { seconds: 20 }
+            timeout: { seconds: 60 }
+            waitTimeAfterEmptyReceive: { seconds: 5 }
 
 auth:
   environment: production
@@ -83,7 +87,7 @@ catalog:
           $include: /app/app-config.d/credentials/google-jwt.keys.yaml
       schedule:
         initialDelay: { seconds: 5 }
-        frequency: { minutes: 15 }
+        frequency: { hours: 2 }
         timeout: { seconds: 60 }
     serverlessops-catalog:
       baseUrl: ${SERVERLESSOPS_CATALOG_API_URL}

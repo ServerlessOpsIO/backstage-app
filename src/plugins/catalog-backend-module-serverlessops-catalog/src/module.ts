@@ -64,6 +64,7 @@ export const catalogModuleServerlessopsCatalog = createBackendModule({
                 const eventProcessor = new EventProcessor({
                     logger,
                     topic: eventConfig.topic,
+                    maxReceiveCount: eventConfig.maxReceiveCount ?? 3,
                     handlers: {
                         create: async notification => provider.handleCreateNotification(notification),
                         update: async notification => provider.handleUpdateNotification(notification),

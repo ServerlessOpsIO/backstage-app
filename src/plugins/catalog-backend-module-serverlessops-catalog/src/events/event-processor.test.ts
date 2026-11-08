@@ -23,7 +23,7 @@ function createProcessor(handlers: {
     create?: jest.Mock
     update?: jest.Mock
     delete?: jest.Mock
-} = {}) {
+} = {}, maxReceiveCount = 3) {
     const outcomeLogger = new OutcomeLogger(mockServices.rootLogger())
     const outcomeSpy = jest.spyOn(outcomeLogger, 'record')
     const create = handlers.create ?? jest.fn().mockResolvedValue(undefined)
@@ -37,6 +37,7 @@ function createProcessor(handlers: {
             update,
             delete: remove,
         },
+        maxReceiveCount,
         outcomeLogger,
     })
 
@@ -103,7 +104,7 @@ describe('EventProcessor', () => {
         })
 
         test('unsupported changeType is rejected with deterministic reason', async () => {
-            const { processor, create, update, remove } = createProcessor()
+            const { processor, create, update, remove } = createProcessor({})
             const outcome = await processor.process({
                 topic: 'serverlessops.catalog',
                 eventPayload: {
@@ -119,6 +120,81 @@ describe('EventProcessor', () => {
                 expect.objectContaining({
                     status: 'rejected',
                     reason: UNSUPPORTED_CHANGE_TYPE_REASON,
+                })
+            )
+        })
+
+        test('retry attempt accounting maps terminal failures to dlq-routed', async () => {
+            const create = jest.fn().mockRejectedValue(new Error('forced failure'))
+            const { processor } = createProcessor({ create }, 3)
+
+            const retryOutcome = await processor.process({
+                topic: 'serverlessops.catalog',
+                eventPayload: createPayload('create'),
+                metadata: {
+                    approximateReceiveCount: '2',
+                },
+            })
+            const terminalOutcome = await processor.process({
+                topic: 'serverlessops.catalog',
+                eventPayload: createPayload('create'),
+                metadata: {
+                    approximateReceiveCount: '3',
+                },
+            })
+
+            expect(retryOutcome).toEqual(
+                expect.objectContaining({
+                    status: 'failed',
+                    attemptCount: 2,
+                })
+            )
+            expect(terminalOutcome).toEqual(
+                expect.objectContaining({
+                    status: 'dlq-routed',
+                    attemptCount: 3,
+                })
+            )
+        })
+
+        test('a failed message does not block subsequent messages', async () => {
+            const create = jest.fn()
+                .mockRejectedValueOnce(new Error('first failure'))
+                .mockResolvedValueOnce(undefined)
+            const { processor } = createProcessor({ create })
+
+            const firstOutcome = await processor.process({
+                topic: 'serverlessops.catalog',
+                eventPayload: {
+                    ...createPayload('create'),
+                    eventId: 'evt-create-fail',
+                },
+                metadata: {
+                    approximateReceiveCount: '1',
+                },
+            })
+            const secondOutcome = await processor.process({
+                topic: 'serverlessops.catalog',
+                eventPayload: {
+                    ...createPayload('create'),
+                    eventId: 'evt-create-next',
+                },
+                metadata: {
+                    approximateReceiveCount: '1',
+                },
+            })
+
+            expect(create).toHaveBeenCalledTimes(2)
+            expect(firstOutcome).toEqual(
+                expect.objectContaining({
+                    eventId: 'evt-create-fail',
+                    status: 'failed',
+                })
+            )
+            expect(secondOutcome).toEqual(
+                expect.objectContaining({
+                    eventId: 'evt-create-next',
+                    status: 'applied',
                 })
             )
         })

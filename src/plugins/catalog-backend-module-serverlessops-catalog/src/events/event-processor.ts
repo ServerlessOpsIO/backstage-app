@@ -24,6 +24,7 @@ export interface EventProcessorOptions {
     topic: string
     handlers: EventProcessorHandlers
     outcomeLogger: OutcomeLogger
+    maxReceiveCount?: number
     processedEventCache?: ProcessedEventCache
 }
 
@@ -32,6 +33,7 @@ export class EventProcessor {
     private readonly topic: string
     private readonly handlers: EventProcessorHandlers
     private readonly outcomeLogger: OutcomeLogger
+    private readonly maxReceiveCount: number
     private readonly processedEventCache: ProcessedEventCache
 
     constructor(options: EventProcessorOptions) {
@@ -39,6 +41,7 @@ export class EventProcessor {
         this.topic = options.topic
         this.handlers = options.handlers
         this.outcomeLogger = options.outcomeLogger
+        this.maxReceiveCount = options.maxReceiveCount ?? 3
         this.processedEventCache = options.processedEventCache ?? new ProcessedEventCache()
     }
 
@@ -59,11 +62,18 @@ export class EventProcessor {
             )
                 ? UNSUPPORTED_CHANGE_TYPE_REASON
                 : validation.reason
+            const status = (
+                reason === UNSUPPORTED_CHANGE_TYPE_REASON
+                || reason.startsWith('eventId minLength:')
+                || reason.startsWith('entityRef pattern:')
+            )
+                ? 'rejected'
+                : this.failureStatus(delivery.approximateReceiveCount)
             const outcome = this.toOutcome({
                 eventId: this.eventIdFromPayload(params.eventPayload),
                 entityRef: this.entityRefFromPayload(params.eventPayload),
                 changeType: 'create',
-                status: 'rejected',
+                status,
                 reason,
                 delivery,
             })
@@ -104,7 +114,7 @@ export class EventProcessor {
                 eventId,
                 entityRef,
                 changeType,
-                status: 'failed',
+                status: this.failureStatus(delivery.approximateReceiveCount),
                 reason,
                 delivery,
             })
@@ -202,6 +212,14 @@ export class EventProcessor {
             processedAt: new Date().toISOString(),
             delivery: options.delivery,
         }
+    }
+
+    private failureStatus(attemptCount: number): NotificationProcessingStatus {
+        if (attemptCount >= this.maxReceiveCount) {
+            return 'dlq-routed'
+        }
+
+        return 'failed'
     }
 
     private eventIdFromPayload(payload: unknown): string {

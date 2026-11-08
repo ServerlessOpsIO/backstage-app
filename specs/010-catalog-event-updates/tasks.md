@@ -102,16 +102,16 @@
 
 ### Tests for User Story 3
 
-- [ ] T029 [P] [US3] Add failing tests for retry-attempt accounting and terminal `dlq-routed` outcome capture in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
-- [ ] T030 [P] [US3] Add failing test that one failed message does not block processing of subsequent messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
+- [X] T029 [P] [US3] Add failing tests for retry-attempt accounting and terminal `dlq-routed` outcome capture in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
+- [X] T030 [P] [US3] Add failing test that one failed message does not block processing of subsequent messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T031 [US3] Implement bounded-retry outcome mapping using `approximateReceiveCount` delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
-- [ ] T032 [US3] Configure SQS consumer options and DLQ-compatible settings for `serverlessops.catalog` in `src/app-config.production.yaml`
-- [ ] T033 [US3] Reduce fallback polling frequency by at least 80% from the baseline schedule for `catalog.providers.serverlessops-catalog.schedule` in `src/app-config.production.yaml`
-- [ ] T034 [US3] Document least-privilege publish/consume queue access requirements in `specs/010-catalog-event-updates/contracts/event-topic-contract.md`
-- [ ] T035 [US3] Add quickstart validation steps for disruption recovery and fallback polling convergence in `specs/010-catalog-event-updates/quickstart.md`
+- [X] T031 [US3] Implement bounded-retry outcome mapping using `approximateReceiveCount` delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
+- [X] T032 [US3] Configure SQS consumer options and DLQ-compatible settings for `serverlessops.catalog` in `src/app-config.production.yaml`
+- [X] T033 [US3] Reduce fallback polling frequency by at least 80% from the baseline schedule for `catalog.providers.serverlessops-catalog.schedule` in `src/app-config.production.yaml`
+- [X] T034 [US3] Document least-privilege publish/consume queue access requirements in `specs/010-catalog-event-updates/contracts/event-topic-contract.md`
+- [X] T035 [US3] Add quickstart validation steps for disruption recovery and fallback polling convergence in `specs/010-catalog-event-updates/quickstart.md`
 
 **Checkpoint**: All user stories are independently functional and operationally verifiable.
 

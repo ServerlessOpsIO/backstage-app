@@ -61,6 +61,9 @@ Expected:
 1. Inject an invalid payload (for example missing `changeType`) and/or force processing failure.
 2. Observe retry attempts via queue receive count.
 3. After max attempts, verify message moves to DLQ.
+4. Confirm outcome statuses by attempt:
+   - attempts `< maxReceiveCount` => `failed`
+   - attempt `>= maxReceiveCount` => `dlq-routed`
 
 Expected:
 - Retries are bounded.
@@ -73,6 +76,10 @@ Expected:
 1. Pause or block event delivery temporarily.
 2. Make upstream entity changes.
 3. Wait for next fallback polling cycle.
+4. Confirm convergence without manual intervention:
+   - capture the pre-change catalog entity state
+   - verify the entity state after one fallback polling interval
+   - confirm the final state matches upstream source-of-truth
 
 Expected:
 - Catalog eventually converges to upstream state.
