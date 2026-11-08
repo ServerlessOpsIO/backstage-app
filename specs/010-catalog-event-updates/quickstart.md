@@ -19,6 +19,21 @@ yarn --cwd src workspace backend build
 yarn --cwd src workspace @internal/backstage-plugin-catalog-backend-module-serverlessops-catalog test
 ```
 
+## Implementation Validation Commands
+
+Run these commands after implementation changes:
+
+```bash
+cd src && yarn workspace @internal/backstage-plugin-catalog-backend-module-serverlessops-catalog test --watch=false
+sam validate --lint
+sam build --parallel --template template.yaml
+```
+
+Expected outcomes:
+- Catalog module tests pass for create/update/delete routing, idempotency, and retry outcome mapping.
+- SAM template validation succeeds with no schema errors.
+- SAM build completes with queue + DLQ + SSM parameter resources resolved.
+
 Start backend:
 
 ```bash

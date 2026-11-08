@@ -218,6 +218,9 @@ backend:
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 events:
+  # Local event-driven catalog development uses a local FIFO queue endpoint.
+  # Keep the same topic name as production (`serverlessops.catalog`) so module
+  # behavior is consistent while validating create/update/delete handling.
   modules:
     awsSqs:
       awsSqsConsumingEventPublisher:
@@ -323,6 +326,16 @@ catalog:
         schedule:
           frequency: { minutes: 30 }
           timeout: { minutes: 3 }
+      # Event-driven provider configuration is environment-specific and is
+      # enabled in app-config.production.yaml. Keep fallback polling enabled
+      # there at a reduced cadence to preserve eventual consistency.
+      # serverlessops-catalog:
+      #   events:
+      #     topic: serverlessops.catalog
+      #     maxReceiveCount: 3
+      #   schedule:
+      #     frequency: { hours: 2 }
+      #     timeout: { seconds: 60 }
   import:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration

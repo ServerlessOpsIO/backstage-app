@@ -2,19 +2,27 @@
 
 This backend module synchronizes entities from the ServerlessOps catalog API into Backstage's catalog.
 
-The module registers a `ServerlessOpsCatalogProvider` with the catalog processing extension point. It authenticates against the provider's auth endpoint, fetches entity lists and entity details for the configured kinds, and applies them as catalog entities with `location` and `originLocation` annotations pointing back to the ServerlessOps source.
+It combines two synchronization paths:
+
+1. **Event-driven deltas** consumed from `serverlessops.catalog` via Backstage Events + AWS SQS.
+2. **Scheduled fallback polling** to guarantee eventual convergence during event transport disruption.
+
+The module registers a `ServerlessOpsCatalogProvider` with the catalog processing extension point, validates incoming notifications, routes `create|update|delete` change types, and records auditable processing outcomes (`applied`, `rejected`, `failed`, `dlq-routed`).
 
 ## Supported behavior
 
-- Reads configuration from `catalog.providers.serverlessops-catalog`
-- Supports scheduled refreshes using the Backstage scheduler
+- Reads provider configuration from `catalog.providers.serverlessops-catalog`
+- Supports event-driven `create`, `update`, and `delete` mutations
+- Applies idempotency guard by producer `eventId + entityRef`
+- Emits deterministic duplicate/unsupported outcomes with explicit reasons
+- Tracks retry attempt count and terminal DLQ-compatible outcome mapping
+- Preserves scheduled refresh fallback using the Backstage scheduler
 - Reads multiple entity kinds from the configured namespace
 - Authenticates using a JWT issued by the configured auth endpoint
-- Publishes imported entities into the Backstage catalog
 
 ## Configuration
 
-Expected config shape:
+Expected provider config shape:
 
 ```yaml
 catalog:
@@ -30,11 +38,32 @@ catalog:
         endpoint: https://auth.example/oauth/token
         clientId: ${SERVERLESSOPS_CLIENT_ID}
         clientSecret: ${SERVERLESSOPS_CLIENT_SECRET}
+      events:
+        topic: serverlessops.catalog
+        maxReceiveCount: 3
       schedule:
         frequency:
-          hours: 1
+          hours: 2
         timeout:
           seconds: 60
+```
+
+Expected Backstage Events SQS topic config:
+
+```yaml
+events:
+  modules:
+    awsSqs:
+      awsSqsConsumingEventPublisher:
+        topics:
+          serverlessops.catalog:
+            queue:
+              url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL}
+              region: ${AWS_REGION}
+            visibilityTimeout: { seconds: 60 }
+            waitTime: { seconds: 20 }
+            timeout: { seconds: 60 }
+            waitTimeAfterEmptyReceive: { seconds: 5 }
 ```
 
 ## Why it exists

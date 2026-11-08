@@ -121,10 +121,10 @@
 
 **Purpose**: Finalize documentation, exports, and validation guidance across stories.
 
-- [ ] T036 [P] Update module documentation with event-driven architecture and config examples in `src/plugins/catalog-backend-module-serverlessops-catalog/README.md`
-- [ ] T037 [P] Export new event-processing types/helpers from `src/plugins/catalog-backend-module-serverlessops-catalog/src/index.ts`
-- [ ] T038 Align local development config notes for event-driven mode and fallback polling in `src/app-config.yaml`
-- [ ] T039 Capture implementation validation command list and expected outcomes in `specs/010-catalog-event-updates/quickstart.md`
+- [X] T036 [P] Update module documentation with event-driven architecture and config examples in `src/plugins/catalog-backend-module-serverlessops-catalog/README.md`
+- [X] T037 [P] Export new event-processing types/helpers from `src/plugins/catalog-backend-module-serverlessops-catalog/src/index.ts`
+- [X] T038 Align local development config notes for event-driven mode and fallback polling in `src/app-config.yaml`
+- [X] T039 Capture implementation validation command list and expected outcomes in `specs/010-catalog-event-updates/quickstart.md`
 
 ---
 
