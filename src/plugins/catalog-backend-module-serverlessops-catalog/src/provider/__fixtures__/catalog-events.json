@@ -1,0 +1,58 @@
+{
+  "create": {
+    "eventId": "evt-create-1",
+    "changeType": "create",
+    "entityRef": "default/component/payments-api",
+    "entity": {
+      "apiVersion": "backstage.io/v1alpha1",
+      "kind": "Component",
+      "metadata": {
+        "name": "payments-api",
+        "namespace": "default"
+      },
+      "spec": {
+        "type": "service",
+        "owner": "payments-team"
+      }
+    }
+  },
+  "update": {
+    "eventId": "evt-update-1",
+    "changeType": "update",
+    "entityRef": "default/component/payments-api",
+    "entity": {
+      "apiVersion": "backstage.io/v1alpha1",
+      "kind": "Component",
+      "metadata": {
+        "name": "payments-api",
+        "namespace": "default"
+      },
+      "spec": {
+        "type": "service",
+        "owner": "payments-platform-team"
+      }
+    }
+  },
+  "delete": {
+    "eventId": "evt-delete-1",
+    "changeType": "delete",
+    "entityRef": "default/component/payments-api",
+    "entity": {
+      "apiVersion": "backstage.io/v1alpha1",
+      "kind": "Component",
+      "metadata": {
+        "name": "payments-api",
+        "namespace": "default"
+      }
+    }
+  },
+  "invalid": {
+    "eventId": "",
+    "changeType": "rename",
+    "entityRef": "invalid-ref",
+    "entity": {
+      "kind": "Component",
+      "metadata": {}
+    }
+  }
+}

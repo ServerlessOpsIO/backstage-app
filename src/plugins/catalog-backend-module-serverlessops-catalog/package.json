@@ -28,6 +28,7 @@
     "@backstage/catalog-model": "backstage:^",
     "@backstage/config": "backstage:^",
     "@backstage/plugin-catalog-node": "backstage:^",
+    "@backstage/plugin-events-node": "backstage:^",
     "axios": "^1.7.7",
     "axios-retry": "^4.5.0",
     "jwt-decode": "^4.0.0"

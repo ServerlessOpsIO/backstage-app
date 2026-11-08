@@ -20,12 +20,12 @@
 
 **Purpose**: Add event-system dependencies and event contract scaffolding.
 
-- [ ] T001 Add Backstage events runtime dependencies (`@backstage/plugin-events-backend`, `@backstage/plugin-events-node`, `@backstage/plugin-events-backend-module-aws-sqs`) in `src/packages/backend/package.json`
-- [ ] T002 Update lockfile entries for new backend dependencies in `src/yarn.lock`
-- [ ] T003 Add `@backstage/plugin-events-node` dependency for provider-side topic handling in `src/plugins/catalog-backend-module-serverlessops-catalog/package.json`
-- [ ] T004 [P] Create event payload and outcome types in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/types.ts`
-- [ ] T005 [P] Create schema validation helper for incoming notifications in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts`
-- [ ] T006 [P] Add event fixture payloads for create/update/delete/invalid messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/__fixtures__/catalog-events.json`
+- [X] T001 Add Backstage events runtime dependencies (`@backstage/plugin-events-backend`, `@backstage/plugin-events-node`, `@backstage/plugin-events-backend-module-aws-sqs`) in `src/packages/backend/package.json`
+- [X] T002 Update lockfile entries for new backend dependencies in `src/yarn.lock`
+- [X] T003 Add `@backstage/plugin-events-node` dependency for provider-side topic handling in `src/plugins/catalog-backend-module-serverlessops-catalog/package.json`
+- [X] T004 [P] Create event payload and outcome types in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/types.ts`
+- [X] T005 [P] Create schema validation helper for incoming notifications in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts`
+- [X] T006 [P] Add event fixture payloads for create/update/delete/invalid messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/__fixtures__/catalog-events.json`
 
 ---
 
