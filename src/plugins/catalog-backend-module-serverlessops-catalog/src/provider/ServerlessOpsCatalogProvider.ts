@@ -19,6 +19,7 @@ import {
 import { Config } from '@backstage/config'
 import axios from 'axios'
 import axiosRetry from 'axios-retry'
+import { CatalogEntityChangeNotification } from '../events/types'
 import { getJwt, isJwtExpired } from '../util/jwt'
 
 axiosRetry(
@@ -41,6 +42,10 @@ export interface ProviderConfig {
         clientSecret: string
     },
     schedule: SchedulerServiceTaskScheduleDefinition
+    events?: {
+        topic: string
+        maxReceiveCount?: number
+    }
 }
 
 export interface ProviderOptions {
@@ -110,19 +115,7 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
 
             await Promise.all(entities.entities.map(async (entry) => {
                 const entity = await this.getEntityByPath(entry, this.jwt as string)
-                // entry is <namespace>/<kind>/<name>
-                const locationRef = `url:${this.providerConfig.baseUrl}/catalog/${entry}`
-                const locationAnnotations = {
-                    [ANNOTATION_LOCATION]: locationRef,
-                    [ANNOTATION_ORIGIN_LOCATION]: locationRef
-                }
-
-                entity.metadata.annotations = {
-                    ...entity.metadata.annotations,
-                    ...locationAnnotations
-                }
-
-                collectedEntities.push({ entity, locationKey: locationRef })
+                collectedEntities.push(this.toDeferredEntity(entry, entity))
             }))
         }))
 
@@ -137,6 +130,16 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
 
     getProviderName(): string {
         return 'serverlessops-catalog'
+    }
+
+    getEventProcessingConfig(): ProviderConfig['events'] {
+        return this.providerConfig.events
+    }
+
+    async processEventNotification(notification: CatalogEntityChangeNotification): Promise<void> {
+        this.logger.debug(
+            `Received catalog change notification ${notification.changeType} for ${notification.entityRef}`
+        )
     }
 
     /**
@@ -204,5 +207,20 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
         } catch (error) {
             throw new Error(`Failed to get entity at ${path}: ${(error as Error).message}`)
         }
+    }
+
+    toDeferredEntity(entityPath: string, entity: Entity): DeferredEntity {
+        const locationRef = `url:${this.providerConfig.baseUrl}/catalog/${entityPath}`
+        const locationAnnotations = {
+            [ANNOTATION_LOCATION]: locationRef,
+            [ANNOTATION_ORIGIN_LOCATION]: locationRef
+        }
+
+        entity.metadata.annotations = {
+            ...entity.metadata.annotations,
+            ...locationAnnotations
+        }
+
+        return { entity, locationKey: locationRef }
     }
 }

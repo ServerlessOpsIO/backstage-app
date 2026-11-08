@@ -33,6 +33,16 @@ backend:
     allow:
       - host: api.catalog.platform.serverlessops.io
 
+events:
+  modules:
+    awsSqs:
+      awsSqsConsumingEventPublisher:
+        topics:
+          serverlessops.catalog:
+            queue:
+              url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL}
+              region: ${AWS_REGION}
+
 auth:
   environment: production
   # Homepage info hub prerequisites:
@@ -88,6 +98,9 @@ catalog:
         endpoint: ${SERVERLESSOPS_AUTH_ENDPOINT}
         clientId: ${SERVERLESSOPS_AUTH_CLIENT_ID}
         clientSecret: ${SERVERLESSOPS_AUTH_CLIENT_SECRET}
+      events:
+        topic: serverlessops.catalog
+        maxReceiveCount: 3
       schedule:
         initialDelay: { seconds: 5 }
         frequency: { minutes: 15 }

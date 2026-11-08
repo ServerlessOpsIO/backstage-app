@@ -12,6 +12,8 @@ const backend = createBackend();
 
 backend.add(import('@backstage/plugin-app-backend'));
 backend.add(import('@backstage/plugin-proxy-backend'));
+backend.add(import('@backstage/plugin-events-backend'));
+backend.add(import('@backstage/plugin-events-backend-module-aws-sqs'));
 
 // scaffolder plugin
 backend.add(import('@backstage/plugin-scaffolder-backend'));

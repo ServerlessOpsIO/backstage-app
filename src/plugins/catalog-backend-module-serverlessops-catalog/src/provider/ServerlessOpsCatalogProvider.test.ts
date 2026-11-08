@@ -27,6 +27,10 @@ const mockConfig = {
         clientId: 'test-client',
         clientSecret: 'test-secret'
     },
+    events: {
+        topic: 'serverlessops.catalog',
+        maxReceiveCount: 3
+    },
     schedule: {
         initialDelay: { seconds: 0 },
         frequency: { hours: 1 },
@@ -61,6 +65,34 @@ describe('ServerlessOpsCatalogProvider', () => {
         describe('should succeed', () => {
             test('provider name', () => {
                 expect(provider.getProviderName()).toBe('serverlessops-catalog')
+            })
+        })
+    })
+
+    describe('getEventProcessingConfig()', () => {
+        describe('should succeed when', () => {
+            test('event config exists', () => {
+                expect(provider.getEventProcessingConfig()).toEqual({
+                    topic: 'serverlessops.catalog',
+                    maxReceiveCount: 3
+                })
+            })
+        })
+    })
+
+    describe('processEventNotification()', () => {
+        describe('should succeed when', () => {
+            test('valid notification is accepted', async () => {
+                await expect(provider.processEventNotification({
+                    eventId: 'evt-1',
+                    changeType: 'create',
+                    entityRef: 'default/component/test-component',
+                    entity: {
+                        apiVersion: 'backstage.io/v1alpha1',
+                        kind: 'Component',
+                        metadata: { name: 'test-component' }
+                    }
+                })).resolves.toBeUndefined()
             })
         })
     })

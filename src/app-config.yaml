@@ -217,6 +217,16 @@ backend:
       - scaffolder
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
+events:
+  modules:
+    awsSqs:
+      awsSqsConsumingEventPublisher:
+        topics:
+          serverlessops.catalog:
+            queue:
+              url: http://localhost:9324/queue/serverlessops-catalog-events.fifo
+              region: us-east-1
+
 integrations:
   datadog:
     server: ${DATADOG_SITE}
