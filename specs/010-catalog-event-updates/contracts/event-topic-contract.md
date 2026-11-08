@@ -15,6 +15,7 @@ This contract defines the event channel interface consumed by the ServerlessOps 
 
 - Message payload MUST validate against `contracts/catalog-entity-change-notification.schema.json`.
 - Producer MUST send one lifecycle change per message.
+- Producer MUST assign a unique `eventId` to each logical change and preserve it when retrying or republishing the same notification. Distinct logical changes MUST have distinct IDs.
 - `changeType` values:
   - `create`
   - `update`

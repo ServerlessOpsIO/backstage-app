@@ -13,7 +13,8 @@
   "properties": {
     "eventId": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "Producer-assigned ID unique to a logical change. Re-deliveries of that change must retain the same ID."
     },
     "changeType": {
       "type": "string",

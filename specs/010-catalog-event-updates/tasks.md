@@ -86,7 +86,7 @@
 
 - [ ] T024 [US2] Implement provider `update` path with fallback fetch-by-entityRef then add-if-present behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
 - [ ] T025 [US2] Implement provider `delete` path using provider-managed entity removal semantics in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T026 [US2] Add idempotency guard keyed by `eventId` + `entityRef` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/processed-event-cache.ts`
+- [ ] T026 [US2] Add idempotency guard keyed by the producer-assigned unique `eventId` (which remains stable for retries/republishing) and `entityRef` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/processed-event-cache.ts`
 - [ ] T027 [US2] Route `create|update|delete` and reject unsupported `changeType` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
 - [ ] T028 [US2] Emit deterministic duplicate/unsupported-type outcomes with reasons in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
 
