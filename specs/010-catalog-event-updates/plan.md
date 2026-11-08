@@ -38,11 +38,16 @@ Add event-driven catalog updates for the ServerlessOps catalog provider by wirin
 - Must support bounded retries and DLQ handoff for failures
 - Must preserve fallback scheduled sync path
 - Must enforce least-privilege queue access controls
+- Production deployment must publish the FIFO queue name to SSM at `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`
 - Must scope changes to ServerlessOps provider only
 
 **Scale/Scope**:
 - Provider entity kinds currently include Domain, System, Resource, Users, Group
-- Scope limited to `@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog`, backend module wiring, and Backstage config
+- Scope includes `template.yaml` for the production FIFO queue, dead-letter queue, and SSM queue-name parameter, plus `@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog`, backend module wiring, and Backstage config
+
+### Production Queue Discovery
+
+The root SAM/CloudFormation stack owns the catalog events FIFO queue and its dead-letter queue. It must publish the deployed FIFO queue's `QueueName` through an `AWS::SSM::Parameter` of type `String`, with the parameter name formed as `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`. Producers discover the queue name from this parameter; the Backstage consumer's queue URL remains configured through its production runtime configuration.
 
 ## Constitution Check
 
@@ -83,6 +88,7 @@ specs/010-catalog-event-updates/
 ### Source Code (repository root)
 
 ```text
+template.yaml
 src/
 ├── app-config.production.yaml
 ├── app-config.yaml

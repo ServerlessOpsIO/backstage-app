@@ -94,6 +94,7 @@ As a platform operator, I can rely on event-driven updates for freshness and low
 - **FR-010**: Publishing notifications to the event channel is out of scope for this feature and remains an external dependency.
 - **FR-011**: The system MUST provide an auditable outcome for each processed notification, including the success or failure reason and whether it was sent to a dead-letter queue, for operational support.
 - **FR-012**: Queue publishing and consumption MUST be restricted through least-privilege access controls so only authorized principals can publish or consume notifications.
+- **FR-013**: The production CloudFormation stack MUST publish the catalog events SQS queue name as an SSM parameter named `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`.
 
 ### Key Entities *(include if feature involves data)*
 
