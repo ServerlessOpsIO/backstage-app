@@ -14,6 +14,7 @@
 
 - Q: What information will each create, update, or delete notification contain? → A: Each notification includes the change type, a stable entity reference, and the full entity snapshot, avoiding an API lookup during normal processing.
 - Q: How should the provider decide which state is newest when notifications arrive out of order or polling updates the entity first? → A: Use FIFO queue delivery order; the producer is expected to publish events in order.
+- Q: If fallback polling has already applied newer entity data, should a delayed FIFO-ordered notification with an older snapshot be allowed to overwrite it? → A: Apply the notification snapshot based on FIFO event order, even if polling has already updated the catalog.
 - Q: What should happen when an update notification refers to an entity not yet present in Backstage? → A: Retrieve the current entity and add it if present.
 - Q: What should happen after a notification cannot be processed successfully? → A: Retry a bounded number of times, then send it to a dead-letter queue and record the outcome.
 - Q: What trust boundary should be used to authorize catalog event publishers? → A: Restrict queue publishing and consumption with least-privilege access controls.
@@ -71,7 +72,7 @@ As a platform operator, I can rely on event-driven updates for freshness and low
 ### Edge Cases
 
 - An update notification refers to an entity not yet present in Backstage; retrieve the current entity and add it if present.
-- Fallback polling updates an entity before a delayed event is delivered.
+- Fallback polling updates an entity before a delayed event is delivered; apply the event snapshot in FIFO order.
 - A notification is missing required fields or contains an unsupported change type.
 - Upstream sends repeated notifications for a previously processed change.
 - A notification remains unprocessable after bounded retries and is sent to a dead-letter queue with its outcome recorded.
@@ -85,7 +86,7 @@ As a platform operator, I can rely on event-driven updates for freshness and low
 - **FR-003**: When a valid update notification is processed, the corresponding entity data in Backstage MUST be updated to the latest known values; if the entity is not yet present, the provider MUST retrieve the current entity and add it if present.
 - **FR-004**: When a valid delete notification is processed, the corresponding entity MUST follow existing Backstage removal behavior for provider-managed entities.
 - **FR-005**: Processing the same notification more than once MUST NOT create duplicate entities or regress entity state.
-- **FR-006**: The event channel MUST deliver notifications in producer order, and the provider MUST process them in FIFO delivery order so stale notifications do not overwrite newer event state.
+- **FR-006**: The event channel MUST deliver notifications in producer order, and the provider MUST apply notification snapshots in FIFO delivery order, including when fallback polling has already updated the entity.
 - **FR-007**: Notifications that cannot be processed successfully MUST be retried a bounded number of times; after retries are exhausted, they MUST be sent to a dead-letter queue with a recorded processing outcome, and MUST NOT stop processing of subsequent notifications.
 - **FR-008**: Scheduled provider polling MUST remain available as a fallback synchronization mechanism.
 - **FR-009**: The feature scope MUST be limited to the ServerlessOps catalog provider; other providers MUST remain unchanged.
