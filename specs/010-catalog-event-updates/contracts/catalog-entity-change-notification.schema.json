@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://serverlessops.io/contracts/catalog-entity-change-notification.schema.json",
+  "title": "CatalogEntityChangeNotification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventId",
+    "changeType",
+    "entityRef",
+    "entity"
+  ],
+  "properties": {
+    "eventId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Producer-assigned ID unique to a logical change. Re-deliveries of that change must retain the same ID."
+    },
+    "changeType": {
+      "type": "string",
+      "enum": [
+        "create",
+        "update",
+        "delete"
+      ]
+    },
+    "entityRef": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/]+/[^/]+/[^/]+$"
+    },
+    "entity": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "apiVersion",
+        "kind",
+        "metadata"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "namespace": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

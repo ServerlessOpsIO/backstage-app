@@ -18,6 +18,7 @@
 - Q: What should happen when an update notification refers to an entity not yet present in Backstage? → A: Retrieve the current entity and add it if present.
 - Q: What should happen after a notification cannot be processed successfully? → A: Retry a bounded number of times, then send it to a dead-letter queue and record the outcome.
 - Q: What trust boundary should be used to authorize catalog event publishers? → A: Restrict queue publishing and consumption with least-privilege access controls.
+- Q: How should notifications be identified for deduplication? → A: The producer MUST assign a unique `eventId` to each logical change and reuse that ID when retrying or republishing the same notification.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -85,7 +86,7 @@ As a platform operator, I can rely on event-driven updates for freshness and low
 - **FR-002**: When a valid create notification is processed, the corresponding entity MUST be added to the Backstage catalog.
 - **FR-003**: When a valid update notification is processed, the corresponding entity data in Backstage MUST be updated to the latest known values; if the entity is not yet present, the provider MUST retrieve the current entity and add it if present.
 - **FR-004**: When a valid delete notification is processed, the corresponding entity MUST follow existing Backstage removal behavior for provider-managed entities.
-- **FR-005**: Processing the same notification more than once MUST NOT create duplicate entities or regress entity state.
+- **FR-005**: The producer MUST assign a unique `eventId` to each logical notification and preserve it when retrying or republishing that notification; processing the same `eventId` more than once MUST NOT create duplicate entities or regress entity state.
 - **FR-006**: The event channel MUST deliver notifications in producer order, and the provider MUST apply notification snapshots in FIFO delivery order, including when fallback polling has already updated the entity.
 - **FR-007**: Notifications that cannot be processed successfully MUST be retried a bounded number of times; after retries are exhausted, they MUST be sent to a dead-letter queue with a recorded processing outcome, and MUST NOT stop processing of subsequent notifications.
 - **FR-008**: Scheduled provider polling MUST remain available as a fallback synchronization mechanism.
@@ -93,10 +94,11 @@ As a platform operator, I can rely on event-driven updates for freshness and low
 - **FR-010**: Publishing notifications to the event channel is out of scope for this feature and remains an external dependency.
 - **FR-011**: The system MUST provide an auditable outcome for each processed notification, including the success or failure reason and whether it was sent to a dead-letter queue, for operational support.
 - **FR-012**: Queue publishing and consumption MUST be restricted through least-privilege access controls so only authorized principals can publish or consume notifications.
+- **FR-013**: The production CloudFormation stack MUST publish the catalog events SQS queue name as an SSM parameter named `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Catalog Entity Change Notification**: A message describing a single entity lifecycle change (create, update, or delete), including the change type, a stable entity reference, and the full entity snapshot.
+- **Catalog Entity Change Notification**: A message describing a single entity lifecycle change (create, update, or delete), including a producer-assigned unique `eventId`, the change type, a stable entity reference, and the full entity snapshot. Re-deliveries of the same logical change retain the same `eventId`.
 - **Catalog Entity Record**: The provider-managed entity representation visible in Backstage catalog views.
 - **Notification Processing Outcome**: A traceable result for each notification, including status and failure reason when applicable.
 
