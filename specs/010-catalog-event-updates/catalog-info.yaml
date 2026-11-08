@@ -1,0 +1,31 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: backstage-app-spec-010
+  title: "010 - Catalog event updates"
+  description: "As a dev I'd like newly created entities to show in the catalog without needing the ServerlessOps catalog provider to poll for updates"
+  annotations:
+    github.com/project-slug: ServerlessOpsIO/backstage-app
+    serverlessops.io/spec-dir: specs/010-catalog-event-updates
+    serverlessops.io/spec-number: "010"
+    serverlessops.io/spec-issue: 116
+    serverlessops.io/spec-type: "feature"
+    backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/010-catalog-event-updates/
+  tags:
+    - speckit
+  links:
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/010-catalog-event-updates/spec.md
+      title: Specification
+      icon: docs
+    - url: https://github.com/ServerlessOpsIO/backstage-app/blob/main/specs/010-catalog-event-updates/plan.md
+      title: Implementation plan
+      icon: docs
+    - url: https://github.com/ServerlessOpsIO/backstage-app/issues/116
+      title: Spec tracking issue
+      icon: github
+spec:
+  type: doc-spec
+  owner: group:00gjdgxs1ur6lsu
+  system: backstage
+  dependsOn:
+    - component:default/backstage-app
