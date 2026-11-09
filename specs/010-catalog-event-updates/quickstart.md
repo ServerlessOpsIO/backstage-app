@@ -5,19 +5,58 @@ This guide validates the feature end to end using SQS FIFO-driven updates plus f
 ## Prerequisites
 
 1. Backstage backend dependencies installed (`yarn --cwd src install`).
-2. AWS FIFO queue and DLQ created for catalog events.
-3. Backstage config includes:
+2. Docker and the AWS CLI installed for local queue validation.
+3. AWS FIFO queue and DLQ created for production catalog events.
+4. Backstage config includes:
    - Provider config at `catalog.providers.serverlessops-catalog`
-   - SQS topic config at `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics.serverlessops.catalog`
-4. Producer is publishing contract-compliant payloads (see `contracts/catalog-entity-change-notification.schema.json`).
+   - SQS topic config at `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics.ServerlessOpsCatalog`
+5. Producer is publishing contract-compliant payloads (see `contracts/catalog-entity-change-notification.schema.json`).
 
 ## Local Validation Setup
+
+Start a local SQS-compatible FIFO queue with ElasticMQ:
+
+```bash
+docker run --rm --name catalog-events-queue -p 9324:9324 softwaremill/elasticmq-native
+```
+
+In another terminal, create the queue at the URL configured in `src/app-config.yaml`:
+
+```bash
+AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws --endpoint-url http://localhost:9324 --region us-east-1 sqs create-queue \
+  --queue-name serverlessops-catalog-events.fifo \
+  --attributes FifoQueue=true,ContentBasedDeduplication=true
+```
+
+Set the same dummy AWS credentials in the environment where Backstage runs:
+
+```bash
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+```
+
+Keep the ElasticMQ container running while validating events. Publish test notifications to the queue and start Backstage as described below.
 
 ```bash
 yarn --cwd src install
 yarn --cwd src workspace backend build
 yarn --cwd src workspace @internal/backstage-plugin-catalog-backend-module-serverlessops-catalog test
 ```
+
+## Implementation Validation Commands
+
+Run these commands after implementation changes:
+
+```bash
+cd src && yarn workspace @internal/backstage-plugin-catalog-backend-module-serverlessops-catalog test --watch=false
+sam validate --lint
+sam build --parallel --template template.yaml
+```
+
+Expected outcomes:
+- Catalog module tests pass for create/update/delete routing, idempotency, and retry outcome mapping.
+- SAM template validation succeeds with no schema errors.
+- SAM build completes with queue + DLQ + SSM parameter resources resolved.
 
 Start backend:
 
@@ -61,6 +100,9 @@ Expected:
 1. Inject an invalid payload (for example missing `changeType`) and/or force processing failure.
 2. Observe retry attempts via queue receive count.
 3. After max attempts, verify message moves to DLQ.
+4. Confirm outcome statuses by attempt:
+   - attempts `< maxReceiveCount` => `failed`
+   - attempt `>= maxReceiveCount` => `dlq-routed`
 
 Expected:
 - Retries are bounded.
@@ -73,6 +115,10 @@ Expected:
 1. Pause or block event delivery temporarily.
 2. Make upstream entity changes.
 3. Wait for next fallback polling cycle.
+4. Confirm convergence without manual intervention:
+   - capture the pre-change catalog entity state
+   - verify the entity state after one fallback polling interval
+   - confirm the final state matches upstream source-of-truth
 
 Expected:
 - Catalog eventually converges to upstream state.

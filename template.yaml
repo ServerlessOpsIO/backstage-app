@@ -189,6 +189,33 @@ Conditions:
   ServiceScaleInEnabled: !Not [!Equals [ !Ref ServiceScaleInCron, '' ]]
 
 Resources:
+  CatalogEventsDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${Component}-${CodeBranch}-catalog-events-dlq.fifo'
+      FifoQueue: true
+      SqsManagedSseEnabled: true
+      MessageRetentionPeriod: 1209600
+
+  CatalogEventsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${Component}-${CodeBranch}-catalog-events.fifo'
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      SqsManagedSseEnabled: true
+      VisibilityTimeout: 60
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt CatalogEventsDeadLetterQueue.Arn
+        maxReceiveCount: 3
+
+  CatalogEventsQueueNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName'
+      Type: String
+      Value: !GetAtt CatalogEventsQueue.QueueName
+
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -239,6 +266,10 @@ Resources:
               Value: !Ref ServerlessOpsAuthClientId
             - Name: SERVERLESSOPS_AUTH_CLIENT_SECRET
               Value: !Ref ServerlessOpsAuthClientSecret
+            - Name: SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL
+              Value: !Ref CatalogEventsQueue
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
             - Name: DATADOG_SITE
               Value: !Ref DatadogSite
             - Name: DATADOG_API_KEY
@@ -380,4 +411,17 @@ Resources:
             Action:
               - sts:AssumeRole
       Path: /
-      Policies: []
+      Policies:
+        - PolicyName: SqsConsumerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:GetQueueAttributes
+                  - sqs:GetQueueUrl
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:DeleteMessageBatch
+                  - sqs:ChangeMessageVisibility
+                Resource: !GetAtt CatalogEventsQueue.Arn

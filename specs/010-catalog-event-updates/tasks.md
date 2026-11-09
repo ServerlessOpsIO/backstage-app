@@ -20,12 +20,12 @@
 
 **Purpose**: Add event-system dependencies and event contract scaffolding.
 
-- [ ] T001 Add Backstage events runtime dependencies (`@backstage/plugin-events-backend`, `@backstage/plugin-events-node`, `@backstage/plugin-events-backend-module-aws-sqs`) in `src/packages/backend/package.json`
-- [ ] T002 Update lockfile entries for new backend dependencies in `src/yarn.lock`
-- [ ] T003 Add `@backstage/plugin-events-node` dependency for provider-side topic handling in `src/plugins/catalog-backend-module-serverlessops-catalog/package.json`
-- [ ] T004 [P] Create event payload and outcome types in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/types.ts`
-- [ ] T005 [P] Create schema validation helper for incoming notifications in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts`
-- [ ] T006 [P] Add event fixture payloads for create/update/delete/invalid messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/__fixtures__/catalog-events.json`
+- [X] T001 Add Backstage events runtime dependencies (`@backstage/plugin-events-backend`, `@backstage/plugin-events-node`, `@backstage/plugin-events-backend-module-aws-sqs`) in `src/packages/backend/package.json`
+- [X] T002 Update lockfile entries for new backend dependencies in `src/yarn.lock`
+- [X] T003 Add `@backstage/plugin-events-node` dependency for provider-side topic handling in `src/plugins/catalog-backend-module-serverlessops-catalog/package.json`
+- [X] T004 [P] Create event payload and outcome types in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/types.ts`
+- [X] T005 [P] Create schema validation helper for incoming notifications in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notificationSchema.ts`
+- [X] T006 [P] Add event fixture payloads for create/update/delete/invalid messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/__fixtures__/catalogEvents.json`
 
 ---
 
@@ -35,14 +35,14 @@
 
 **⚠️ CRITICAL**: No user story work starts until this phase is complete.
 
-- [ ] T007 Register events backend plugins in `src/packages/backend/src/index.ts`
-- [ ] T008 Add SQS topic configuration for `serverlessops.catalog` under `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics` in `src/app-config.yaml`
-- [ ] T009 Add the catalog FIFO queue and dead-letter queue to `template.yaml`, publish the queue name using an `AWS::SSM::Parameter` named `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`, and add production SQS topic configuration and queue environment placeholders in `src/app-config.production.yaml`
-- [ ] T010 Extend provider configuration types for event-driven settings in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T011 Wire event subscription and provider dispatch bootstrap in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
-- [ ] T012 [P] Implement shared processing outcome logger (`applied`, `rejected`, `failed`, `dlq-routed`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
-- [ ] T013 [P] Add event-processor orchestration shell for validate/dispatch/result recording in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
-- [ ] T014 Update baseline provider test setup for event-driven initialization paths in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
+- [X] T007 Register events backend plugins in `src/packages/backend/src/index.ts`
+- [X] T008 Add SQS topic configuration for `ServerlessOpsCatalog` under `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics` in `src/app-config.yaml`
+- [X] T009 Add the catalog FIFO queue and dead-letter queue to `template.yaml`, publish the queue name using an `AWS::SSM::Parameter` named `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`, and add production SQS topic configuration and queue environment placeholders in `src/app-config.production.yaml`
+- [X] T010 Extend provider configuration types for event-driven settings in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
+- [X] T011 Wire event subscription and provider dispatch bootstrap in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
+- [X] T012 [P] Implement shared processing outcome logger (`applied`, `rejected`, `failed`, `dlq-routed`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcomeLogger.ts`
+- [X] T013 [P] Add event-processor orchestration shell for validate/dispatch/result recording in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/eventProcessor.ts`
+- [X] T014 Update baseline provider test setup for event-driven initialization paths in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
 
 **Checkpoint**: Event ingestion infrastructure and provider wiring are ready for story implementation.
 
@@ -56,16 +56,16 @@
 
 ### Tests for User Story 1
 
-- [ ] T015 [P] [US1] Add failing unit test for `create` notification -> `applyMutation` add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
-- [ ] T016 [P] [US1] Add failing unit test that validates `create` event routing from topic handler into provider logic in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
+- [X] T015 [P] [US1] Add failing unit test for `create` notification -> `applyMutation` add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
+- [X] T016 [P] [US1] Add failing unit test that validates `create` event routing from topic handler into provider logic in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/eventProcessor.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implement provider `create` notification mutation path with managed-by annotations in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T018 [US1] Implement payload validation rules in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts` quoting constraints verbatim: `changeType must be one of the three supported values`, `entityRef must be non-empty and match provider entity identity constraints`, `entity must include apiVersion, kind, and metadata.name`, and `unknown changeType or missing required fields is a processing failure and must be retried/then DLQ-routed`
-- [ ] T019 [US1] Add schema-level checks from contract (`eventId minLength: 1`, `entityRef pattern: ^[^/]+/[^/]+/[^/]+$`, required `eventId/changeType/entityRef/entity`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notification-schema.ts`
-- [ ] T020 [US1] Wire `serverlessops.catalog` `create` message dispatch to provider handler in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
-- [ ] T021 [US1] Record successful create processing outcomes with event and delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
+- [X] T017 [US1] Implement provider `create` notification mutation path with managed-by annotations in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
+- [X] T018 [US1] Implement payload validation rules in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notificationSchema.ts` quoting constraints verbatim: `changeType must be one of the three supported values`, `entityRef must be non-empty and match provider entity identity constraints`, `entity must include apiVersion, kind, and metadata.name`, and `unknown changeType or missing required fields is a processing failure and must be retried/then DLQ-routed`
+- [X] T019 [US1] Add schema-level checks from contract (`eventId minLength: 1`, `entityRef pattern: ^[^/]+/[^/]+/[^/]+$`, required `eventId/changeType/entityRef/entity`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notificationSchema.ts`
+- [X] T020 [US1] Wire `ServerlessOpsCatalog` `create` message dispatch to provider handler in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
+- [X] T021 [US1] Record successful create processing outcomes with event and delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcomeLogger.ts`
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 
@@ -79,16 +79,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T022 [P] [US2] Add failing unit tests for update mutation and missing-entity fetch/add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
-- [ ] T023 [P] [US2] Add failing unit tests for delete mutation semantics and duplicate event idempotency in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
+- [X] T022 [P] [US2] Add failing unit tests for update mutation and missing-entity fetch/add behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
+- [X] T023 [P] [US2] Add failing unit tests for delete mutation semantics and duplicate event idempotency in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Implement provider `update` path with fallback fetch-by-entityRef then add-if-present behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T025 [US2] Implement provider `delete` path using provider-managed entity removal semantics in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
-- [ ] T026 [US2] Add idempotency guard keyed by the producer-assigned unique `eventId` (which remains stable for retries/republishing) and `entityRef` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/processed-event-cache.ts`
-- [ ] T027 [US2] Route `create|update|delete` and reject unsupported `changeType` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
-- [ ] T028 [US2] Emit deterministic duplicate/unsupported-type outcomes with reasons in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcome-logger.ts`
+- [X] T024 [US2] Implement provider `update` path with fallback fetch-by-entityRef then add-if-present behavior in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
+- [X] T025 [US2] Implement provider `delete` path using provider-managed entity removal semantics in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
+- [X] T026 [US2] Add idempotency guard keyed by the producer-assigned unique `eventId` (which remains stable for retries/republishing) and `entityRef` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/processedEventCache.ts`
+- [X] T027 [US2] Route `create|update|delete` and reject unsupported `changeType` in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/eventProcessor.ts`
+- [X] T028 [US2] Emit deterministic duplicate/unsupported-type outcomes with reasons in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcomeLogger.ts`
 
 **Checkpoint**: User Stories 1 and 2 both work independently.
 
@@ -102,16 +102,16 @@
 
 ### Tests for User Story 3
 
-- [ ] T029 [P] [US3] Add failing tests for retry-attempt accounting and terminal `dlq-routed` outcome capture in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
-- [ ] T030 [P] [US3] Add failing test that one failed message does not block processing of subsequent messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.test.ts`
+- [X] T029 [P] [US3] Add failing tests for retry-attempt accounting and terminal `dlq-routed` outcome capture in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/eventProcessor.test.ts`
+- [X] T030 [P] [US3] Add failing test that one failed message does not block processing of subsequent messages in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/eventProcessor.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T031 [US3] Implement bounded-retry outcome mapping using `approximateReceiveCount` delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/event-processor.ts`
-- [ ] T032 [US3] Configure SQS consumer options and DLQ-compatible settings for `serverlessops.catalog` in `src/app-config.production.yaml`
-- [ ] T033 [US3] Reduce fallback polling frequency by at least 80% from the baseline schedule for `catalog.providers.serverlessops-catalog.schedule` in `src/app-config.production.yaml`
-- [ ] T034 [US3] Document least-privilege publish/consume queue access requirements in `specs/010-catalog-event-updates/contracts/event-topic-contract.md`
-- [ ] T035 [US3] Add quickstart validation steps for disruption recovery and fallback polling convergence in `specs/010-catalog-event-updates/quickstart.md`
+- [X] T031 [US3] Implement bounded-retry outcome mapping using `approximateReceiveCount` delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/eventProcessor.ts`
+- [X] T032 [US3] Configure SQS consumer options and DLQ-compatible settings for `ServerlessOpsCatalog` in `src/app-config.production.yaml`
+- [X] T033 [US3] Reduce fallback polling frequency by at least 80% from the baseline schedule for `catalog.providers.serverlessops-catalog.schedule` in `src/app-config.production.yaml`
+- [X] T034 [US3] Document least-privilege publish/consume queue access requirements in `specs/010-catalog-event-updates/contracts/event-topic-contract.md`
+- [X] T035 [US3] Add quickstart validation steps for disruption recovery and fallback polling convergence in `specs/010-catalog-event-updates/quickstart.md`
 
 **Checkpoint**: All user stories are independently functional and operationally verifiable.
 
@@ -121,10 +121,10 @@
 
 **Purpose**: Finalize documentation, exports, and validation guidance across stories.
 
-- [ ] T036 [P] Update module documentation with event-driven architecture and config examples in `src/plugins/catalog-backend-module-serverlessops-catalog/README.md`
-- [ ] T037 [P] Export new event-processing types/helpers from `src/plugins/catalog-backend-module-serverlessops-catalog/src/index.ts`
-- [ ] T038 Align local development config notes for event-driven mode and fallback polling in `src/app-config.yaml`
-- [ ] T039 Capture implementation validation command list and expected outcomes in `specs/010-catalog-event-updates/quickstart.md`
+- [X] T036 [P] Update module documentation with event-driven architecture and config examples in `src/plugins/catalog-backend-module-serverlessops-catalog/README.md`
+- [X] T037 [P] Export new event-processing types/helpers from `src/plugins/catalog-backend-module-serverlessops-catalog/src/index.ts`
+- [X] T038 Align local development config notes for event-driven mode and fallback polling in `src/app-config.yaml`
+- [X] T039 Capture implementation validation command list and expected outcomes in `specs/010-catalog-event-updates/quickstart.md`
 
 ---
 
@@ -161,7 +161,7 @@
 ```bash
 # Parallel test authoring
 Task: "T015 [US1] Add failing unit test for create notification mutation in ServerlessOpsCatalogProvider.test.ts"
-Task: "T016 [US1] Add failing unit test for create routing in event-processor.test.ts"
+Task: "T016 [US1] Add failing unit test for create routing in eventProcessor.test.ts"
 ```
 
 ### User Story 2
@@ -176,8 +176,8 @@ Task: "T023 [US2] Add failing unit tests for delete semantics and duplicate idem
 
 ```bash
 # Parallel reliability test authoring
-Task: "T029 [US3] Add failing tests for retry accounting and dlq-routed outcomes in event-processor.test.ts"
-Task: "T030 [US3] Add failing test for non-blocking continuation after failure in event-processor.test.ts"
+Task: "T029 [US3] Add failing tests for retry accounting and dlq-routed outcomes in eventProcessor.test.ts"
+Task: "T030 [US3] Add failing test for non-blocking continuation after failure in eventProcessor.test.ts"
 ```
 
 ---

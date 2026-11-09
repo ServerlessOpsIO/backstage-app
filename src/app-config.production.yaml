@@ -33,6 +33,20 @@ backend:
     allow:
       - host: api.catalog.platform.serverlessops.io
 
+events:
+  modules:
+    awsSqs:
+      awsSqsConsumingEventPublisher:
+        topics:
+          ServerlessOpsCatalog:
+            queue:
+              url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL}
+              region: ${AWS_REGION}
+            visibilityTimeout: { seconds: 60 }
+            waitTime: { seconds: 20 }
+            timeout: { seconds: 60 }
+            waitTimeAfterEmptyReceive: { seconds: 5 }
+
 auth:
   environment: production
   # Homepage info hub prerequisites:
@@ -73,7 +87,7 @@ catalog:
           $include: /app/app-config.d/credentials/google-jwt.keys.yaml
       schedule:
         initialDelay: { seconds: 5 }
-        frequency: { minutes: 15 }
+        frequency: { hours: 12 }
         timeout: { seconds: 60 }
     serverlessops-catalog:
       baseUrl: ${SERVERLESSOPS_CATALOG_API_URL}
@@ -88,6 +102,9 @@ catalog:
         endpoint: ${SERVERLESSOPS_AUTH_ENDPOINT}
         clientId: ${SERVERLESSOPS_AUTH_CLIENT_ID}
         clientSecret: ${SERVERLESSOPS_AUTH_CLIENT_SECRET}
+      events:
+        topic: ServerlessOpsCatalog
+        maxReceiveCount: 3
       schedule:
         initialDelay: { seconds: 5 }
         frequency: { minutes: 15 }

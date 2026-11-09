@@ -6,7 +6,7 @@ This contract defines the event channel interface consumed by the ServerlessOps 
 
 ## Topic and Transport
 
-- **Backstage topic**: `serverlessops.catalog`
+- **Backstage topic**: `ServerlessOpsCatalog`
 - **Transport module**: `@backstage/plugin-events-backend-module-aws-sqs`
 - **Queue type**: AWS SQS FIFO (`*.fifo`)
 - **Delivery expectation**: FIFO order per message group, with SQS-managed retries and DLQ redrive
@@ -37,7 +37,7 @@ events:
     awsSqs:
       awsSqsConsumingEventPublisher:
         topics:
-          serverlessops.catalog:
+          ServerlessOpsCatalog:
             queue:
               url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL} # must end with .fifo
               region: ${AWS_REGION}
@@ -53,3 +53,22 @@ events:
 - Publish and consume access MUST be restricted to approved principals only.
 - Queue and DLQ IAM policies MUST follow least privilege.
 - Secrets (credentials, tokens) MUST be sourced from environment/secret management, not committed config.
+
+### Least-Privilege IAM Requirements
+
+- **Producer principal** (publish-only) MUST be limited to:
+  - `sqs:GetQueueAttributes`
+  - `sqs:GetQueueUrl`
+  - `sqs:SendMessage`
+  - Resource scope: catalog FIFO queue ARN only.
+- **Backstage consumer principal** (consume-only) MUST be limited to:
+  - `sqs:GetQueueAttributes`
+  - `sqs:GetQueueUrl`
+  - `sqs:ReceiveMessage`
+  - `sqs:DeleteMessage`
+  - `sqs:DeleteMessageBatch`
+  - `sqs:ChangeMessageVisibility`
+  - Resource scope: catalog FIFO queue ARN only.
+- **DLQ access** MUST be explicit and minimal:
+  - No application principal should have `sqs:PurgeQueue` or wildcard `sqs:*`.
+  - Only approved operational roles may read DLQ messages for incident response.
