@@ -3,8 +3,8 @@ import {
     EventProcessor,
     DUPLICATE_EVENT_REASON,
     UNSUPPORTED_CHANGE_TYPE_REASON,
-} from './event-processor'
-import { OutcomeLogger } from './outcome-logger'
+} from './eventProcessor'
+import { OutcomeLogger } from './outcomeLogger'
 
 function createPayload(changeType: 'create' | 'update' | 'delete') {
     return {

@@ -14,10 +14,10 @@ export {
     UNSUPPORTED_CHANGE_TYPE_REASON,
     type EventProcessorHandlers,
     type EventProcessorOptions,
-} from './events/event-processor'
-export { validateNotificationPayload } from './events/notification-schema'
-export { OutcomeLogger } from './events/outcome-logger'
-export { ProcessedEventCache } from './events/processed-event-cache'
+} from './events/eventProcessor'
+export { validateNotificationPayload } from './events/notificationSchema'
+export { OutcomeLogger } from './events/outcomeLogger'
+export { ProcessedEventCache } from './events/processedEventCache'
 export {
     type CatalogEntityChangeNotification,
     type CatalogEntityChangeType,

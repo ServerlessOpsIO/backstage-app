@@ -5,8 +5,8 @@ import {
 } from '@backstage/backend-plugin-api'
 import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node'
 import { eventsServiceRef } from '@backstage/plugin-events-node'
-import { EventProcessor } from './events/event-processor'
-import { OutcomeLogger } from './events/outcome-logger'
+import { EventProcessor } from './events/eventProcessor'
+import { OutcomeLogger } from './events/outcomeLogger'
 import {
     ProviderConfig,
     ServerlessOpsCatalogProvider,

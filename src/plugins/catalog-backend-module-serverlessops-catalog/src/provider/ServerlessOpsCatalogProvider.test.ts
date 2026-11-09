@@ -2,7 +2,7 @@ import { Entity } from '@backstage/catalog-model'
 import { mockServices } from '@backstage/backend-test-utils'
 import { EntityProviderConnection } from '@backstage/plugin-catalog-node'
 import axios from 'axios'
-import { ProcessedEventCache } from '../events/processed-event-cache'
+import { ProcessedEventCache } from '../events/processedEventCache'
 import { getJwt, isJwtExpired } from '../util/jwt'
 import { ServerlessOpsCatalogProvider } from './ServerlessOpsCatalogProvider'
 

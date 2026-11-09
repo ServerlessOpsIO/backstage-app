@@ -1,8 +1,8 @@
 import { LoggerService } from '@backstage/backend-plugin-api'
 import { EventParams } from '@backstage/plugin-events-node'
-import { validateNotificationPayload } from './notification-schema'
-import { OutcomeLogger } from './outcome-logger'
-import { ProcessedEventCache } from './processed-event-cache'
+import { validateNotificationPayload } from './notificationSchema'
+import { OutcomeLogger } from './outcomeLogger'
+import { ProcessedEventCache } from './processedEventCache'
 import {
     CatalogEntityChangeNotification,
     NotificationProcessingOutcome,
