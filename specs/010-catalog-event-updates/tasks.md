@@ -37,7 +37,7 @@
 
 - [X] T007 Register events backend plugins in `src/packages/backend/src/index.ts`
 - [X] T008 Add SQS topic configuration for `ServerlessOpsCatalog` under `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics` in `src/app-config.yaml`
-- [X] T009 Add the catalog FIFO queue and dead-letter queue to `template.yaml`, publish the queue name using an `AWS::SSM::Parameter` named `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`, and add production SQS topic configuration and queue environment placeholders in `src/app-config.production.yaml`
+- [X] T009 Add the catalog FIFO queue and dead-letter queue to `template.yaml`, publish the queue ARN using an `AWS::SSM::Parameter` named `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueArn`, and add production SQS topic configuration and queue environment placeholders in `src/app-config.production.yaml`
 - [X] T010 Extend provider configuration types for event-driven settings in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
 - [X] T011 Wire event subscription and provider dispatch bootstrap in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
 - [X] T012 [P] Implement shared processing outcome logger (`applied`, `rejected`, `failed`, `dlq-routed`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcomeLogger.ts`
