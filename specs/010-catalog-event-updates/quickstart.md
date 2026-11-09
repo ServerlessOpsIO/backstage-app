@@ -9,7 +9,7 @@ This guide validates the feature end to end using SQS FIFO-driven updates plus f
 3. AWS FIFO queue and DLQ created for production catalog events.
 4. Backstage config includes:
    - Provider config at `catalog.providers.serverlessops-catalog`
-   - SQS topic config at `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics.serverlessops.catalog`
+   - SQS topic config at `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics.serverlessops-catalog`
 5. Producer is publishing contract-compliant payloads (see `contracts/catalog-entity-change-notification.schema.json`).
 
 ## Local Validation Setup
