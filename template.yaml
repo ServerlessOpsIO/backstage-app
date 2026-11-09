@@ -209,12 +209,12 @@ Resources:
         deadLetterTargetArn: !GetAtt CatalogEventsDeadLetterQueue.Arn
         maxReceiveCount: 3
 
-  CatalogEventsQueueNameParameter:
+  CatalogEventsQueueArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
-      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName'
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueArn'
       Type: String
-      Value: !GetAtt CatalogEventsQueue.QueueName
+      Value: !GetAtt CatalogEventsQueue.Arn
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition

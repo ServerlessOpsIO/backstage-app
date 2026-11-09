@@ -55,6 +55,6 @@ export function validateNotificationPayload(payload: unknown): NotificationValid
 
     return {
         ok: true,
-        value: payload as CatalogEntityChangeNotification,
+        value: payload as unknown as CatalogEntityChangeNotification,
     }
 }

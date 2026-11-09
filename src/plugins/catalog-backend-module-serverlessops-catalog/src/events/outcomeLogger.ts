@@ -17,7 +17,7 @@ export class OutcomeLogger {
             status: outcome.status,
             reason: outcome.reason,
             attemptCount: outcome.attemptCount,
-            delivery: outcome.delivery,
+            delivery: { ...outcome.delivery },
             processedAt: outcome.processedAt,
         }
 
