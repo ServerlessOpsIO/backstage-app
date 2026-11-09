@@ -5,13 +5,37 @@ This guide validates the feature end to end using SQS FIFO-driven updates plus f
 ## Prerequisites
 
 1. Backstage backend dependencies installed (`yarn --cwd src install`).
-2. AWS FIFO queue and DLQ created for catalog events.
-3. Backstage config includes:
+2. Docker and the AWS CLI installed for local queue validation.
+3. AWS FIFO queue and DLQ created for production catalog events.
+4. Backstage config includes:
    - Provider config at `catalog.providers.serverlessops-catalog`
    - SQS topic config at `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics.serverlessops.catalog`
-4. Producer is publishing contract-compliant payloads (see `contracts/catalog-entity-change-notification.schema.json`).
+5. Producer is publishing contract-compliant payloads (see `contracts/catalog-entity-change-notification.schema.json`).
 
 ## Local Validation Setup
+
+Start a local SQS-compatible FIFO queue with ElasticMQ:
+
+```bash
+docker run --rm --name catalog-events-queue -p 9324:9324 softwaremill/elasticmq-native
+```
+
+In another terminal, create the queue at the URL configured in `src/app-config.yaml`:
+
+```bash
+AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test aws --endpoint-url http://localhost:9324 --region us-east-1 sqs create-queue \
+  --queue-name serverlessops-catalog-events.fifo \
+  --attributes FifoQueue=true,ContentBasedDeduplication=true
+```
+
+Set the same dummy AWS credentials in the environment where Backstage runs:
+
+```bash
+export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+```
+
+Keep the ElasticMQ container running while validating events. Publish test notifications to the queue and start Backstage as described below.
 
 ```bash
 yarn --cwd src install

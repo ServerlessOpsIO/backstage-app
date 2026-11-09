@@ -227,7 +227,8 @@ events:
         topics:
           serverlessops.catalog:
             queue:
-              url: http://localhost:9324/queue/serverlessops-catalog-events.fifo
+              url: >-
+                http://localhost:9324/queue/serverlessops-catalog-events.fifo
               region: us-east-1
 
 integrations:
