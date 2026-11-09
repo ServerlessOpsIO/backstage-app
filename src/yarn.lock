@@ -272,6 +272,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/client-dynamodb@npm:^3.1164.0":
+  version: 3.1164.0
+  resolution: "@aws-sdk/client-dynamodb@npm:3.1164.0"
+  dependencies:
+    "@aws-sdk/core": "npm:^3.980.1"
+    "@aws-sdk/credential-provider-node": "npm:^3.972.94"
+    "@aws-sdk/dynamodb-codec": "npm:^3.973.56"
+    "@aws-sdk/middleware-endpoint-discovery": "npm:^3.972.37"
+    "@aws-sdk/types": "npm:^3.975.0"
+    "@smithy/core": "npm:^3.38.0"
+    "@smithy/fetch-http-handler": "npm:^5.8.0"
+    "@smithy/node-http-handler": "npm:^4.14.0"
+    "@smithy/types": "npm:^4.19.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/3bf7e23ea341b4dcf3f05dc3fcb9350b66ada3972aad8fd8884aab0a7669f0ec6477bd4012088fd316b798394e92c86591b243fa58156a9590e43a60e1ce5cf9
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/client-s3@npm:^3.350.0":
   version: 3.1077.0
   resolution: "@aws-sdk/client-s3@npm:3.1077.0"
@@ -643,6 +661,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/dynamodb-codec@npm:^3.973.56":
+  version: 3.973.56
+  resolution: "@aws-sdk/dynamodb-codec@npm:3.973.56"
+  dependencies:
+    "@aws-sdk/core": "npm:^3.980.1"
+    "@smithy/core": "npm:^3.38.0"
+    "@smithy/types": "npm:^4.19.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/e897835cb59e221036fffd51c07db771ed23c820dcb845be005af73e5e535d6e68bb34de60f110b76f42074ec9e2f3e9a6c15b3f4cbf10e4c45f41b7f93103a1
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/endpoint-cache@npm:^3.972.11":
+  version: 3.972.11
+  resolution: "@aws-sdk/endpoint-cache@npm:3.972.11"
+  dependencies:
+    mnemonist: "npm:0.38.3"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/8f3c039fb2dd8e434cd2992bce2a840e6f6470be5ae6d71c762f6cb842149fb60d5566ca470319d5abcf90b115d2c1a0114ed3328afbfc0abed4cbcd52ad03a1
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/lib-storage@npm:^3.350.0":
   version: 3.1077.0
   resolution: "@aws-sdk/lib-storage@npm:3.1077.0"
@@ -656,6 +696,19 @@ __metadata:
   peerDependencies:
     "@aws-sdk/client-s3": ^3.1077.0
   checksum: 10c0/25b528618ce5b55cd4640a7707aa91437ada1213827f640be0ae41b008ebac50c069025117dab34a4d88624ed5181fde778a1ea747ad992ceff23554d3219c3b
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/middleware-endpoint-discovery@npm:^3.972.37":
+  version: 3.972.37
+  resolution: "@aws-sdk/middleware-endpoint-discovery@npm:3.972.37"
+  dependencies:
+    "@aws-sdk/endpoint-cache": "npm:^3.972.11"
+    "@aws-sdk/types": "npm:^3.975.0"
+    "@smithy/core": "npm:^3.38.0"
+    "@smithy/types": "npm:^4.19.0"
+    tslib: "npm:^2.6.2"
+  checksum: 10c0/acf1c7b2a9f77ffa2bb8cf0f54c28da240bc2f4314efde08f0142ae23f19f7e3ccb15224264c70a2d237e674429f33495318f52e3d9e0c344fc1a07308308dad
   languageName: node
   linkType: hard
 
@@ -820,6 +873,17 @@ __metadata:
     "@aws-sdk/core": "npm:^3.974.25"
     tslib: "npm:^2.6.2"
   checksum: 10c0/55f564a530c004fcbc868f13ad647433cf61c9e4a290af3f374f2f2173a9ea89ab0865343f53e2647dbbcbc3b6b5cbf946a513b733cbda2cd7cc73a86061f379
+  languageName: node
+  linkType: hard
+
+"@aws-sdk/util-dynamodb@npm:^3.996.9":
+  version: 3.996.9
+  resolution: "@aws-sdk/util-dynamodb@npm:3.996.9"
+  dependencies:
+    tslib: "npm:^2.6.2"
+  peerDependencies:
+    "@aws-sdk/client-dynamodb": ^3.1111.0
+  checksum: 10c0/3f19524435023ddc747a6b196b44f4ca43081a023dd827597c95a851ef9d7ba29f24181ad4194964af43b64a11f679a351c68de1bf22fdbc820d4f09103298d6
   languageName: node
   linkType: hard
 
@@ -6642,6 +6706,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@internal/backstage-plugin-catalog-backend-module-serverlessops-catalog@workspace:plugins/catalog-backend-module-serverlessops-catalog"
   dependencies:
+    "@aws-sdk/client-dynamodb": "npm:^3.1164.0"
+    "@aws-sdk/util-dynamodb": "npm:^3.996.9"
     "@backstage/backend-plugin-api": "backstage:^"
     "@backstage/backend-test-utils": "backstage:^"
     "@backstage/catalog-model": "backstage:^"
@@ -25213,6 +25279,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mnemonist@npm:0.38.3":
+  version: 0.38.3
+  resolution: "mnemonist@npm:0.38.3"
+  dependencies:
+    obliterator: "npm:^1.6.1"
+  checksum: 10c0/064aa1ee1a89fce2754423b3617c598fd65bc34311eb3c01dc063976f6b819b073bd23532415cf8c92240157b4c8fbb7ec5d79d717f2bd4fcd95d8131cb23acb
+  languageName: node
+  linkType: hard
+
 "mockttp@npm:^3.13.0":
   version: 3.17.1
   resolution: "mockttp@npm:3.17.1"
@@ -26060,6 +26135,13 @@ __metadata:
     define-properties: "npm:^1.2.1"
     es-object-atoms: "npm:^1.0.0"
   checksum: 10c0/3c47814fdc64842ae3d5a74bc9d06bdd8d21563c04d9939bf6716a9c00596a4ebc342552f8934013d1ec991c74e3671b26710a0c51815f0b603795605ab6b2c9
+  languageName: node
+  linkType: hard
+
+"obliterator@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "obliterator@npm:1.6.1"
+  checksum: 10c0/5fad57319aae0ef6e34efa640541d41c2dd9790a7ab808f17dcb66c83a81333963fc2dfcfa6e1b62158e5cef6291cdcf15c503ad6c3de54b2227dd4c3d7e1b55
   languageName: node
   linkType: hard
 

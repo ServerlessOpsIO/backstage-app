@@ -20,6 +20,8 @@ This contract defines the event channel interface consumed by the ServerlessOps 
   - `create`
   - `update`
   - `delete`
+- The producer currently sends `entity` as a DynamoDB Stream AttributeValue image. The consumer verifies that `entityRef` matches the persisted sort key, unmarshalls the image, and removes `pk`, `sk`, and `itemType` before catalog dispatch.
+- The consumer continues to accept legacy notifications where `entity` is already a plain Backstage entity during migration.
 
 ## Behavioral Contract
 

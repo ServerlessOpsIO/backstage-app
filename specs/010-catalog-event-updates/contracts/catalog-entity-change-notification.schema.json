@@ -4,12 +4,124 @@
   "title": "CatalogEntityChangeNotification",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "eventId",
-    "changeType",
-    "entityRef",
-    "entity"
-  ],
+  "required": ["eventId", "changeType", "entityRef", "entity"],
+  "$defs": {
+    "stringAttributeValue": {
+      "type": "object",
+      "required": ["S"],
+      "properties": {
+        "S": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "attributeValue": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "oneOf": [
+        {
+          "required": ["S"],
+          "properties": { "S": { "type": "string" } }
+        },
+        {
+          "required": ["N"],
+          "properties": { "N": { "type": "string" } }
+        },
+        {
+          "required": ["BOOL"],
+          "properties": { "BOOL": { "type": "boolean" } }
+        },
+        {
+          "required": ["NULL"],
+          "properties": { "NULL": { "const": true } }
+        },
+        {
+          "required": ["M"],
+          "properties": {
+            "M": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/$defs/attributeValue" }
+            }
+          }
+        },
+        {
+          "required": ["L"],
+          "properties": {
+            "L": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/attributeValue" }
+            }
+          }
+        },
+        {
+          "required": ["SS"],
+          "properties": {
+            "SS": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        {
+          "required": ["NS"],
+          "properties": {
+            "NS": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      ]
+    },
+    "backstageEntity": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["apiVersion", "kind", "metadata"],
+      "properties": {
+        "apiVersion": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "namespace": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "dynamoDbEntityImage": {
+      "type": "object",
+      "required": ["pk", "sk", "itemType", "apiVersion", "kind", "metadata"],
+      "properties": {
+        "pk": { "$ref": "#/$defs/stringAttributeValue" },
+        "sk": { "$ref": "#/$defs/stringAttributeValue" },
+        "itemType": {
+          "type": "object",
+          "required": ["S"],
+          "properties": { "S": { "const": "entity" } },
+          "additionalProperties": false
+        },
+        "apiVersion": { "$ref": "#/$defs/stringAttributeValue" },
+        "kind": { "$ref": "#/$defs/stringAttributeValue" },
+        "metadata": {
+          "type": "object",
+          "required": ["M"],
+          "properties": {
+            "M": {
+              "type": "object",
+              "required": ["name"],
+              "properties": {
+                "name": { "$ref": "#/$defs/stringAttributeValue" },
+                "namespace": { "$ref": "#/$defs/stringAttributeValue" }
+              },
+              "additionalProperties": { "$ref": "#/$defs/attributeValue" }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": { "$ref": "#/$defs/attributeValue" }
+    }
+  },
   "properties": {
     "eventId": {
       "type": "string",
@@ -18,11 +130,7 @@
     },
     "changeType": {
       "type": "string",
-      "enum": [
-        "create",
-        "update",
-        "delete"
-      ]
+      "enum": ["create", "update", "delete"]
     },
     "entityRef": {
       "type": "string",
@@ -30,40 +138,11 @@
       "pattern": "^[^/]+/[^/]+/[^/]+$"
     },
     "entity": {
-      "type": "object",
-      "additionalProperties": true,
-      "required": [
-        "apiVersion",
-        "kind",
-        "metadata"
-      ],
-      "properties": {
-        "apiVersion": {
-          "type": "string",
-          "minLength": 1
-        },
-        "kind": {
-          "type": "string",
-          "minLength": 1
-        },
-        "metadata": {
-          "type": "object",
-          "additionalProperties": true,
-          "required": [
-            "name"
-          ],
-          "properties": {
-            "name": {
-              "type": "string",
-              "minLength": 1
-            },
-            "namespace": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        }
-      }
+      "description": "A Backstage entity or a DynamoDB Stream AttributeValue item image for that entity.",
+      "oneOf": [
+        { "$ref": "#/$defs/backstageEntity" },
+        { "$ref": "#/$defs/dynamoDbEntityImage" }
+      ]
     },
     "source": {
       "type": "string",
