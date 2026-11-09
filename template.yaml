@@ -216,6 +216,20 @@ Resources:
       Type: String
       Value: !GetAtt CatalogEventsQueue.Arn
 
+  CatalogEventsQueueNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName'
+      Type: String
+      Value: !GetAtt CatalogEventsQueue.QueueName
+
+  CatalogEventsQueueUrlParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueUrl'
+      Type: String
+      Value: !Ref CatalogEventsQueue
+
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
