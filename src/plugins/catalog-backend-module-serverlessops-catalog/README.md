@@ -4,7 +4,7 @@ This backend module synchronizes entities from the ServerlessOps catalog API int
 
 It combines two synchronization paths:
 
-1. **Event-driven deltas** consumed from `serverlessops-catalog` via Backstage Events + AWS SQS.
+1. **Event-driven deltas** consumed from `ServerlessOpsCatalog` via Backstage Events + AWS SQS.
 2. **Scheduled fallback polling** to guarantee eventual convergence during event transport disruption.
 
 The module registers a `ServerlessOpsCatalogProvider` with the catalog processing extension point, validates incoming notifications, routes `create|update|delete` change types, and records auditable processing outcomes (`applied`, `rejected`, `failed`, `dlq-routed`).
@@ -39,7 +39,7 @@ catalog:
         clientId: ${SERVERLESSOPS_CLIENT_ID}
         clientSecret: ${SERVERLESSOPS_CLIENT_SECRET}
       events:
-        topic: serverlessops-catalog
+        topic: ServerlessOpsCatalog
         maxReceiveCount: 3
       schedule:
         frequency:
@@ -56,7 +56,7 @@ events:
     awsSqs:
       awsSqsConsumingEventPublisher:
         topics:
-          serverlessops-catalog:
+          ServerlessOpsCatalog:
             queue:
               url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL}
               region: ${AWS_REGION}

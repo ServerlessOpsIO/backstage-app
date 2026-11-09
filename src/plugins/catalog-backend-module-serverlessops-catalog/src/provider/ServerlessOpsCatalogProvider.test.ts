@@ -27,7 +27,7 @@ const mockConfig = {
         clientSecret: 'test-secret'
     },
     events: {
-        topic: 'serverlessops-catalog',
+        topic: 'ServerlessOpsCatalog',
         maxReceiveCount: 3
     },
     schedule: {
@@ -84,7 +84,7 @@ describe('ServerlessOpsCatalogProvider', () => {
     describe('getEventProcessingConfig()', () => {
         test('event config exists', () => {
             expect(provider.getEventProcessingConfig()).toEqual({
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 maxReceiveCount: 3
             })
         })

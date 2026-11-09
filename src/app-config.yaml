@@ -219,13 +219,13 @@ backend:
 
 events:
   # Local event-driven catalog development uses a local FIFO queue endpoint.
-  # Keep the same topic name as production (`serverlessops-catalog`) so module
+  # Keep the same topic name as production (`ServerlessOpsCatalog`) so module
   # behavior is consistent while validating create/update/delete handling.
   modules:
     awsSqs:
       awsSqsConsumingEventPublisher:
         topics:
-          serverlessops-catalog:
+          ServerlessOpsCatalog:
             queue:
               url: >-
                 http://localhost:9324/queue/serverlessops-catalog-events.fifo
@@ -332,7 +332,7 @@ catalog:
       # there at a reduced cadence to preserve eventual consistency.
       # serverlessops-catalog:
       #   events:
-      #     topic: serverlessops-catalog
+      #     topic: ServerlessOpsCatalog
       #     maxReceiveCount: 3
       #   schedule:
       #     frequency: { hours: 2 }

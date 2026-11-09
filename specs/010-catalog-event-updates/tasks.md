@@ -36,7 +36,7 @@
 **⚠️ CRITICAL**: No user story work starts until this phase is complete.
 
 - [X] T007 Register events backend plugins in `src/packages/backend/src/index.ts`
-- [X] T008 Add SQS topic configuration for `serverlessops-catalog` under `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics` in `src/app-config.yaml`
+- [X] T008 Add SQS topic configuration for `ServerlessOpsCatalog` under `events.modules.awsSqs.awsSqsConsumingEventPublisher.topics` in `src/app-config.yaml`
 - [X] T009 Add the catalog FIFO queue and dead-letter queue to `template.yaml`, publish the queue name using an `AWS::SSM::Parameter` named `/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName`, and add production SQS topic configuration and queue environment placeholders in `src/app-config.production.yaml`
 - [X] T010 Extend provider configuration types for event-driven settings in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
 - [X] T011 Wire event subscription and provider dispatch bootstrap in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
@@ -64,7 +64,7 @@
 - [X] T017 [US1] Implement provider `create` notification mutation path with managed-by annotations in `src/plugins/catalog-backend-module-serverlessops-catalog/src/provider/ServerlessOpsCatalogProvider.ts`
 - [X] T018 [US1] Implement payload validation rules in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notificationSchema.ts` quoting constraints verbatim: `changeType must be one of the three supported values`, `entityRef must be non-empty and match provider entity identity constraints`, `entity must include apiVersion, kind, and metadata.name`, and `unknown changeType or missing required fields is a processing failure and must be retried/then DLQ-routed`
 - [X] T019 [US1] Add schema-level checks from contract (`eventId minLength: 1`, `entityRef pattern: ^[^/]+/[^/]+/[^/]+$`, required `eventId/changeType/entityRef/entity`) in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/notificationSchema.ts`
-- [X] T020 [US1] Wire `serverlessops-catalog` `create` message dispatch to provider handler in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
+- [X] T020 [US1] Wire `ServerlessOpsCatalog` `create` message dispatch to provider handler in `src/plugins/catalog-backend-module-serverlessops-catalog/src/module.ts`
 - [X] T021 [US1] Record successful create processing outcomes with event and delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/outcomeLogger.ts`
 
 **Checkpoint**: User Story 1 is independently functional and testable.
@@ -108,7 +108,7 @@
 ### Implementation for User Story 3
 
 - [X] T031 [US3] Implement bounded-retry outcome mapping using `approximateReceiveCount` delivery metadata in `src/plugins/catalog-backend-module-serverlessops-catalog/src/events/eventProcessor.ts`
-- [X] T032 [US3] Configure SQS consumer options and DLQ-compatible settings for `serverlessops-catalog` in `src/app-config.production.yaml`
+- [X] T032 [US3] Configure SQS consumer options and DLQ-compatible settings for `ServerlessOpsCatalog` in `src/app-config.production.yaml`
 - [X] T033 [US3] Reduce fallback polling frequency by at least 80% from the baseline schedule for `catalog.providers.serverlessops-catalog.schedule` in `src/app-config.production.yaml`
 - [X] T034 [US3] Document least-privilege publish/consume queue access requirements in `specs/010-catalog-event-updates/contracts/event-topic-contract.md`
 - [X] T035 [US3] Add quickstart validation steps for disruption recovery and fallback polling convergence in `specs/010-catalog-event-updates/quickstart.md`

@@ -31,7 +31,7 @@ function createProcessor(handlers: {
     const remove = handlers.delete ?? jest.fn().mockResolvedValue(undefined)
     const processor = new EventProcessor({
         logger: mockServices.rootLogger(),
-        topic: 'serverlessops-catalog',
+        topic: 'ServerlessOpsCatalog',
         handlers: {
             create,
             update,
@@ -51,7 +51,7 @@ describe('EventProcessor', () => {
             const payload = createPayload('create')
 
             const outcome = await processor.process({
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 eventPayload: payload,
                 metadata: {
                     messageId: 'message-1',
@@ -83,7 +83,7 @@ describe('EventProcessor', () => {
             const { processor, create } = createProcessor()
             const payload = createPayload('create')
             const params = {
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 eventPayload: payload,
                 metadata: {
                     approximateReceiveCount: '1',
@@ -106,7 +106,7 @@ describe('EventProcessor', () => {
         test('unsupported changeType is rejected with deterministic reason', async () => {
             const { processor, create, update, remove } = createProcessor({})
             const outcome = await processor.process({
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 eventPayload: {
                     ...createPayload('create'),
                     changeType: 'archive',
@@ -129,14 +129,14 @@ describe('EventProcessor', () => {
             const { processor } = createProcessor({ create }, 3)
 
             const retryOutcome = await processor.process({
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 eventPayload: createPayload('create'),
                 metadata: {
                     approximateReceiveCount: '2',
                 },
             })
             const terminalOutcome = await processor.process({
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 eventPayload: createPayload('create'),
                 metadata: {
                     approximateReceiveCount: '3',
@@ -164,7 +164,7 @@ describe('EventProcessor', () => {
             const { processor } = createProcessor({ create })
 
             const firstOutcome = await processor.process({
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 eventPayload: {
                     ...createPayload('create'),
                     eventId: 'evt-create-fail',
@@ -174,7 +174,7 @@ describe('EventProcessor', () => {
                 },
             })
             const secondOutcome = await processor.process({
-                topic: 'serverlessops-catalog',
+                topic: 'ServerlessOpsCatalog',
                 eventPayload: {
                     ...createPayload('create'),
                     eventId: 'evt-create-next',

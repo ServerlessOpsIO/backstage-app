@@ -6,7 +6,7 @@ This contract defines the event channel interface consumed by the ServerlessOps 
 
 ## Topic and Transport
 
-- **Backstage topic**: `serverlessops-catalog`
+- **Backstage topic**: `ServerlessOpsCatalog`
 - **Transport module**: `@backstage/plugin-events-backend-module-aws-sqs`
 - **Queue type**: AWS SQS FIFO (`*.fifo`)
 - **Delivery expectation**: FIFO order per message group, with SQS-managed retries and DLQ redrive
@@ -37,7 +37,7 @@ events:
     awsSqs:
       awsSqsConsumingEventPublisher:
         topics:
-          serverlessops-catalog:
+          ServerlessOpsCatalog:
             queue:
               url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL} # must end with .fifo
               region: ${AWS_REGION}

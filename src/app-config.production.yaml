@@ -38,7 +38,7 @@ events:
     awsSqs:
       awsSqsConsumingEventPublisher:
         topics:
-          serverlessops-catalog:
+          ServerlessOpsCatalog:
             queue:
               url: ${SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL}
               region: ${AWS_REGION}
@@ -103,7 +103,7 @@ catalog:
         clientId: ${SERVERLESSOPS_AUTH_CLIENT_ID}
         clientSecret: ${SERVERLESSOPS_AUTH_CLIENT_SECRET}
       events:
-        topic: serverlessops-catalog
+        topic: ServerlessOpsCatalog
         maxReceiveCount: 3
       schedule:
         initialDelay: { seconds: 5 }
