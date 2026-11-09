@@ -24,6 +24,8 @@
     "postpack": "backstage-cli package postpack"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1164.0",
+    "@aws-sdk/util-dynamodb": "^3.996.9",
     "@backstage/backend-plugin-api": "backstage:^",
     "@backstage/catalog-model": "backstage:^",
     "@backstage/config": "backstage:^",
