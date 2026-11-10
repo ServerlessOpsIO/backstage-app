@@ -105,6 +105,7 @@ catalog:
       events:
         topic: ServerlessOpsCatalog
         maxReceiveCount: 3
+        messageLogLevel: ${SERVERLESSOPS_CATALOG_EVENTS_MESSAGE_LOG_LEVEL}
       schedule:
         initialDelay: { seconds: 5 }
         frequency: { minutes: 15 }

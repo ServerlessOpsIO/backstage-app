@@ -166,6 +166,14 @@ Parameters:
     Description: ServerlessOps auth client secret
     NoEcho: true
 
+  CatalogEventMessageLogLevel:
+    Type: String
+    Description: Log level for received catalog event messages; use info to log message payloads without enabling debug logging
+    AllowedValues:
+      - debug
+      - info
+    Default: debug
+
   DatadogSite:
     Type: String
     Description: Datadog site
@@ -282,6 +290,8 @@ Resources:
               Value: !Ref ServerlessOpsAuthClientSecret
             - Name: SERVERLESSOPS_CATALOG_EVENTS_QUEUE_URL
               Value: !Ref CatalogEventsQueue
+            - Name: SERVERLESSOPS_CATALOG_EVENTS_MESSAGE_LOG_LEVEL
+              Value: !Ref CatalogEventMessageLogLevel
             - Name: AWS_REGION
               Value: !Ref AWS::Region
             - Name: DATADOG_SITE

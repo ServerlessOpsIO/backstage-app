@@ -41,6 +41,10 @@ catalog:
       events:
         topic: ServerlessOpsCatalog
         maxReceiveCount: 3
+        # Level for the log line written for every received event message,
+        # including its full payload. `debug` (default) hides it unless the
+        # backend runs with LOG_LEVEL=debug; `info` shows it at the default level.
+        messageLogLevel: debug
       schedule:
         frequency:
           hours: 2
