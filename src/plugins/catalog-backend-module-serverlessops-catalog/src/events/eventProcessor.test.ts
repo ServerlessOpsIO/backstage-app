@@ -3,6 +3,8 @@ import {
     EventProcessor,
     DUPLICATE_EVENT_REASON,
     UNSUPPORTED_CHANGE_TYPE_REASON,
+    MessageLogLevel,
+    parseMessageLogLevel,
 } from './eventProcessor'
 import { OutcomeLogger } from './outcomeLogger'
 
@@ -74,6 +76,71 @@ describe('EventProcessor', () => {
                     eventId: 'evt-create-1',
                     status: 'applied',
                 })
+            )
+        })
+
+        test.each<[MessageLogLevel | undefined, MessageLogLevel]>([
+            [undefined, 'debug'],
+            ['debug', 'debug'],
+            ['info', 'info'],
+        ])('received messages are logged with messageLogLevel=%s at %s, including invalid payloads', async (
+            messageLogLevel,
+            expectedLevel,
+        ) => {
+            const logger = {
+                debug: jest.fn(),
+                info: jest.fn(),
+                warn: jest.fn(),
+                error: jest.fn(),
+                child: jest.fn(),
+            }
+            logger.child.mockReturnValue(logger)
+            const processor = new EventProcessor({
+                logger,
+                topic: 'ServerlessOpsCatalog',
+                handlers: {
+                    create: jest.fn().mockResolvedValue(undefined),
+                    update: jest.fn().mockResolvedValue(undefined),
+                    delete: jest.fn().mockResolvedValue(undefined),
+                },
+                outcomeLogger: new OutcomeLogger(mockServices.rootLogger()),
+                messageLogLevel,
+            })
+            const invalidPayload = { eventId: 'evt-bad-1', entityRef: 'default/component/x' }
+
+            await processor.process({
+                topic: 'ServerlessOpsCatalog',
+                eventPayload: invalidPayload,
+                metadata: {
+                    messageId: 'message-9',
+                    messageGroupId: 'default/component/x',
+                    approximateReceiveCount: '2',
+                },
+            })
+
+            const otherLevel = expectedLevel === 'debug' ? 'info' : 'debug'
+            expect(logger[otherLevel]).not.toHaveBeenCalled()
+            expect(logger[expectedLevel]).toHaveBeenCalledTimes(1)
+            expect(logger[expectedLevel]).toHaveBeenCalledWith(
+                'Received catalog event message messageId=message-9',
+                {
+                    topic: 'ServerlessOpsCatalog',
+                    messageId: 'message-9',
+                    messageGroupId: 'default/component/x',
+                    messageDeduplicationId: undefined,
+                    approximateReceiveCount: 2,
+                    eventPayload: JSON.stringify(invalidPayload),
+                },
+            )
+        })
+
+        test('message log level config values are parsed', () => {
+            expect(parseMessageLogLevel(undefined)).toBe('debug')
+            expect(parseMessageLogLevel('')).toBe('debug')
+            expect(parseMessageLogLevel('debug')).toBe('debug')
+            expect(parseMessageLogLevel('info')).toBe('info')
+            expect(() => parseMessageLogLevel('verbose')).toThrow(
+                'Invalid events.messageLogLevel "verbose"; expected one of debug, info'
             )
         })
     })

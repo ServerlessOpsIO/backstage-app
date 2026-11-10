@@ -13,6 +13,21 @@ import {
 export const DUPLICATE_EVENT_REASON = 'duplicate-event'
 export const UNSUPPORTED_CHANGE_TYPE_REASON = 'unsupported-change-type'
 
+export const MESSAGE_LOG_LEVELS = ['debug', 'info'] as const
+export type MessageLogLevel = typeof MESSAGE_LOG_LEVELS[number]
+
+export function parseMessageLogLevel(value: unknown): MessageLogLevel {
+    if (value === undefined || value === null || value === '') {
+        return 'debug'
+    }
+    if (typeof value === 'string' && (MESSAGE_LOG_LEVELS as readonly string[]).includes(value)) {
+        return value as MessageLogLevel
+    }
+    throw new Error(
+        `Invalid events.messageLogLevel "${String(value)}"; expected one of ${MESSAGE_LOG_LEVELS.join(', ')}`
+    )
+}
+
 export interface EventProcessorHandlers {
     create: (notification: CatalogEntityChangeNotification) => Promise<void>
     update: (notification: CatalogEntityChangeNotification) => Promise<void>
@@ -25,6 +40,7 @@ export interface EventProcessorOptions {
     handlers: EventProcessorHandlers
     outcomeLogger: OutcomeLogger
     maxReceiveCount?: number
+    messageLogLevel?: MessageLogLevel
     processedEventCache?: ProcessedEventCache
 }
 
@@ -34,6 +50,7 @@ export class EventProcessor {
     private readonly handlers: EventProcessorHandlers
     private readonly outcomeLogger: OutcomeLogger
     private readonly maxReceiveCount: number
+    private readonly messageLogLevel: MessageLogLevel
     private readonly processedEventCache: ProcessedEventCache
 
     constructor(options: EventProcessorOptions) {
@@ -42,6 +59,7 @@ export class EventProcessor {
         this.handlers = options.handlers
         this.outcomeLogger = options.outcomeLogger
         this.maxReceiveCount = options.maxReceiveCount ?? 3
+        this.messageLogLevel = options.messageLogLevel ?? 'debug'
         this.processedEventCache = options.processedEventCache ?? new ProcessedEventCache()
     }
 
@@ -52,6 +70,17 @@ export class EventProcessor {
         }
 
         const delivery = this.getDeliveryContext(params.metadata)
+        this.logger[this.messageLogLevel](
+            `Received catalog event message messageId=${delivery.messageId ?? 'unknown'}`,
+            {
+                topic: params.topic,
+                messageId: delivery.messageId,
+                messageGroupId: delivery.messageGroupId,
+                messageDeduplicationId: delivery.messageDeduplicationId,
+                approximateReceiveCount: delivery.approximateReceiveCount,
+                eventPayload: this.serializePayload(params.eventPayload),
+            },
+        )
         const validation = validateNotificationPayload(params.eventPayload)
 
         if (!validation.ok) {
@@ -142,6 +171,14 @@ export class EventProcessor {
                     `${UNSUPPORTED_CHANGE_TYPE_REASON}:${unknownType}`
                 )
             }
+        }
+    }
+
+    private serializePayload(payload: unknown): string {
+        try {
+            return typeof payload === 'string' ? payload : JSON.stringify(payload) ?? String(payload)
+        } catch {
+            return String(payload)
         }
     }
 

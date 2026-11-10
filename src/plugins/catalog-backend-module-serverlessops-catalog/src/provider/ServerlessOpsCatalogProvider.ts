@@ -45,6 +45,7 @@ export interface ProviderConfig {
     events?: {
         topic: string
         maxReceiveCount?: number
+        messageLogLevel?: string
     }
 }
 

@@ -5,7 +5,7 @@ import {
 } from '@backstage/backend-plugin-api'
 import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node'
 import { eventsServiceRef } from '@backstage/plugin-events-node'
-import { EventProcessor } from './events/eventProcessor'
+import { EventProcessor, parseMessageLogLevel } from './events/eventProcessor'
 import { OutcomeLogger } from './events/outcomeLogger'
 import {
     ProviderConfig,
@@ -65,6 +65,7 @@ export const catalogModuleServerlessopsCatalog = createBackendModule({
                     logger,
                     topic: eventConfig.topic,
                     maxReceiveCount: eventConfig.maxReceiveCount ?? 3,
+                    messageLogLevel: parseMessageLogLevel(eventConfig.messageLogLevel),
                     handlers: {
                         create: async notification => provider.handleCreateNotification(notification),
                         update: async notification => provider.handleUpdateNotification(notification),
