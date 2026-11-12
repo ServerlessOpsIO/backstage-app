@@ -108,7 +108,7 @@ catalog:
         messageLogLevel: ${SERVERLESSOPS_CATALOG_EVENTS_MESSAGE_LOG_LEVEL}
       schedule:
         initialDelay: { seconds: 5 }
-        frequency: { minutes: 15 }
+        frequency: { days: 1 }
         timeout: { seconds: 60 }
 
   # Overrides the default list locations from app-config.yaml as these contain example data.
