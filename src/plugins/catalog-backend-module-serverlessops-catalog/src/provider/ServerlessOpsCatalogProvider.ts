@@ -4,7 +4,8 @@
 import {
     ANNOTATION_LOCATION,
     ANNOTATION_ORIGIN_LOCATION,
-    Entity
+    Entity,
+    stringifyEntityRef
 } from '@backstage/catalog-model'
 import {
     DeferredEntity,
@@ -280,7 +281,10 @@ export class ServerlessOpsCatalogProvider implements EntityProvider {
             added: [],
             removed: [
                 {
-                    entityRef: notification.entityRef,
+                    // The notification's entityRef is the catalog API path
+                    // (namespace/kind/name); Backstage matches removals on
+                    // its own ref format (kind:namespace/name).
+                    entityRef: stringifyEntityRef(notification.entity),
                     locationKey: this.toLocationRef(notification.entityRef),
                 }
             ],
