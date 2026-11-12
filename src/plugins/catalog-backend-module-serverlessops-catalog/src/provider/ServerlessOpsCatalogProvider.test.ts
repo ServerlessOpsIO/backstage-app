@@ -268,7 +268,7 @@ describe('ServerlessOpsCatalogProvider', () => {
                 added: [],
                 removed: [
                     {
-                        entityRef: 'default/component/test-component',
+                        entityRef: 'component:default/test-component',
                         locationKey: 'url:http://api.example.com/catalog/default/component/test-component'
                     }
                 ]
