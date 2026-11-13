@@ -6,6 +6,7 @@ metadata:
   description: Backstage ECS Service & Task
   annotations:
     github.com/project-slug: ServerlessOpsIO/backstage-app
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: application
   lifecycle: production
