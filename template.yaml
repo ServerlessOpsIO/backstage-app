@@ -410,6 +410,13 @@ Resources:
                   - sqs:DeleteMessageBatch
                   - sqs:ChangeMessageVisibility
                 Resource: !GetAtt CatalogEventsQueue.Arn
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub 'arn:aws:s3:::${TechDocsBucket}'
+                  - !Sub 'arn:aws:s3:::${TechDocsBucket}/*'
 
   CatalogEventsDeadLetterQueue:
     Type: AWS::SQS::Queue
