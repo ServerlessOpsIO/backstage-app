@@ -1,4 +1,4 @@
-# backstage-app
+# Documentation
 
 platform / backstage / backstage-app
 
