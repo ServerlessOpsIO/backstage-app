@@ -114,7 +114,7 @@ jobs:
       - name: Build TechDocs
         env:
           WORK_DIR: ${{ runner.temp }}/build/source
-          SITE_DIR: ${{ runner.temp }}/build/site
+          SITE_DIR: ${{ runner.temp }}/build/artifact/site
         run: |
           npx --yes @techdocs/cli generate \
             --no-docker \
@@ -122,11 +122,24 @@ jobs:
             --source-dir "${WORK_DIR}" \
             --output-dir "${SITE_DIR}"
 
+      # The deploy job has no checkout, so the catalog-info.yaml that names the
+      # entity to publish to travels with the site. It sits beside site/, not
+      # in it, so it is not published.
+      - name: Bundle catalog-info.yaml
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/build/artifact
+        run: |
+          if [ ! -f "${CATALOG_FILE}" ]; then
+            echo "::error::${CATALOG_FILE} is required to publish TechDocs"
+            exit 1
+          fi
+          cp "${CATALOG_FILE}" "${ARTIFACT_DIR}/catalog-info.yaml"
+
       - name: Upload TechDocs site
         uses: actions/upload-artifact@v7
         with:
           name: techdocs-docs
-          path: ${{ runner.temp }}/build/site
+          path: ${{ runner.temp }}/build/artifact
           if-no-files-found: error
 
   deploy:
@@ -137,11 +150,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    env:
-      CATALOG_FILE: catalog-info.yaml
 
     steps:
-      # The catalog-info.yaml in the checkout names the entity to publish to.
       - name: Setup job workspace
         uses: ServerlessOpsIO/gha-setup-workspace@v2
         with:
@@ -153,11 +163,13 @@ jobs:
         with:
           node-version: '24'
 
+      # The artifact holds the site in site/ and, beside it, the
+      # catalog-info.yaml that names the entity to publish to.
       - name: Download TechDocs site
         uses: actions/download-artifact@v8
         with:
           name: techdocs-docs
-          path: ${{ runner.temp }}/site
+          path: ${{ runner.temp }}/techdocs
 
       - name: Assume AWS Credentials
         uses: ServerlessOpsIO/gha-assume-aws-credentials@v1
@@ -169,7 +181,8 @@ jobs:
       # from the project's catalog-info.yaml.
       - name: Publish TechDocs
         env:
-          SITE_DIR: ${{ runner.temp }}/site
+          SITE_DIR: ${{ runner.temp }}/techdocs/site
+          CATALOG_FILE: ${{ runner.temp }}/techdocs/catalog-info.yaml
           TECHDOCS_BUCKET: ${{ vars.TECHDOCS_BUCKET }}
         run: |
           if [ -z "${TECHDOCS_BUCKET}" ]; then
