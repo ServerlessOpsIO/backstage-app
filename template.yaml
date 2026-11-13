@@ -253,6 +253,8 @@ Resources:
               Value: !Ref CatalogEventMessageLogLevel
             - Name: AWS_REGION
               Value: !Ref AWS::Region
+            - Name: TECHDOCS_BUCKET
+              Value: !Ref TechDocsBucket
             - Name: DATADOG_SITE
               Value: !Ref DatadogSite
             - Name: DATADOG_API_KEY
