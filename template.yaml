@@ -197,47 +197,6 @@ Conditions:
   ServiceScaleInEnabled: !Not [!Equals [ !Ref ServiceScaleInCron, '' ]]
 
 Resources:
-  CatalogEventsDeadLetterQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub '${Component}-${CodeBranch}-catalog-events-dlq.fifo'
-      FifoQueue: true
-      SqsManagedSseEnabled: true
-      MessageRetentionPeriod: 1209600
-
-  CatalogEventsQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: !Sub '${Component}-${CodeBranch}-catalog-events.fifo'
-      FifoQueue: true
-      ContentBasedDeduplication: true
-      SqsManagedSseEnabled: true
-      VisibilityTimeout: 60
-      RedrivePolicy:
-        deadLetterTargetArn: !GetAtt CatalogEventsDeadLetterQueue.Arn
-        maxReceiveCount: 3
-
-  CatalogEventsQueueArnParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueArn'
-      Type: String
-      Value: !GetAtt CatalogEventsQueue.Arn
-
-  CatalogEventsQueueNameParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName'
-      Type: String
-      Value: !GetAtt CatalogEventsQueue.QueueName
-
-  CatalogEventsQueueUrlParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueUrl'
-      Type: String
-      Value: !Ref CatalogEventsQueue
-
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -294,6 +253,8 @@ Resources:
               Value: !Ref CatalogEventMessageLogLevel
             - Name: AWS_REGION
               Value: !Ref AWS::Region
+            - Name: TECHDOCS_BUCKET
+              Value: !Ref TechDocsBucket
             - Name: DATADOG_SITE
               Value: !Ref DatadogSite
             - Name: DATADOG_API_KEY
@@ -449,3 +410,54 @@ Resources:
                   - sqs:DeleteMessageBatch
                   - sqs:ChangeMessageVisibility
                 Resource: !GetAtt CatalogEventsQueue.Arn
+
+  CatalogEventsDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${Component}-${CodeBranch}-catalog-events-dlq.fifo'
+      FifoQueue: true
+      SqsManagedSseEnabled: true
+      MessageRetentionPeriod: 1209600
+
+  CatalogEventsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub '${Component}-${CodeBranch}-catalog-events.fifo'
+      FifoQueue: true
+      ContentBasedDeduplication: true
+      SqsManagedSseEnabled: true
+      VisibilityTimeout: 60
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt CatalogEventsDeadLetterQueue.Arn
+        maxReceiveCount: 3
+
+  TechDocsBucket:
+    Type: AWS::S3::Bucket
+
+  CatalogEventsQueueArnParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueArn'
+      Type: String
+      Value: !GetAtt CatalogEventsQueue.Arn
+
+  CatalogEventsQueueNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueName'
+      Type: String
+      Value: !GetAtt CatalogEventsQueue.QueueName
+
+  CatalogEventsQueueUrlParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/SqsQueueUrl'
+      Type: String
+      Value: !Ref CatalogEventsQueue
+
+  TechDocsBucketNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/TechDocsBucketName'
+      Type: String
+      Value: !Ref TechDocsBucket

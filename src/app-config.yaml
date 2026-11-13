@@ -260,11 +260,12 @@ proxy:
 # and an external cloud storage when deploying TechDocs for production use-case.
 # https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
 techdocs:
-  builder: 'local' # Alternatives - 'external'
-  generator:
-    runIn: 'docker' # Alternatives - 'local'
+  builder: 'external'
   publisher:
-    type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+    type: 'awsS3'
+    awsS3:
+      bucketName: ${TECHDOCS_BUCKET}
+      region: ${AWS_REGION}
 
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
