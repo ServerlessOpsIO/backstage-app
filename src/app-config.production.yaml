@@ -144,7 +144,15 @@ catalog:
       rules:
         - allow: [Template]
     - type: url
-      target: https://github.com/ServerlessOpsIO/backstage-aws-sam-ecs-template/blob/main/template.yaml
+      target: https://github.com/ServerlessOpsIO/backstage-aws-sam-ecs-template/blob/main/template-cluster.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-aws-sam-ecs-template/blob/main/template-container.yaml
+      rules:
+        - allow: [Template]
+    - type: url
+      target: https://github.com/ServerlessOpsIO/backstage-aws-sam-ecs-template/blob/main/template-container-develop.yaml
       rules:
         - allow: [Template]
     - type: url
