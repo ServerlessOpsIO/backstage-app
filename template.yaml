@@ -429,6 +429,9 @@ Resources:
         deadLetterTargetArn: !GetAtt CatalogEventsDeadLetterQueue.Arn
         maxReceiveCount: 3
 
+  TechDocsBucket:
+    Type: AWS::S3::Bucket
+
   CatalogEventsQueueArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
@@ -450,3 +453,9 @@ Resources:
       Type: String
       Value: !Ref CatalogEventsQueue
 
+  TechDocsBucketNameParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: !Sub '/${Domain}/${System}/${Component}/${CodeBranch}/TechDocsBucketName'
+      Type: String
+      Value: !Ref TechDocsBucket
