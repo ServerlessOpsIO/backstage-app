@@ -68,7 +68,19 @@ jobs:
           python-version: '3.14'
 
       - name: Install MkDocs
-        run: pip install 'mkdocs-techdocs-core==1.*'
+        run: pip install 'mkdocs-techdocs-core==1.*' 'markdown-inline-mermaid==1.*'
+
+      # Mermaid diagrams are rendered to inline SVG at build time by
+      # markdown-inline-mermaid, which runs the Mermaid CLI (mmdc) for each
+      # diagram. The CLI drives a headless browser, which is installed
+      # explicitly because npm may not run the install script that fetches it.
+      - name: Install Mermaid CLI
+        env:
+          MERMAID_DIR: ${{ runner.temp }}/mermaid
+        run: |
+          npm install --prefix "${MERMAID_DIR}" '@mermaid-js/mermaid-cli@12'
+          "${MERMAID_DIR}/node_modules/.bin/puppeteer" browsers install chrome-headless-shell
+          echo "${MERMAID_DIR}/node_modules/.bin" >> "$GITHUB_PATH"
 
       # Lay docs/ out as a MkDocs project in $RUNNER_TEMP/build, outside the git
       # checkout. A mkdocs.yml is generated unless the project supplies its own.
@@ -99,6 +111,14 @@ jobs:
             ' > "${WORK_DIR}/mkdocs.yml"
           fi
 
+          # Enable Mermaid rendering, including in a mkdocs.yml the project
+          # supplied, unless it is already enabled there.
+          yq -i '
+            .markdown_extensions = (.markdown_extensions // []) |
+            with(select(.markdown_extensions | any_c(. == "markdown_inline_mermaid") | not);
+              .markdown_extensions += ["markdown_inline_mermaid"])
+          ' "${WORK_DIR}/mkdocs.yml"
+
           # TechDocs needs a landing page at the site root.
           if [ ! -f "${WORK_DIR}/docs/index.md" ]; then
             {
@@ -120,7 +140,15 @@ jobs:
             --no-docker \
             --verbose \
             --source-dir "${WORK_DIR}" \
-            --output-dir "${SITE_DIR}"
+            --output-dir "${SITE_DIR}" \
+            --dangerouslyAllowAdditionalExtensions markdown_inline_mermaid
+
+          # A diagram that fails to render is written into the page as an error
+          # instead of failing the build, so look for it.
+          if grep -rl --include='*.html' '<pre>Error : ' "${SITE_DIR}"; then
+            echo "::error::A Mermaid diagram failed to render in the pages listed above"
+            exit 1
+          fi
 
       # The deploy job has no checkout, so the catalog-info.yaml that names the
       # entity to publish to travels with the site. It sits beside site/, not
