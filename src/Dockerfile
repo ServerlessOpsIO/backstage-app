@@ -17,6 +17,18 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gh && \
     rm -rf /var/lib/apt/lists/*
 RUN curl -fsSL https://gh.io/copilot-install | bash
+# Claude Code CLI, used by Spec Kit when the claude integration is selected.
+# Installed from Anthropic's apt repository (stable channel):
+# https://code.claude.com/docs/en/setup#install-with-linux-package-managers
+RUN install -d -m 0755 /etc/apt/keyrings && \
+    curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
+      -o /etc/apt/keyrings/claude-code.asc && \
+    chmod go+r /etc/apt/keyrings/claude-code.asc && \
+    echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" \
+      > /etc/apt/sources.list.d/claude-code.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends claude-code && \
+    rm -rf /var/lib/apt/lists/*
 USER node
 
 # Add SSL cert for RDS. We support all US regions
