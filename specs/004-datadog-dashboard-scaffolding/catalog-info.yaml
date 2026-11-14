@@ -9,6 +9,7 @@ metadata:
     serverlessops.io/spec-dir: specs/004-datadog-dashboard-scaffolding
     serverlessops.io/spec-number: "004"
     backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/004-datadog-dashboard-scaffolding/
+    backstage.io/techdocs-ref: dir:.
   tags:
     - speckit
   links:

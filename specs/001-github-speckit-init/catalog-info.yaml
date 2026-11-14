@@ -9,6 +9,7 @@ metadata:
     serverlessops.io/spec-dir: specs/001-github-speckit-init
     serverlessops.io/spec-number: "001"
     backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/001-github-speckit-init/
+    backstage.io/techdocs-ref: dir:.
   tags:
     - speckit
   links:
