@@ -9,6 +9,7 @@ metadata:
     serverlessops.io/spec-dir: specs/009-skip-ci-for-specs
     serverlessops.io/spec-number: "009"
     backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/009-skip-ci-for-specs/
+    backstage.io/techdocs-ref: dir:.
   tags:
     - speckit
   links:

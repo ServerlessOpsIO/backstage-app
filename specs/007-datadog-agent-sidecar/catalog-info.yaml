@@ -9,6 +9,7 @@ metadata:
     serverlessops.io/spec-dir: specs/007-datadog-agent-sidecar
     serverlessops.io/spec-number: "007"
     backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/007-datadog-agent-sidecar/
+    backstage.io/techdocs-ref: dir:.
   tags:
     - speckit
   links:

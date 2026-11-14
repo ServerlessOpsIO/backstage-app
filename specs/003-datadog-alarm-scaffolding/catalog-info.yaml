@@ -9,6 +9,7 @@ metadata:
     serverlessops.io/spec-dir: specs/003-datadog-alarm-scaffolding
     serverlessops.io/spec-number: "003"
     backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/003-datadog-alarm-scaffolding/
+    backstage.io/techdocs-ref: dir:.
   tags:
     - speckit
   links:

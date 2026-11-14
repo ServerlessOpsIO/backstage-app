@@ -9,6 +9,7 @@ metadata:
     serverlessops.io/spec-dir: specs/002-catalog-spec-content
     serverlessops.io/spec-number: "002"
     backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/002-catalog-spec-content/
+    backstage.io/techdocs-ref: dir:.
   tags:
     - speckit
   links:

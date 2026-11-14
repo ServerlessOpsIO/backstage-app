@@ -11,6 +11,7 @@ metadata:
     serverlessops.io/spec-issue: "116"
     serverlessops.io/spec-type: "feature"
     backstage.io/source-location: url:https://github.com/ServerlessOpsIO/backstage-app/tree/main/specs/010-catalog-event-updates/
+    backstage.io/techdocs-ref: dir:.
   tags:
     - speckit
   links:
