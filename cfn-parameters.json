@@ -39,5 +39,6 @@
 	"CatalogEventMessageLogLevel": "debug",
 	"DatadogSite": $secrets.DATADOG_SITE,
 	"DatadogApiKey": $secrets.DATADOG_API_KEY,
-	"DatadogAppKey": $secrets.DATADOG_APP_KEY
+	"DatadogAppKey": $secrets.DATADOG_APP_KEY,
+	"ClaudeCodeOauthToken": $secrets.CLAUDE_CODE_OAUTH_TOKEN
 }

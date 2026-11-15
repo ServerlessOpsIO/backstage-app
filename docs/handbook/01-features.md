@@ -80,7 +80,7 @@ ServerlessOps catalog. The rest are loaded from other repositories. See
 
 Templates can use local scaffolder actions for the ServerlessOps catalog,
 GitHub, GitHub Copilot, Spec Kit, and Datadog. The container image includes the
-`specify`, `gh`, and `copilot` command-line tools those actions run.
+`specify`, `gh`, `copilot`, and `claude` command-line tools those actions run.
 
 ## ECS Fargate service
 

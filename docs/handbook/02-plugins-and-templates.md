@@ -93,7 +93,7 @@ Things to know when writing templates:
 - `github:speckit:init` and `github:speckit:workflow` run `specify`, and
   workflow command steps run `copilot` and `gh`, on the scaffolder host, which
   is the Backstage container. `x_github:commit` and `x_github:push` need `git`
-  there too. `src/Dockerfile` installs `specify`, `gh`, and `copilot`.
+  there too. `src/Dockerfile` installs `specify`, `gh`, `copilot`, and `claude`.
 - Copilot usage is billed to the owner of the token the action uses.
 - The Datadog actions and the monitors endpoint share the one account
   configured under `integrations.datadog`.

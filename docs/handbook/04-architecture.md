@@ -277,7 +277,7 @@ The image is built in two stages by two Dockerfiles:
 | Stage | Dockerfile | Result |
 | --- | --- | --- |
 | Base | `src/packages/backend/Dockerfile`, run by `yarn build-image` | `backstage:latest`: `node:24-trixie-slim`, Python with `mkdocs-techdocs-core`, production dependencies, the backend bundle, and `app-config*.yaml`. Runs as `node` in `/app`. |
-| Final | `src/Dockerfile` | Adds `specify-cli`, the GitHub CLI, and the Copilot CLI; the combined RDS CA bundle for the four US regions; and `app-config.d/`. |
+| Final | `src/Dockerfile` | Adds `specify-cli`, the GitHub CLI, the Copilot CLI, and the Claude Code CLI; the combined RDS CA bundle for the four US regions; and `app-config.d/`. |
 
 The base stage copies the pre-built `skeleton.tar.gz` and `bundle.tar.gz` from
 `src/packages/backend/dist/`, so `yarn build:all` must run first on a host with

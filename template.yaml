@@ -188,6 +188,11 @@ Parameters:
     Description: Datadog application key
     NoEcho: true
 
+  ClaudeCodeOauthToken:
+    Type: String
+    Description: Claude Code OAuth token used by the Claude Code CLI
+    NoEcho: true
+
 Conditions:
   ServiceScalingEnabled: !Or [
     !Not [!Equals [ !Ref ServiceScaleOutCron, '' ]],
@@ -261,6 +266,8 @@ Resources:
               Value: !Ref DatadogApiKey
             - Name: DATADOG_APP_KEY
               Value: !Ref DatadogAppKey
+            - Name: CLAUDE_CODE_OAUTH_TOKEN
+              Value: !Ref ClaudeCodeOauthToken
           LogConfiguration:
             LogDriver: awslogs
             Options:

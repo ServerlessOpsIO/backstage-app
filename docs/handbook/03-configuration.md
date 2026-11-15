@@ -52,6 +52,7 @@ The task definition sets these on the application container.
 | `AWS_REGION` | Stack region | SQS and S3 clients |
 | `TECHDOCS_BUCKET` | The stack's `TechDocsBucket` | TechDocs publisher |
 | `DATADOG_SITE`, `DATADOG_API_KEY`, `DATADOG_APP_KEY` | `Datadog*` | Datadog scaffolder actions and monitors endpoint |
+| `CLAUDE_CODE_OAUTH_TOKEN` | `ClaudeCodeOauthToken` | Read by the `claude` CLI, not by app-config; authenticates Spec Kit runs that use the Claude integration |
 
 The base file also references `GITHUB_TOKEN`. Production replaces that
 integration with the GitHub App credentials file, so the variable is only
@@ -141,6 +142,7 @@ service propagates task-definition tags to tasks.
 | `AUTH_GOOGLE_CLIENT_ID`, `AUTH_GOOGLE_CLIENT_SECRET`, `AUTH_GITHUB_CLIENT_ID`, `AUTH_GITHUB_CLIENT_SECRET` | Secret | Auth providers |
 | `SERVERLESSOPS_AUTH_CLIENT_ID`, `SERVERLESSOPS_AUTH_CLIENT_SECRET`, `SERVERLESSOPS_AUTH_ENDPOINT` | Secret | ServerlessOps catalog API |
 | `DATADOG_SITE`, `DATADOG_API_KEY`, `DATADOG_APP_KEY` | Secret | Datadog Agent, scaffolder actions, and monitors endpoint |
+| `CLAUDE_CODE_OAUTH_TOKEN` | Secret | Claude Code CLI in the application container |
 | `BACKSTAGE_APP_URL`, `BACKSTAGE_BACKEND_URL`, `SERVERLESSOPS_CATALOG_API_URL` | Variable | Application URLs |
 | `TECHDOCS_BUCKET` | Variable | TechDocs publishing workflows |
 
